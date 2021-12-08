@@ -17,13 +17,13 @@ public class InternshipApplication implements CommandLineRunner {
 	}
 
 	@Override	public void run(String... args) throws Exception {
-		String sql = "CREATE TABLE Persons (\n" +
-				"    PersonID int,\n" +
-				"    LastName varchar(255),\n" +
-				"    FirstName varchar(255),\n" +
-				"    Address varchar(255),\n" +
-				"    City varchar(255)\n" +
-				");";
-		jdbcTemplate.execute(sql);
+//		String sql = "CREATE TABLE Persons (\n" +
+//				"    PersonID int,\n" +
+//				"    LastName varchar(255),\n" +
+//				"    FirstName varchar(255),\n" +
+//				"    Address varchar(255),\n" +
+//				"    City varchar(255)\n" +
+//				");";
+//		jdbcTemplate.execute(sql);
 	}
 }
