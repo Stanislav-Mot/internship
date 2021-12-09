@@ -1,16 +1,24 @@
-package com.internship.internship.models;
+package com.internship.internship.model;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+import javax.persistence.Entity;
 import javax.persistence.Id;
 
+@Entity
 public class Progress {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Task task;
     private Short percents;
+
+    public Progress() {
+    }
+
+    public Progress(Long id, Task task, Short percents) {
+        this.id = id;
+        this.task = task;
+        this.percents = percents;
+    }
 
     public Long getId() {
         return id;

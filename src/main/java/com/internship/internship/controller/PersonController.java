@@ -1,8 +1,7 @@
-package com.internship.internship.controllers;
+package com.internship.internship.controller;
 
-import com.internship.internship.models.Person;
-import com.internship.internship.repositories.PersonRepo;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.internship.internship.model.Person;
+import com.internship.internship.repository.PersonRepo;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,31 +9,34 @@ import java.util.List;
 @RestController
 public class PersonController {
 
-    @Autowired
     PersonRepo personRepo;
 
+    public PersonController(PersonRepo personRepo) {
+        this.personRepo = personRepo;
+    }
+
     @GetMapping("/person/{id}")
-    Person getPerson(@PathVariable Long id ) {
+    public Person getPerson(@PathVariable Long id ) {
         return personRepo.getById(id);
     }
 
     @GetMapping("/person")
-    List<Person> getAllPersons(){
+    public List<Person> getAllPersons(){
        return personRepo.getAll();
     }
 
     @PostMapping("/person")
-    Integer addPerson(@RequestBody Person person){
+    public Integer addPerson(@RequestBody Person person){
         return personRepo.add(person);
     }
 
     @PutMapping("/person")
-    Integer updatePerson(@RequestBody Person person){
+    public Integer updatePerson(@RequestBody Person person){
         return personRepo.update(person);
     }
 
     @DeleteMapping("/person/{id}")
-    Integer delete(@PathVariable Long id ){
+    public Integer delete(@PathVariable Long id ){
         return personRepo.delete(id);
     }
 }
