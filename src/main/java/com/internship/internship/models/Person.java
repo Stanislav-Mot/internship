@@ -1,18 +1,20 @@
 package com.internship.internship.models;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
 public class Person {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String firstname;
     private String lastname;
     private Integer age;
     private GroupTasks groupTasks;
+
+    public Person(long id, long id_groups, String firstname, String lastname, Integer age) {
+        this.id = id;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.age = age;
+        this.groupTasks = new GroupTasks(id_groups);
+    }
 
     public Long getId() {
         return id;

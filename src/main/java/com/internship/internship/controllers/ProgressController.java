@@ -2,7 +2,6 @@ package com.internship.internship.controllers;
 
 import com.internship.internship.models.Person;
 import com.internship.internship.models.Progress;
-import com.internship.internship.repositories.PersonRepo;
 import com.internship.internship.repositories.ProgressRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
