@@ -1,14 +1,16 @@
-package com.internship.internship.models;
+package com.internship.internship.model;
 
-import java.util.LinkedList;
+import javax.persistence.Entity;
+import java.util.List;
 
-public class GroupTasks {
+@Entity
+public class TasksGroup {
 
     private Long id;
-    private LinkedList<Task> tasks;
+    private List<Task> tasks;
     private Person person;
 
-    public GroupTasks(Long id) {
+    public TasksGroup(Long id) {
         this.id = id;
     }
 
@@ -20,11 +22,11 @@ public class GroupTasks {
         this.id = id;
     }
 
-    public LinkedList<Task> getTasks() {
+    public List<Task> getTasks() {
         return tasks;
     }
 
-    public void setTasks(LinkedList<Task> tasks) {
+    public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
     }
 

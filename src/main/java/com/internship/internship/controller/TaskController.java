@@ -1,7 +1,7 @@
-package com.internship.internship.controllers;
+package com.internship.internship.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class GroupTasksController {
+public class TaskController {
 }
