@@ -24,17 +24,17 @@ public class PersonController {
     }
 
     @PostMapping("/person")
-    Person addPerson(Person person){
+    Integer addPerson(@RequestBody Person person){
         return personRepo.add(person);
     }
 
     @PutMapping("/person")
-    Person updatePerson(Person person){
+    Integer updatePerson(@RequestBody Person person){
         return personRepo.update(person);
     }
 
     @DeleteMapping("/person/{id}")
-    Person delete(@PathVariable Long id ){
+    Integer delete(@PathVariable Long id ){
         return personRepo.delete(id);
     }
 }

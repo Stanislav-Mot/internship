@@ -1,17 +1,16 @@
 package com.internship.internship.models;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import java.util.LinkedList;
 
 public class GroupTasks {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private LinkedList<Task> tasks;
     private Person person;
+
+    public GroupTasks(Long id) {
+        this.id = id;
+    }
 
     public Long getId() {
         return id;
