@@ -28,6 +28,7 @@ public class PersonRepo {
     return jdbcTemplate.update(
         sql,
         person.getId(),
+        //
         person.getGroupTasks().getId(),
         person.getFirstname(),
         person.getLastname(),
@@ -47,6 +48,7 @@ public class PersonRepo {
             person.getFirstname(),
             person.getLastname(),
             person.getAge(),
+            // update group
             person.getId());
      }
 
@@ -56,6 +58,7 @@ public class PersonRepo {
         return jdbcTemplate.queryForObject(sql, (rs, rowNum) ->
             new Person(
                 rs.getLong("id"),
+                //??
                 rs.getLong("id_groups"),
                 rs.getString("firstname"),
                 rs.getString("lastname"),
@@ -69,6 +72,7 @@ public class PersonRepo {
         return jdbcTemplate.query(sql, (rs, rowNum) ->
             new Person(
                 rs.getLong("id"),
+                //?
                 rs.getLong("id_groups"),
                 rs.getString("firstname"),
                 rs.getString("lastname"),

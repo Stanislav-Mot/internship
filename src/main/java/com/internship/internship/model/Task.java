@@ -2,6 +2,7 @@ package com.internship.internship.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.sql.Array;
 import java.util.List;
 
 @Entity
@@ -18,13 +19,17 @@ public class Task {
     public Task() {
     }
 
-    public Task(Long id, String name, String startTime, Person person, Progress progress, List<TasksGroup> groupTasksList) {
+    public Task(Long id) {
+        this.id = id;
+    }
+
+    public Task(Long id, String name, String startTime, Long personId, Long progressId, Array groupTasksIds) {
         this.id = id;
         this.name = name;
         this.startTime = startTime;
-        this.person = person;
-        this.progress = progress;
-        this.groupTasksList = groupTasksList;
+        this.person = null;
+        this.progress = null;
+        this.groupTasksList = null;
     }
 
     public Long getId() {

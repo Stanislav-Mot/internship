@@ -1,6 +1,5 @@
 package com.internship.internship.controller;
 
-import com.internship.internship.model.Person;
 import com.internship.internship.model.Progress;
 import com.internship.internship.repository.ProgressRepo;
 import org.springframework.web.bind.annotation.*;
@@ -17,27 +16,27 @@ public class ProgressController {
     }
 
     @GetMapping("/progress/{id}")
-    public Person getProgress(@PathVariable Long id ) {
+    public Progress getProgress(@PathVariable Long id ) {
         return progressRepo.getById(id);
     }
 
     @GetMapping("/progress")
-    public List<Person> getAllProgresses(){
+    public List<Progress> getAllProgress(){
         return progressRepo.getAll();
     }
 
     @PostMapping("/progress")
-    public Person addProgress(Progress progress){
+    public Integer addProgress(@RequestBody Progress progress){
         return progressRepo.add(progress);
     }
 
     @PutMapping("/progress")
-    public Person updateProgress(Progress progress){
+    public Integer updateTask(@RequestBody Progress progress){
         return progressRepo.update(progress);
     }
 
     @DeleteMapping("/progress/{id}")
-    public Person delete(@PathVariable Long id ){
+    public Integer delete(@PathVariable Long id ){
         return progressRepo.delete(id);
     }
 }

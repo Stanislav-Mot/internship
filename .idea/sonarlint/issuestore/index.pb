@@ -1,0 +1,23 @@
+
+7
+pom.xml,4/4/442292b8a7efeabbe4cc176709b833b1792140ec
+r
+Bsrc/main/java/com/internship/internship/InternshipApplication.java,7/d/7dff36b4318e1c813ca2ed1daa1ba29588329a33
+m
+=src/main/java/com/internship/internship/model/TasksGroup.java,8/4/84fc9a052b4792e1d899c7805e793b468826df37
+9
+	.gitigore,4/f/4fad8bfe9f08760247e03ea75f9c99cd408eeb43
+x
+Hsrc/main/java/com/internship/internship/controller/PersonController.java,5/3/53b5d73ee0131075d4ac25fdb08db119e3c9aefa
+9
+	README.md,8/e/8ec9a00bfd09b3190ac6b22251dbb1aa95a0579d
+v
+Fsrc/main/java/com/internship/internship/controller/TaskController.java,4/f/4fb809cfd596297c60d3b5307f819017a294b972
+|
+Lsrc/main/java/com/internship/internship/controller/TasksGroupController.java,9/a/9a63a52878c1e5ea18346851aa87d8315411833b
+i
+9src/main/java/com/internship/internship/model/Person.java,5/0/5047962b984ed362e70bdb5b8b6e4d796193db33
+r
+Bsrc/main/java/com/internship/internship/repository/PersonRepo.java,4/e/4ee391375c12764db5bd5ec50faf26fbd2e352b8
+z
+Jsrc/main/java/com/internship/internship/controller/ProgressController.java,8/a/8ad2660ad3bd7ae497d6fdd80db3449c888a8c35

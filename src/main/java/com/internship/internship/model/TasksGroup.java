@@ -1,6 +1,7 @@
 package com.internship.internship.model;
 
 import javax.persistence.Entity;
+import java.sql.Array;
 import java.util.List;
 
 @Entity
@@ -9,6 +10,15 @@ public class TasksGroup {
     private Long id;
     private List<Task> tasks;
     private Person person;
+
+    public TasksGroup() {
+    }
+
+    public TasksGroup(Long id, Array tasks, Long personId) {
+        this.id = id;
+        this.tasks = null;
+        this.person = null;
+    }
 
     public TasksGroup(Long id) {
         this.id = id;
