@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public class ProgressRepo {
 
-    JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
     public ProgressRepo(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;

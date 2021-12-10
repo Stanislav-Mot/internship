@@ -9,7 +9,7 @@ import java.util.List;
 @RestController
 public class PersonController {
 
-    PersonRepo personRepo;
+    private PersonRepo personRepo;
 
     public PersonController(PersonRepo personRepo) {
         this.personRepo = personRepo;

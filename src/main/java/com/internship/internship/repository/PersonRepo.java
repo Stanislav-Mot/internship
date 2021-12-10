@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public class PersonRepo {
 
-    JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
     public PersonRepo(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;

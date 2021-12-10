@@ -10,7 +10,7 @@ import java.util.List;
 @RestController
 public class ProgressController {
 
-    ProgressRepo progressRepo;
+    private ProgressRepo progressRepo;
 
     public ProgressController(ProgressRepo progressRepo) {
         this.progressRepo = progressRepo;
