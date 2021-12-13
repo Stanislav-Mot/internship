@@ -11,7 +11,7 @@ public class Person {
     private String firstName;
     private String lastName;
     private Integer age;
-    private TasksGroup groupTasks;
+    private Group groupTasks;
 
     public Person() {
     }
@@ -21,7 +21,11 @@ public class Person {
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
-        this.groupTasks = new TasksGroup(idGroups);
+        this.groupTasks = new Group(idGroups);
+    }
+
+    public Person(Long id_person) {
+        this.id = id_person;
     }
 
     public Long getId() {
@@ -56,11 +60,11 @@ public class Person {
         this.age = age;
     }
 
-    public TasksGroup getGroupTasks() {
+    public Group getGroupTasks() {
         return groupTasks;
     }
 
-    public void setGroupTasks(TasksGroup groupTasks) {
+    public void setGroupTasks(Group groupTasks) {
         this.groupTasks = groupTasks;
     }
 }

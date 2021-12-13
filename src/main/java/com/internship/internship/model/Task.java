@@ -1,7 +1,6 @@
 package com.internship.internship.model;
 
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import java.sql.Array;
 import java.util.List;
 
@@ -13,7 +12,7 @@ public class Task {
     private String startTime;
     private Person person;
     private Progress progress;
-    private List<TasksGroup> groupTasksList;
+    private List<Group> groupsList;
 
     public Task() {
     }
@@ -22,13 +21,13 @@ public class Task {
         this.id = id;
     }
 
-    public Task(Long id, String name, String startTime, Long personId, Long progressId, Array groupTasksIds) {
+    public Task(Long id, String name, String startTime, Long personId, Long progressId) {
         this.id = id;
         this.name = name;
         this.startTime = startTime;
         this.person = null;
         this.progress = null;
-        this.groupTasksList = null;
+        this.groupsList = null;
     }
 
     public Long getId() {
@@ -51,8 +50,8 @@ public class Task {
         return progress;
     }
 
-    public List<TasksGroup> getGroupTasksList() {
-        return groupTasksList;
+    public List<Group> getGroupsList() {
+        return groupsList;
     }
 
     public void setId(Long id) {
@@ -75,7 +74,7 @@ public class Task {
         this.progress = progress;
     }
 
-    public void setGroupTasksArrayList(List<TasksGroup> groupTasksList) {
-        this.groupTasksList = groupTasksList;
+    public void setGroupsList(List<Group> groupsList) {
+        this.groupsList = groupsList;
     }
 }

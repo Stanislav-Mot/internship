@@ -6,8 +6,7 @@ DROP TABLE IF EXISTS tasks_groups CASCADE;
 
 CREATE TABLE groups (
     id INT8 NOT NULL  PRIMARY KEY,
-    id_person INT8,
-    id_task INT8
+    id_person INT8
 );
 
 CREATE TABLE persons (
@@ -29,8 +28,7 @@ CREATE TABLE tasks (
     name VARCHAR(256),
     start_time DATE,
     id_person INT8,
-    id_progress INT8,
-    id_group INT8
+    id_progress INT8
 );
 
 CREATE TABLE tasks_groups(

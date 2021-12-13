@@ -1,7 +1,7 @@
 package com.internship.internship.model.mapper;
 
 import com.internship.internship.model.Person;
-import com.internship.internship.model.TasksGroup;
+import com.internship.internship.model.Group;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
@@ -19,7 +19,7 @@ public class PersonMapper implements RowMapper<Person> {
         person.setLastname(rs.getString("lastname"));
 
         if(rs.getLong("id_groups") > 0){
-            TasksGroup tasksGroup = new TasksGroup();
+            Group tasksGroup = new Group();
             tasksGroup.setId(rs.getLong("id_groups"));
             person.setGroupTasks(tasksGroup);
         }

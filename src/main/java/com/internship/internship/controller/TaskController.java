@@ -1,5 +1,6 @@
 package com.internship.internship.controller;
 
+import com.internship.internship.model.Group;
 import com.internship.internship.model.Task;
 import com.internship.internship.repository.TaskRepo;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,16 @@ public class TaskController {
     @PostMapping("/task")
     public Integer addTask(@RequestBody Task task){
         return taskRepo.add(task);
+    }
+
+    @PostMapping("/task/{id}/group")
+    public Integer addGroupToTask(@PathVariable Long id, @RequestBody Group group){
+        return taskRepo.addGroup(id, group);
+    }
+
+    @DeleteMapping("/task/{id}/group/{idGroup}")
+    public Integer deleteGroupFromTask(@PathVariable Long id, @PathVariable Long idGroup){
+        return taskRepo.deleteGroup(id,idGroup);
     }
 
     @PutMapping("/task")
