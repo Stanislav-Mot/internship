@@ -70,13 +70,13 @@ public class PersonRepo {
     }
 
     public Integer addGroup(Long id, Group group) {
-        String sql = "insert into groups (id_task, id_groups) values (?,?) ";
+        String sql = "insert into groups (id_person, id) values (?,?) ";
         return jdbcTemplate.update(sql,id,group.getId());
 
     }
 
     public Integer deleteGroup(Long id, Long idGroup) {
-        String sql = "delete from groups where id_person = ? and id_group = ?";
+        String sql = "delete from groups where id_person = ? and id= ?";
         return jdbcTemplate.update(sql,id,idGroup);
 
     }

@@ -13,8 +13,8 @@ CREATE TABLE persons (
 
 CREATE TABLE groups (
     id INT8 NOT NULL  PRIMARY KEY,
-    id_person INT8 REFERENCES persons(id),
-    name VARCHAR(256)
+    name VARCHAR(256),
+    id_person INT8 REFERENCES persons(id)
 );
 
 

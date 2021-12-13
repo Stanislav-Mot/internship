@@ -18,7 +18,7 @@ public class PersonService {
 
     public List<Group> getGroupsById(Long id) {
         String sqlForGroup =
-            "select * from persons p join group g on p.id = g.id_person where g.id = ?";
+            "select * from persons p join groups g on p.id = g.id_person where p.id = ?";
 
         List<Group> groupList = jdbcTemplate.query(sqlForGroup, new GroupMapper(), id);
 
