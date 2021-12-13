@@ -45,8 +45,8 @@ public class GroupRepo {
     }
 
     public Integer add(Group group) {
-        String sql = "insert into groups ( id, id_person) " +
-            "values (?,?); " +
+        String sql = "insert into groups ( id, name, id_person) " +
+            "values (?, ?, ?); " +
             "update persons set id_groups = null where id = ?; " +
             "update persons set id_groups = ? where id = ?;";
 
@@ -55,6 +55,7 @@ public class GroupRepo {
         return jdbcTemplate.update(
             sql,
             group.getId(),
+            group.getName(),
             personID,
             personID,
             group.getId(), personID
@@ -62,13 +63,14 @@ public class GroupRepo {
     }
 
     public Integer update(Group group) {
-        String sql = "update groups set id_person = ? where id = ?;" +
+        String sql = "update groups set id_person = ?, name = ? where id = ?;" +
             "update persons set id_groups = ? where id = ?";
 
         Long personID = (group.getPerson() != null) ? group.getPerson().getId() : null;
 
         return jdbcTemplate.update(sql,
             personID,
+            group.getName(),
             group.getId(),
             group.getId(),
             personID);

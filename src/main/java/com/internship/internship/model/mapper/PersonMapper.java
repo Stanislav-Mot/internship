@@ -15,14 +15,8 @@ public class PersonMapper implements RowMapper<Person> {
 
         person.setId(rs.getLong("id"));
         person.setAge(rs.getInt("age"));
-        person.setFirstname(rs.getString("firstname"));
-        person.setLastname(rs.getString("lastname"));
-
-        if(rs.getLong("id_groups") > 0){
-            Group tasksGroup = new Group();
-            tasksGroup.setId(rs.getLong("id_groups"));
-            person.setGroupTasks(tasksGroup);
-        }
+        person.setFirstName(rs.getString("firstname"));
+        person.setLastName(rs.getString("lastname"));
 
         return person;
     }

@@ -2,6 +2,7 @@ package com.internship.internship.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.util.List;
 
 @Entity
 public class Person {
@@ -11,21 +12,21 @@ public class Person {
     private String firstName;
     private String lastName;
     private Integer age;
-    private Group groupTasks;
+    private List<Group> groupTasks;
 
     public Person() {
     }
 
-    public Person(long id, long idGroups, String firstName, String lastName, Integer age) {
+    public Person(Long id_person) {
+        this.id = id_person;
+    }
+
+    public Person(Long id, String firstName, String lastName, Integer age, List<Group> groupTasks) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
-        this.groupTasks = new Group(idGroups);
-    }
-
-    public Person(Long id_person) {
-        this.id = id_person;
+        this.groupTasks = groupTasks;
     }
 
     public Long getId() {
@@ -36,20 +37,20 @@ public class Person {
         this.id = id;
     }
 
-    public String getFirstname() {
+    public String getFirstName() {
         return firstName;
     }
 
-    public void setFirstname(String firstname) {
-        this.firstName = firstname;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getLastname() {
+    public String getLastName() {
         return lastName;
     }
 
-    public void setLastname(String lastname) {
-        this.lastName = lastname;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public Integer getAge() {
@@ -60,11 +61,11 @@ public class Person {
         this.age = age;
     }
 
-    public Group getGroupTasks() {
+    public List<Group> getGroupTasks() {
         return groupTasks;
     }
 
-    public void setGroupTasks(Group groupTasks) {
+    public void setGroupTasks(List<Group> groupTasks) {
         this.groupTasks = groupTasks;
     }
 }

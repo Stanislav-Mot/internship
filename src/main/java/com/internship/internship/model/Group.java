@@ -1,23 +1,23 @@
 package com.internship.internship.model;
 
 import javax.persistence.Entity;
-import java.sql.Array;
 import java.util.List;
 
 @Entity
 public class Group {
 
     private Long id;
+    private String name;
     private List<Task> tasks;
     private Person person;
 
-    public Group() {
-    }
+    public Group() {}
 
-    public Group(Long id, Array tasks, Long personId) {
+    public Group(Long id, String name, List<Task> tasks, Person person) {
         this.id = id;
-        this.tasks = null;
-        this.person = null;
+        this.name = name;
+        this.tasks = tasks;
+        this.person = person;
     }
 
     public Group(Long id) {
@@ -46,5 +46,13 @@ public class Group {
 
     public void setPerson(Person person) {
         this.person = person;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
