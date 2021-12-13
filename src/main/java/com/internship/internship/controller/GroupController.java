@@ -1,6 +1,7 @@
 package com.internship.internship.controller;
 
 import com.internship.internship.model.Group;
+import com.internship.internship.model.Task;
 import com.internship.internship.repository.GroupRepo;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,34 +10,44 @@ import java.util.List;
 @RestController
 public class GroupController {
 
-    GroupRepo tasksGroupRepo;
+    GroupRepo groupRepo;
 
     public GroupController(GroupRepo tasksGroupRepo) {
-        this.tasksGroupRepo = tasksGroupRepo;
+        this.groupRepo = tasksGroupRepo;
     }
 
     @GetMapping("/group/{id}")
     public Group getGroup(@PathVariable Long id ) {
-        return tasksGroupRepo.getById(id);
+        return groupRepo.getById(id);
     }
 
     @GetMapping("/group")
     public List<Group> getAllGroups(){
-        return tasksGroupRepo.getAll();
+        return groupRepo.getAll();
     }
 
     @PostMapping("/group")
     public Integer addGroup(@RequestBody Group tasksGroup){
-        return tasksGroupRepo.add(tasksGroup);
+        return groupRepo.add(tasksGroup);
+    }
+
+    @PostMapping("/group/{id}/task")
+    public Integer addGroupToTask(@PathVariable Long id, @RequestBody Task task){
+        return groupRepo.addTask(id, task);
+    }
+
+    @DeleteMapping("/group/{id}/task/{idTask}")
+    public Integer deleteGroupFromTask(@PathVariable Long id, @PathVariable Long idTask){
+        return groupRepo.deleteTask(id,idTask);
     }
 
     @PutMapping("/group")
     public Integer updateGroup(@RequestBody Group tasksGroup){
-        return tasksGroupRepo.update(tasksGroup);
+        return groupRepo.update(tasksGroup);
     }
 
     @DeleteMapping("/group/{id}")
     public Integer delete(@PathVariable Long id ){
-        return tasksGroupRepo.delete(id);
+        return groupRepo.delete(id);
     }
 }
