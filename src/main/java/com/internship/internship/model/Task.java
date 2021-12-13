@@ -8,7 +8,6 @@ import java.util.List;
 @Entity
 public class Task {
 
-    @Id
     private Long id;
     private String name;
     private String startTime;
