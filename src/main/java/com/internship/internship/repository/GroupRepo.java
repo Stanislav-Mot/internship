@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public class GroupRepo {
 
-    JdbcTemplate jdbcTemplate;
+    JdbcTemplate jdbcTemplate; // приватные
     GroupService groupService;
 
     public GroupRepo(JdbcTemplate jdbcTemplate, GroupService groupService) {
@@ -25,7 +25,7 @@ public class GroupRepo {
         String sql = "select * from groups g left join persons p on p.id = g.id_person " +
             "where g.id = ?";
 
-        Group group = jdbcTemplate.queryForObject(sql,new GroupMapper(), id);
+        Group group = jdbcTemplate.queryForObject(sql,new GroupMapper(), id); // ctrl + shift + o
 
         group.setTasks(groupService.getTasksById(id));
 
@@ -47,7 +47,7 @@ public class GroupRepo {
     public Integer add(Group group) {
         String sql = "insert into groups ( id, name, id_person) " +
             "values (?, ?, ?); " +
-            "update persons set id_groups = null where id = ?; " +
+            "update persons set id_groups = null where id = ?; " + // зачем 2 апдейта?
             "update persons set id_groups = ? where id = ?;";
 
         Long personID = (group.getPerson() != null) ? group.getPerson().getId() : null;

@@ -21,7 +21,7 @@ public class Task {
         this.id = id;
     }
 
-    public Task(Long id, String name, String startTime, Long personId, Long progressId) {
+    public Task(Long id, String name, String startTime, Long personId, Long progressId) { // personId, progressId не используются
         this.id = id;
         this.name = name;
         this.startTime = startTime;

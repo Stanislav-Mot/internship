@@ -16,8 +16,8 @@ public class GroupMapper implements RowMapper<Group> {
         group.setId(rs.getLong("id"));
         group.setName(rs.getString("name"));
 
-        Long id_person = rs.getLong("id_person");
-        if(id_person > 0) {
+        Long id_person = rs.getLong("id_person"); // snake_case?
+        if(id_person > 0) { // ctrl + shift + o прожимай после написания кода
             group.setPerson(new Person(id_person));
         }
 

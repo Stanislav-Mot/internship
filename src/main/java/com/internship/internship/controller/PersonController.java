@@ -10,7 +10,7 @@ import java.util.List;
 @RestController
 public class PersonController {
 
-    PersonRepo personRepo;
+    PersonRepo personRepo; // почему до сих пор не приватное поле?
 
     public PersonController(PersonRepo personRepo) {
         this.personRepo = personRepo;

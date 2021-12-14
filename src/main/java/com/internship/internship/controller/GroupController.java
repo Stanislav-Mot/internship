@@ -10,7 +10,7 @@ import java.util.List;
 @RestController
 public class GroupController {
 
-    GroupRepo groupRepo;
+    GroupRepo groupRepo; // почему до сих пор не приватное поле?
 
     public GroupController(GroupRepo tasksGroupRepo) {
         this.groupRepo = tasksGroupRepo;
