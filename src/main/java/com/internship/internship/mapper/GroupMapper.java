@@ -9,7 +9,6 @@ import java.sql.SQLException;
 
 public class GroupMapper implements RowMapper<Group> {
 
-
     @Override
     public Group mapRow(ResultSet rs, int rowNum) throws SQLException {
         Group group = new Group();

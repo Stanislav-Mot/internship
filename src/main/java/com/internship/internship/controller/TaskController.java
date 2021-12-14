@@ -2,7 +2,6 @@ package com.internship.internship.controller;
 
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Task;
-import com.internship.internship.repository.TaskRepo;
 import com.internship.internship.service.TaskService;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,7 +1,6 @@
 package com.internship.internship.controller;
 
 import com.internship.internship.model.Progress;
-import com.internship.internship.repository.ProgressRepo;
 import com.internship.internship.service.ProgressService;
 import org.springframework.web.bind.annotation.*;
 

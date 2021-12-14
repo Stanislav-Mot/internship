@@ -32,8 +32,7 @@ public class TaskRepo {
     }
 
     public List<Task> getAllTasks() {
-        String sql =
-            "select * from tasks t " +
+        String sql = "select * from tasks t " +
                 "left join persons p on p.id = t.id_person " +
                 "left join progresses pr on pr.id = t.id_progress";
 
@@ -41,8 +40,7 @@ public class TaskRepo {
     }
 
     public Integer addTask(SqlParameterSource parameters) {
-        String sql =
-            "insert into tasks (id, name, start_time, id_person, id_progress) " +
+        String sql = "insert into tasks (id, name, start_time, id_person, id_progress) " +
                 "values (:id, :name, :date, :personId, :progressId);" +
                 "update progresses set id_task = :id where id = progressId";
 
@@ -76,8 +74,7 @@ public class TaskRepo {
     }
 
     public List<Group> getGroupsById(Long id) {
-        String sqlForGroup =
-            "select * from tasks t join tasks_groups tg on t.id = tg.id_task " +
+        String sqlForGroup = "select * from tasks t join tasks_groups tg on t.id = tg.id_task " +
                 "join groups g on tg.id_group = g.id where t.id = ?";
 
         return jdbcTemplate.query(sqlForGroup, new GroupMapper(), id);

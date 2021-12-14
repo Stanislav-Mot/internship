@@ -31,8 +31,7 @@ public class GroupRepo {
     }
 
     public Integer addGroup(MapSqlParameterSource parameters) {
-        String sql = "insert into groups ( id, name) " +
-            "values (:id, :name)";
+        String sql = "insert into groups ( id, name) values (:id, :name)";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
@@ -44,11 +43,12 @@ public class GroupRepo {
     }
 
     public Integer deleteGroup(Long id) {
-        String sql =
-            "delete from tasks_groups where id_group = ?; " +
-            "delete from groups where id = ?;";
+        String deleteConstrains = "delete from tasks_groups where id_group = ?;";
+        String deleteGroupSql = "delete from groups where id = ?;";
 
-        return jdbcTemplate.update(sql,id);
+        jdbcTemplate.update(deleteConstrains,id);
+
+        return jdbcTemplate.update(deleteGroupSql,id);
     }
 
     public Integer addTaskToGroup(Long id, Task task) {
@@ -70,9 +70,9 @@ public class GroupRepo {
     }
 
     public List<Task> getTasksById(Long id) {
-        String sqlForGroup =
-            "select * from groups g join tasks_groups tg on g.id = tg.id_group " +
-                "join tasks t on tg.id_task = t.id where g.id = ?";
+        String sqlForGroup = "select * from groups g " +
+            "join tasks_groups tg on g.id = tg.id_group " +
+            "join tasks t on tg.id_task = t.id where g.id = ?";
 
         List<Task> tasksList = jdbcTemplate.query(sqlForGroup, new TaskMapper(), id);
 

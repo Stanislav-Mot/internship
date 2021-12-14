@@ -37,9 +37,12 @@ public class PersonRepo {
     }
 
     public Integer deletePerson(Long id) {
-        String sql = "update groups set id_person = null where id_person = ?; delete from persons where id = ?;";
+        String deletePerson = "delete from persons where id = ?;";
+        String deleteConstrains = "update groups set id_person = null where id_person = ?;";
 
-        return jdbcTemplate.update(sql, id, id);
+        jdbcTemplate.update(deleteConstrains, id);
+
+        return jdbcTemplate.update(deletePerson, id);
     }
 
     public Person getPersonById(Long id) {
