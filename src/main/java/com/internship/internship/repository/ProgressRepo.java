@@ -3,6 +3,8 @@ package com.internship.internship.repository;
 import com.internship.internship.model.Progress;
 import com.internship.internship.mapper.ProgressMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,60 +13,45 @@ import java.util.List;
 public class ProgressRepo {
 
     private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    public ProgressRepo(JdbcTemplate jdbcTemplate) {
+    public ProgressRepo(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    public Progress getById(Long id) {
+    public Progress getProgressById(Long id) {
         String sql = "select * from progresses p left join tasks t on p.id = t.id_progress where p.id = ?";
 
         return jdbcTemplate.queryForObject(sql, new ProgressMapper(), id);
     }
 
-    public List<Progress> getAll() {
+    public List<Progress> getAllProgresses() {
         String sql = "select * from progresses";
 
         return jdbcTemplate.query(sql, new ProgressMapper());
     }
 
 
-    public Integer add(Progress progress) {
+    public Integer addProgress(SqlParameterSource parameters) {
         String sql =
-            "insert into progresses (id, id_task, percents) values (?,?,?);" +
-                "update tasks set id_progress = ? where id = ?";
+            "insert into progresses (id, id_task, percents) " +
+                "values (:id, :taskId, :percents);" +
+                "update tasks set id_progress = :id where id = :taskId";
 
-        Long taskID = (progress.getTask() != null) ? progress.getTask().getId() : null;
 
-        return jdbcTemplate.update(
-            sql,
-            progress.getId(),
-            taskID,
-            progress.getPercents(),
-            progress.getId(),
-            taskID
-        );
+        return namedParameterJdbcTemplate.update(sql, parameters);
     }
 
-    public Integer update(Progress progress) {
+    public Integer updateProgresses(SqlParameterSource parameters) {
         String sql =
-            "update tasks set id_progress= null where id = ?; " +
-                "update tasks set id_progress= ? where id = ?; " +
-                "update progresses set percents = ?, id_task = ? where id = ?";
+                "update tasks set id_progress= :id where id = taskId; " +
+                "update progresses set percents = :percents, id_task = :taskId where id = :id";
 
-        Long taskID = (progress.getTask() != null) ? progress.getTask().getId() : null;
-
-        return jdbcTemplate.update(
-            sql,
-            taskID,
-            progress.getId(),
-            taskID,
-            progress.getPercents(),
-            taskID,
-            progress.getId());
+        return namedParameterJdbcTemplate.update(sql, parameters);
     }
 
-    public Integer delete(Long id) {
+    public Integer deleteProgress(Long id) {
         String sql =
             "update tasks set id_progress = null where id = ?;" +
                 "delete from progresses where id = ?";
