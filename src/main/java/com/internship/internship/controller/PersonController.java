@@ -2,7 +2,7 @@ package com.internship.internship.controller;
 
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
-import com.internship.internship.repository.PersonRepo;
+import com.internship.internship.service.PersonService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,44 +10,44 @@ import java.util.List;
 @RestController
 public class PersonController {
 
-    private final PersonRepo personRepo;
+    private final PersonService personService;
 
-    public PersonController(PersonRepo personRepo) {
-        this.personRepo = personRepo;
+    public PersonController(PersonService personService) {
+        this.personService = personService;
     }
 
     @GetMapping("/person/{id}")
     public Person getPerson(@PathVariable Long id) {
-        return personRepo.getById(id);
+        return personService.getById(id);
     }
 
     @GetMapping("/person")
     public List<Person> getAllPersons() {
-        return personRepo.getAll();
+        return personService.getAll();
     }
 
     @PostMapping("/person")
     public Integer addPerson(@RequestBody Person person) {
-        return personRepo.add(person);
+        return personService.add(person);
     }
 
     @PostMapping("/person/{id}/group")
     public Integer addGroupToPerson(@PathVariable Long id, @RequestBody Group group) {
-        return personRepo.addGroup(id, group);
+        return personService.addGroup(id, group);
     }
 
     @DeleteMapping("/person/{id}/group/{idGroup}")
-    public Integer deleteGroupFromPerson(@PathVariable Long id, @PathVariable Long idGroup) {
-        return personRepo.deleteGroup(id, idGroup);
+    public Integer deleteGroupFromPerson(@PathVariable Long id, @PathVariable Long groupId) {
+        return personService.deleteGroup(id, groupId);
     }
 
     @PutMapping("/person")
     public Integer updatePerson(@RequestBody Person person) {
-        return personRepo.update(person);
+        return personService.update(person);
     }
 
     @DeleteMapping("/person/{id}")
     public Integer delete(@PathVariable Long id) {
-        return personRepo.delete(id);
+        return personService.delete(id);
     }
 }
