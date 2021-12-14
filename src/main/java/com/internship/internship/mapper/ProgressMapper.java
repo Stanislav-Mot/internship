@@ -1,4 +1,4 @@
-package com.internship.internship.model.mapper;
+package com.internship.internship.mapper;
 
 import com.internship.internship.model.Progress;
 import com.internship.internship.model.Task;
@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class ProgressMapper implements RowMapper<Progress> {
+
     @Override
     public Progress mapRow(ResultSet rs, int rowNum) throws SQLException {
 
@@ -16,9 +17,9 @@ public class ProgressMapper implements RowMapper<Progress> {
         progress.setId(rs.getLong("id"));
         progress.setPercents(rs.getShort("percents"));
 
-        Long id_task = rs.getLong("id_task");
-        if(id_task > 0) {
-            progress.setTask(new Task(id_task));
+        Long taskID = rs.getLong("id_task");
+        if (taskID > 0) {
+            progress.setTask(new Task(taskID));
         }
 
         return progress;

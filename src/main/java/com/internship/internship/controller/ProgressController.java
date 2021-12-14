@@ -9,34 +9,34 @@ import java.util.List;
 @RestController
 public class ProgressController {
 
-    ProgressRepo progressRepo;
+    private final ProgressRepo progressRepo;
 
     public ProgressController(ProgressRepo progressRepo) {
         this.progressRepo = progressRepo;
     }
 
     @GetMapping("/progress/{id}")
-    public Progress getProgress(@PathVariable Long id ) {
+    public Progress getProgress(@PathVariable Long id) {
         return progressRepo.getById(id);
     }
 
     @GetMapping("/progress")
-    public List<Progress> getAllProgress(){
+    public List<Progress> getAllProgress() {
         return progressRepo.getAll();
     }
 
     @PostMapping("/progress")
-    public Integer addProgress(@RequestBody Progress progress){
+    public Integer addProgress(@RequestBody Progress progress) {
         return progressRepo.add(progress);
     }
 
     @PutMapping("/progress")
-    public Integer updateTask(@RequestBody Progress progress){
+    public Integer updateTask(@RequestBody Progress progress) {
         return progressRepo.update(progress);
     }
 
     @DeleteMapping("/progress/{id}")
-    public Integer delete(@PathVariable Long id ){
+    public Integer delete(@PathVariable Long id) {
         return progressRepo.delete(id);
     }
 }

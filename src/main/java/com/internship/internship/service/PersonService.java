@@ -1,7 +1,7 @@
 package com.internship.internship.service;
 
 import com.internship.internship.model.Group;
-import com.internship.internship.model.mapper.GroupMapper;
+import com.internship.internship.mapper.GroupMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 public class PersonService {
 
-    JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     public PersonService(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;

@@ -1,7 +1,7 @@
 package com.internship.internship.repository;
 
 import com.internship.internship.model.Progress;
-import com.internship.internship.model.mapper.ProgressMapper;
+import com.internship.internship.mapper.ProgressMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public class ProgressRepo {
 
-    JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     public ProgressRepo(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -32,7 +32,7 @@ public class ProgressRepo {
     public Integer add(Progress progress) {
         String sql =
             "insert into progresses (id, id_task, percents) values (?,?,?);" +
-            "update tasks set id_progress = ? where id = ?";
+                "update tasks set id_progress = ? where id = ?";
 
         Long taskID = (progress.getTask() != null) ? progress.getTask().getId() : null;
 
@@ -49,8 +49,8 @@ public class ProgressRepo {
     public Integer update(Progress progress) {
         String sql =
             "update tasks set id_progress= null where id = ?; " +
-            "update tasks set id_progress= ? where id = ?; " +
-            "update progresses set percents = ?, id_task = ? where id = ?";
+                "update tasks set id_progress= ? where id = ?; " +
+                "update progresses set percents = ?, id_task = ? where id = ?";
 
         Long taskID = (progress.getTask() != null) ? progress.getTask().getId() : null;
 
@@ -67,8 +67,8 @@ public class ProgressRepo {
     public Integer delete(Long id) {
         String sql =
             "update tasks set id_progress = null where id = ?;" +
-            "delete from progresses where id = ?";
+                "delete from progresses where id = ?";
 
-        return jdbcTemplate.update(sql,id,id);
+        return jdbcTemplate.update(sql, id, id);
     }
 }

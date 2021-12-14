@@ -1,4 +1,4 @@
-package com.internship.internship.model.mapper;
+package com.internship.internship.mapper;
 
 import com.internship.internship.model.Person;
 import com.internship.internship.model.Progress;
@@ -7,7 +7,6 @@ import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 
 
 public class TaskMapper implements RowMapper<Task> {
@@ -20,14 +19,14 @@ public class TaskMapper implements RowMapper<Task> {
         task.setName(rs.getString("name"));
         task.setStartTime(rs.getString("start_time"));
 
-        Long id_person = rs.getLong("id_person");
-        if(id_person > 0) {
-            task.setPerson(new Person(id_person));
+        Long personID = rs.getLong("id_person");
+        if (personID > 0) {
+            task.setPerson(new Person(personID));
         }
 
-        Long id_progress = rs.getLong("id_progress");
-        if(id_progress > 0) {
-            task.setProgress(new Progress(id_progress));
+        Long progressID = rs.getLong("id_progress");
+        if (progressID > 0) {
+            task.setProgress(new Progress(progressID));
         }
 
         return task;

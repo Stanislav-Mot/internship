@@ -2,8 +2,7 @@ package com.internship.internship.repository;
 
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Task;
-import com.internship.internship.model.mapper.GroupMapper;
-import com.internship.internship.model.mapper.TaskMapper;
+import com.internship.internship.mapper.GroupMapper;
 import com.internship.internship.service.GroupService;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -13,8 +12,8 @@ import java.util.List;
 @Repository
 public class GroupRepo {
 
-    JdbcTemplate jdbcTemplate;
-    GroupService groupService;
+    private final JdbcTemplate jdbcTemplate;
+    private final GroupService groupService;
 
     public GroupRepo(JdbcTemplate jdbcTemplate, GroupService groupService) {
         this.jdbcTemplate = jdbcTemplate;
@@ -25,7 +24,7 @@ public class GroupRepo {
         String sql = "select * from groups g left join persons p on p.id = g.id_person " +
             "where g.id = ?";
 
-        Group group = jdbcTemplate.queryForObject(sql,new GroupMapper(), id);
+        Group group = jdbcTemplate.queryForObject(sql, new GroupMapper(), id);
 
         group.setTasks(groupService.getTasksById(id));
 
@@ -37,7 +36,7 @@ public class GroupRepo {
 
         List<Group> groupsList = jdbcTemplate.query(sql, new GroupMapper());
 
-        for (Group group: groupsList) {
+        for (Group group : groupsList) {
             group.setTasks(groupService.getTasksById(group.getId()));
         }
 
@@ -79,19 +78,19 @@ public class GroupRepo {
     public Integer delete(Long id) {
         String sql =
             "update persons set id_group = null where id = ?; " +
-            "delete from tasks_groups where id_group = ?; " +
-            "delete from groups where id = ?;";
+                "delete from tasks_groups where id_group = ?; " +
+                "delete from groups where id = ?;";
 
-        return jdbcTemplate.update(sql,id);
+        return jdbcTemplate.update(sql, id);
     }
 
     public Integer addTask(Long id, Task task) {
         String sql = "insert into tasks_groups (id_group, id_task) values (?,?) ";
-        return jdbcTemplate.update(sql,id,task.getId());
+        return jdbcTemplate.update(sql, id, task.getId());
     }
 
     public Integer deleteTask(Long id, Long idTask) {
         String sql = "delete from tasks_groups where id_task = ? and id_group = ?";
-        return jdbcTemplate.update(sql,id,idTask);
+        return jdbcTemplate.update(sql, id, idTask);
     }
 }

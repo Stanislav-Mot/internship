@@ -1,19 +1,16 @@
 package com.internship.internship.service;
 
-import com.internship.internship.model.Group;
 import com.internship.internship.model.Task;
-import com.internship.internship.model.mapper.GroupMapper;
-import com.internship.internship.model.mapper.TaskMapper;
+import com.internship.internship.mapper.TaskMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class GroupService {
 
-    JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     public GroupService(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;

@@ -10,44 +10,44 @@ import java.util.List;
 @RestController
 public class PersonController {
 
-    PersonRepo personRepo;
+    private final PersonRepo personRepo;
 
     public PersonController(PersonRepo personRepo) {
         this.personRepo = personRepo;
     }
 
     @GetMapping("/person/{id}")
-    public Person getPerson(@PathVariable Long id ) {
+    public Person getPerson(@PathVariable Long id) {
         return personRepo.getById(id);
     }
 
     @GetMapping("/person")
-    public List<Person> getAllPersons(){
-       return personRepo.getAll();
+    public List<Person> getAllPersons() {
+        return personRepo.getAll();
     }
 
     @PostMapping("/person")
-    public Integer addPerson(@RequestBody Person person){
+    public Integer addPerson(@RequestBody Person person) {
         return personRepo.add(person);
     }
 
     @PostMapping("/person/{id}/group")
-    public Integer addGroupToPerson(@PathVariable Long id, @RequestBody Group group){
+    public Integer addGroupToPerson(@PathVariable Long id, @RequestBody Group group) {
         return personRepo.addGroup(id, group);
     }
 
     @DeleteMapping("/person/{id}/group/{idGroup}")
-    public Integer deleteGroupFromPerson(@PathVariable Long id, @PathVariable Long idGroup){
-        return personRepo.deleteGroup(id,idGroup);
+    public Integer deleteGroupFromPerson(@PathVariable Long id, @PathVariable Long idGroup) {
+        return personRepo.deleteGroup(id, idGroup);
     }
 
     @PutMapping("/person")
-    public Integer updatePerson(@RequestBody Person person){
+    public Integer updatePerson(@RequestBody Person person) {
         return personRepo.update(person);
     }
 
     @DeleteMapping("/person/{id}")
-    public Integer delete(@PathVariable Long id ){
+    public Integer delete(@PathVariable Long id) {
         return personRepo.delete(id);
     }
 }

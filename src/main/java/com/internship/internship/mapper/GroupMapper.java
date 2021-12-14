@@ -1,4 +1,4 @@
-package com.internship.internship.model.mapper;
+package com.internship.internship.mapper;
 
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
@@ -9,16 +9,15 @@ import java.sql.SQLException;
 
 public class GroupMapper implements RowMapper<Group> {
 
-
     @Override
     public Group mapRow(ResultSet rs, int rowNum) throws SQLException {
         Group group = new Group();
         group.setId(rs.getLong("id"));
         group.setName(rs.getString("name"));
 
-        Long id_person = rs.getLong("id_person");
-        if(id_person > 0) {
-            group.setPerson(new Person(id_person));
+        Long personID = rs.getLong("id_person");
+        if (personID > 0) {
+            group.setPerson(new Person(personID));
         }
 
         return group;

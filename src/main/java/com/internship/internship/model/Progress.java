@@ -28,20 +28,20 @@ public class Progress {
         return id;
     }
 
-    public Task getTask() {
-        return task;
-    }
-
-    public Short getPercents() {
-        return percents;
-    }
-
     public void setId(Long id) {
         this.id = id;
     }
 
+    public Task getTask() {
+        return task;
+    }
+
     public void setTask(Task task) {
         this.task = task;
+    }
+
+    public Short getPercents() {
+        return percents;
     }
 
     public void setPercents(Short percents) {

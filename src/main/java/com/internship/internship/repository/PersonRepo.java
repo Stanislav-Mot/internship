@@ -2,7 +2,7 @@ package com.internship.internship.repository;
 
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
-import com.internship.internship.model.mapper.PersonMapper;
+import com.internship.internship.mapper.PersonMapper;
 import com.internship.internship.service.PersonService;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -12,8 +12,8 @@ import java.util.List;
 @Repository
 public class PersonRepo {
 
-    JdbcTemplate jdbcTemplate;
-    PersonService personService;
+    private final JdbcTemplate jdbcTemplate;
+    private final PersonService personService;
 
     public PersonRepo(JdbcTemplate jdbcTemplate, PersonService personService) {
         this.jdbcTemplate = jdbcTemplate;
@@ -23,7 +23,7 @@ public class PersonRepo {
     public Integer delete(Long id) {
         String sql = "update groups set id_person = null where id_person = ?; delete from persons where id = ?;";
 
-        return jdbcTemplate.update(sql,id,id);
+        return jdbcTemplate.update(sql, id, id);
     }
 
     public Integer add(Person person) {
@@ -45,10 +45,10 @@ public class PersonRepo {
             person.getLastName(),
             person.getAge(),
             person.getId());
-     }
+    }
 
     public Person getById(Long id) {
-        String sql = "select * from persons p left join groups g on g.id_person = p.id  where p.id = ?";
+        String sql = "select * from persons p where p.id = ?";
 
         Person person = jdbcTemplate.queryForObject(sql, new PersonMapper(), id);
 
@@ -62,7 +62,7 @@ public class PersonRepo {
 
         List<Person> personList = jdbcTemplate.query(sql, new PersonMapper());
 
-        for (Person person: personList) {
+        for (Person person : personList) {
             person.setGroupTasks(personService.getGroupsById(person.getId()));
         }
 
@@ -71,13 +71,13 @@ public class PersonRepo {
 
     public Integer addGroup(Long id, Group group) {
         String sql = "insert into groups (id_person, id) values (?,?) ";
-        return jdbcTemplate.update(sql,id,group.getId());
+        return jdbcTemplate.update(sql, id, group.getId());
 
     }
 
     public Integer deleteGroup(Long id, Long idGroup) {
         String sql = "delete from groups where id_person = ? and id= ?";
-        return jdbcTemplate.update(sql,id,idGroup);
+        return jdbcTemplate.update(sql, id, idGroup);
 
     }
 }
