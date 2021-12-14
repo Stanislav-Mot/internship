@@ -2,7 +2,7 @@ package com.internship.internship.controller;
 
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Task;
-import com.internship.internship.repository.GroupRepo;
+import com.internship.internship.service.GroupService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,44 +10,44 @@ import java.util.List;
 @RestController
 public class GroupController {
 
-    private final GroupRepo groupRepo;
+    private final GroupService groupService;
 
-    public GroupController(GroupRepo tasksGroupRepo) {
-        this.groupRepo = tasksGroupRepo;
+    public GroupController(GroupService groupService) {
+        this.groupService = groupService;
     }
 
     @GetMapping("/group/{id}")
     public Group getGroup(@PathVariable Long id) {
-        return groupRepo.getById(id);
+        return groupService.getById(id);
     }
 
     @GetMapping("/group")
     public List<Group> getAllGroups() {
-        return groupRepo.getAll();
+        return groupService.getAll();
     }
 
     @PostMapping("/group")
-    public Integer addGroup(@RequestBody Group tasksGroup) {
-        return groupRepo.add(tasksGroup);
+    public Integer addGroup(@RequestBody Group group) {
+        return groupService.add(group);
     }
 
     @PostMapping("/group/{id}/task")
     public Integer addGroupToTask(@PathVariable Long id, @RequestBody Task task) {
-        return groupRepo.addTask(id, task);
+        return groupService.addTask(id, task);
     }
 
     @DeleteMapping("/group/{id}/task/{idTask}")
     public Integer deleteGroupFromTask(@PathVariable Long id, @PathVariable Long idTask) {
-        return groupRepo.deleteTask(id, idTask);
+        return groupService.deleteTask(id, idTask);
     }
 
     @PutMapping("/group")
-    public Integer updateGroup(@RequestBody Group tasksGroup) {
-        return groupRepo.update(tasksGroup);
+    public Integer updateGroup(@RequestBody Group group) {
+        return groupService.update(group);
     }
 
     @DeleteMapping("/group/{id}")
     public Integer delete(@PathVariable Long id) {
-        return groupRepo.delete(id);
+        return groupService.delete(id);
     }
 }

@@ -1,4 +1,4 @@
-package com.internship.internship.model.mapper;
+package com.internship.internship.mapper;
 
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
