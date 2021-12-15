@@ -1,9 +1,11 @@
 package com.internship.internship.repository;
 
+import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.mapper.GroupMapper;
 import com.internship.internship.mapper.TaskMapper;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Task;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -27,8 +29,16 @@ public class TaskRepo {
                 "left join persons p on p.id = t.id_person " +
                 "left join progresses pr on pr.id = t.id_progress " +
                 "where t.id = ?";
-
-        return jdbcTemplate.queryForObject(sql, new TaskMapper(), id);
+        Task task;
+        try {
+            task = jdbcTemplate.queryForObject(sql, new TaskMapper(), id);
+        }
+        catch (EmptyResultDataAccessException exception) {
+            //можно прологировать в будущем
+            System.out.println(exception.getMessage());
+            throw new DataNotFoundException(String.format("Task Id %d is not found", id));
+        }
+        return task;
     }
 
     public List<Task> getAllTasks() {

@@ -1,7 +1,9 @@
 package com.internship.internship.repository;
 
+import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.mapper.ProgressMapper;
 import com.internship.internship.model.Progress;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -24,7 +26,18 @@ public class ProgressRepo {
         String sql = "select * from progresses p " +
             "left join tasks t on p.id = t.id_progress where p.id = ?";
 
-        return jdbcTemplate.queryForObject(sql, new ProgressMapper(), id);
+        Progress progress;
+
+        try {
+            progress = jdbcTemplate.queryForObject(sql, new ProgressMapper(), id);
+        }
+        catch (EmptyResultDataAccessException exception) {
+            //можно прологировать в будущем
+            System.out.println(exception.getMessage());
+            throw new DataNotFoundException(String.format("Progress Id %d is not found", id));
+        }
+
+        return progress;
     }
 
     public List<Progress> getAllProgresses() {

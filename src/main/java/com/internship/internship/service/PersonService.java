@@ -18,11 +18,7 @@ public class PersonService {
     }
 
     public Person getById(Long id) {
-        Person person = personRepo.getPersonById(id);
-
-        person.setGroupTasks(personRepo.getGroupsById(id));
-
-        return person;
+        return personRepo.getPersonById(id);
     }
 
     public List<Person> getAll() {

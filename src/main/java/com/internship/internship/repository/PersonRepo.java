@@ -1,9 +1,11 @@
 package com.internship.internship.repository;
 
+import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.mapper.GroupMapper;
 import com.internship.internship.mapper.PersonMapper;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -47,8 +49,16 @@ public class PersonRepo {
 
     public Person getPersonById(Long id) {
         String sql = "select * from persons p where p.id = ?";
-
-        return jdbcTemplate.queryForObject(sql, new PersonMapper(), id);
+        Person person;
+        try {
+            person = jdbcTemplate.queryForObject(sql, new PersonMapper(), id);
+        }
+        catch (EmptyResultDataAccessException exception) {
+            //можно прологировать в будущем
+            System.out.println(exception.getMessage());
+            throw new DataNotFoundException(String.format("Person Id %d is not found", id));
+        }
+        return person;
     }
 
     public List<Person> getAllPersons() {

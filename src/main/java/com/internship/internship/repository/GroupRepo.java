@@ -1,9 +1,11 @@
 package com.internship.internship.repository;
 
+import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.mapper.GroupMapper;
 import com.internship.internship.mapper.TaskMapper;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Task;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -65,7 +67,16 @@ public class GroupRepo {
         String sql = "select * from groups g left join persons p on p.id = g.id_person " +
             "where g.id = ?";
 
-        return jdbcTemplate.queryForObject(sql, new GroupMapper(),id);
+        Group group;
+        try{
+            group = jdbcTemplate.queryForObject(sql, new GroupMapper(),id);
+        }
+        catch (EmptyResultDataAccessException exception) {
+            //можно прологировать в будущем
+            System.out.println(exception.getMessage());
+            throw new DataNotFoundException(String.format("Group Id %d is not found", id));
+        }
+        return group;
 
     }
 
