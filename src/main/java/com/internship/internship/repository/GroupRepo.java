@@ -5,6 +5,8 @@ import com.internship.internship.mapper.GroupMapper;
 import com.internship.internship.mapper.TaskMapper;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Task;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -18,6 +20,7 @@ public class GroupRepo {
 
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private static final Logger LOGGER = LoggerFactory.getLogger(GroupRepo.class);
 
     public GroupRepo(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -72,8 +75,8 @@ public class GroupRepo {
             group = jdbcTemplate.queryForObject(sql, new GroupMapper(),id);
         }
         catch (EmptyResultDataAccessException exception) {
-            //можно прологировать в будущем
-            System.out.println(exception.getMessage());
+            LOGGER.debug("handling 404 error on getGroupById method");
+
             throw new DataNotFoundException(String.format("Group Id %d is not found", id));
         }
         return group;

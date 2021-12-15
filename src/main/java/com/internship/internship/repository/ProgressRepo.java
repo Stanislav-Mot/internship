@@ -3,6 +3,8 @@ package com.internship.internship.repository;
 import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.mapper.ProgressMapper;
 import com.internship.internship.model.Progress;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -16,6 +18,7 @@ public class ProgressRepo {
 
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private static final Logger LOGGER = LoggerFactory.getLogger(GroupRepo.class);
 
     public ProgressRepo(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -32,8 +35,8 @@ public class ProgressRepo {
             progress = jdbcTemplate.queryForObject(sql, new ProgressMapper(), id);
         }
         catch (EmptyResultDataAccessException exception) {
-            //можно прологировать в будущем
-            System.out.println(exception.getMessage());
+            LOGGER.debug("handling 404 error on getProgressById method");
+
             throw new DataNotFoundException(String.format("Progress Id %d is not found", id));
         }
 

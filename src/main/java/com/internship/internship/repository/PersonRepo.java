@@ -5,6 +5,8 @@ import com.internship.internship.mapper.GroupMapper;
 import com.internship.internship.mapper.PersonMapper;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -18,6 +20,7 @@ public class PersonRepo {
 
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private static final Logger LOGGER = LoggerFactory.getLogger(GroupRepo.class);
 
     public PersonRepo(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -54,8 +57,8 @@ public class PersonRepo {
             person = jdbcTemplate.queryForObject(sql, new PersonMapper(), id);
         }
         catch (EmptyResultDataAccessException exception) {
-            //можно прологировать в будущем
-            System.out.println(exception.getMessage());
+            LOGGER.debug("handling 404 error on getPersonById method");
+
             throw new DataNotFoundException(String.format("Person Id %d is not found", id));
         }
         return person;
