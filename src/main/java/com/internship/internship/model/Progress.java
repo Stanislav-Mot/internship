@@ -14,30 +14,34 @@ public class Progress {
     public Progress() {
     }
 
-    public Progress(Long id, Task task, Short percents) {
+    public Progress(Long id, Long taskId, Short percents) {
         this.id = id;
-        this.task = task;
+        this.task = new Task(taskId);
         this.percents = percents;
+    }
+
+    public Progress(Long progressId) {
+        this.id = progressId;
     }
 
     public Long getId() {
         return id;
     }
 
-    public Task getTask() {
-        return task;
-    }
-
-    public Short getPercents() {
-        return percents;
-    }
-
     public void setId(Long id) {
         this.id = id;
     }
 
+    public Task getTask() {
+        return task;
+    }
+
     public void setTask(Task task) {
         this.task = task;
+    }
+
+    public Short getPercents() {
+        return percents;
     }
 
     public void setPercents(Short percents) {

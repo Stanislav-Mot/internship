@@ -1,8 +1,7 @@
 package com.internship.internship.controller;
 
-import com.internship.internship.model.Person;
 import com.internship.internship.model.Progress;
-import com.internship.internship.repository.ProgressRepo;
+import com.internship.internship.service.ProgressService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,34 +9,34 @@ import java.util.List;
 @RestController
 public class ProgressController {
 
-    private ProgressRepo progressRepo;
+    private final ProgressService progressService;
 
-    public ProgressController(ProgressRepo progressRepo) {
-        this.progressRepo = progressRepo;
+    public ProgressController(ProgressService progressService) {
+        this.progressService = progressService;
     }
 
     @GetMapping("/progress/{id}")
-    public Person getProgress(@PathVariable Long id ) {
-        return progressRepo.getById(id);
+    public Progress getProgress(@PathVariable Long id) {
+        return progressService.getById(id);
     }
 
     @GetMapping("/progress")
-    public List<Person> getAllProgresses(){
-        return progressRepo.getAll();
+    public List<Progress> getAllProgress() {
+        return progressService.getAll();
     }
 
     @PostMapping("/progress")
-    public Person addProgress(Progress progress){
-        return progressRepo.add(progress);
+    public Integer addProgress(@RequestBody Progress progress) {
+        return progressService.add(progress);
     }
 
     @PutMapping("/progress")
-    public Person updateProgress(Progress progress){
-        return progressRepo.update(progress);
+    public Integer updateTask(@RequestBody Progress progress) {
+        return progressService.update(progress);
     }
 
     @DeleteMapping("/progress/{id}")
-    public Person delete(@PathVariable Long id ){
-        return progressRepo.delete(id);
+    public Integer delete(@PathVariable Long id) {
+        return progressService.delete(id);
     }
 }
