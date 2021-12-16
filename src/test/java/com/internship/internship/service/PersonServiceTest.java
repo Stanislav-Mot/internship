@@ -3,40 +3,77 @@ package com.internship.internship.service;
 import com.internship.internship.model.Person;
 import com.internship.internship.repository.PersonRepo;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class PersonServiceTest {
 
-    @Mock
-    private PersonRepo personRepo;
     @InjectMocks
-    private PersonService personService;
+    PersonService service;
+
+    @Mock
+    PersonRepo dao;
 
     @Test
-    public void getById() {
-        Person person = new Person();
+    public void testFindAllEmployees()
+    {
+        List<Person> list = new ArrayList<Person>();
+        Person empOne = new Person(33L);
+        Person empTwo = new Person(44L);
+        Person empThree = new Person(55L);
+
+        list.add(empOne);
+        list.add(empTwo);
+        list.add(empThree);
+
+        Mockito.doReturn(list).when(dao).getAllPersons();
+        when(dao.getAllPersons()).thenReturn(list);
+
+        //test
+        List<Person> empList = service.getAll();
+
+        assertEquals(3, empList.size());
+        verify(dao, times(1)).getAllPersons();
+    }
+
+    @Test
+    public void testCreateOrSaveEmployee()
+    {
+        Person person = new Person(15L);
+        person.setFirstName("Tester");
+        person.setLastName("Tester_ov");
+        person.setAge(15);
+
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("id", person.getId());
+        parameters.addValue("firstname", person.getFirstName());
+        parameters.addValue("lastname", person.getLastName());
+        parameters.addValue("age", person.getAge());
+
+        service.add(person);
+
+        verify(dao, times(1)).addPerson(parameters);
     }
 
     @Test
     void getAll() {
         List<Person> persons = new ArrayList<>();
         persons.add(new Person());
-        given(personRepo.getAllPersons()).willReturn(persons);
-        List<Person> expected = personService.getAll();
+        given(dao.getAllPersons()).willReturn(persons);
+        List<Person> expected = service.getAll();
         assertEquals(expected, persons);
-        verify(personRepo).getAllPersons();
+        verify(dao).getAllPersons();
     }
 }

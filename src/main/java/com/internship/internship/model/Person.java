@@ -17,8 +17,8 @@ public class Person {
     public Person() {
     }
 
-    public Person(Long id_person) {
-        this.id = id_person;
+    public Person(Long personId) {
+        this.id = personId;
     }
 
     public Person(Long id, String firstName, String lastName, Integer age, List<Group> groupTasks) {
