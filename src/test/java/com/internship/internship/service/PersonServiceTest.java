@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,7 +26,7 @@ class PersonServiceTest {
     PersonRepo dao;
 
     @Test
-    public void testFindAllEmployees()
+    public void testGetAllPersons()
     {
         List<Person> list = new ArrayList<Person>();
         Person empOne = new Person(33L);
@@ -41,7 +40,6 @@ class PersonServiceTest {
         Mockito.doReturn(list).when(dao).getAllPersons();
         when(dao.getAllPersons()).thenReturn(list);
 
-        //test
         List<Person> empList = service.getAll();
 
         assertEquals(3, empList.size());
@@ -49,7 +47,7 @@ class PersonServiceTest {
     }
 
     @Test
-    public void testCreateOrSaveEmployee()
+    public void testCreateOrSavePerson()
     {
         Person person = new Person(15L);
         person.setFirstName("Tester");
@@ -64,16 +62,6 @@ class PersonServiceTest {
 
         service.add(person);
 
-        verify(dao, times(1)).addPerson(parameters);
-    }
-
-    @Test
-    void getAll() {
-        List<Person> persons = new ArrayList<>();
-        persons.add(new Person());
-        given(dao.getAllPersons()).willReturn(persons);
-        List<Person> expected = service.getAll();
-        assertEquals(expected, persons);
-        verify(dao).getAllPersons();
+        verify(dao, times(1)).addPerson(eq(parameters));
     }
 }

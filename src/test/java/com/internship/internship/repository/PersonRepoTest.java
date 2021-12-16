@@ -26,7 +26,7 @@ class PersonRepoTest {
     PersonRepo personRepo;
 
     @Test
-    public void testCreateReadDelete() {
+    public void testCreateReadDeletePerson() {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
 
         parameters.addValue("id", 999L);

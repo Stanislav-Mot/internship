@@ -63,7 +63,7 @@ public class TaskRepo {
     public Integer updateTask(SqlParameterSource parameters) {
         String sql = "update tasks set name = :name," +
                 "start_time = :date, id_person = :personId, " +
-                "id_progress = progressId where id = :id";
+                "id_progress = :progressId where id = :id";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }

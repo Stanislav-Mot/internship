@@ -38,7 +38,7 @@ public class PersonRepo {
         String sql = "update persons set firstname = :firstname," +
             " lastname = :lastname, age = :age where id = :id;";
 
-        return jdbcTemplate.update(sql, parameters);
+        return namedParameterJdbcTemplate.update(sql, parameters);
     }
 
     public Integer deletePerson(Long id) {
