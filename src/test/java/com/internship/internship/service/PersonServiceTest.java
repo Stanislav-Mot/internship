@@ -1,12 +1,12 @@
 package com.internship.internship.service;
 
+import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
 import com.internship.internship.repository.PersonRepo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -25,27 +25,19 @@ class PersonServiceTest {
     @Mock
     PersonRepo personRepo;
 
-    @Test
-    public void testCreateOrSavePerson()
-    {
-        Person person = new Person(15L);
-        person.setFirstName("Tester");
-        person.setLastName("Tester_ov");
-        person.setAge(15);
-
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
-        parameters.addValue("id", person.getId());
-        parameters.addValue("firstname", person.getFirstName());
-        parameters.addValue("lastname", person.getLastName());
-        parameters.addValue("age", person.getAge());
-
-        Mockito.doReturn(1).when(personRepo).addPerson(parameters);
-
-        verify(personRepo, times(1)).addPerson(eq(parameters));
-    }
+    public static final Long CORRECT_ID = 999L;
 
     @Test
     void getById() {
+        Person person = newPersonForTest();
+
+        when(personRepo.getPersonById(person.getId())).thenReturn(person);
+
+        Person personFromService = personService.getById(person.getId());
+
+        assertEquals(personFromService, person);
+
+        verify(personRepo, times(1)).getPersonById(person.getId());
     }
 
     @Test
@@ -65,25 +57,93 @@ class PersonServiceTest {
 
     @Test
     void add() {
+        Person person = newPersonForTest();
+
+        when(personRepo.addPerson(any(MapSqlParameterSource.class))).thenReturn(1);
+
+        Integer result = personService.add(person);
+
+        assertEquals(1, result);
+
+        verify(personRepo, times(1)).addPerson(any(MapSqlParameterSource.class));
     }
 
     @Test
     void update() {
+        Person person = newPersonForTest();
+
+        when(personRepo.updatePerson(any(MapSqlParameterSource.class))).thenReturn(1);
+
+        Integer result = personService.update(person);
+
+        assertEquals(1, result);
+
+        verify(personRepo, times(1)).updatePerson(any(MapSqlParameterSource.class));
     }
 
     @Test
     void delete() {
+        Person person = newPersonForTest();
+
+        when(personRepo.deletePerson(person.getId())).thenReturn(1);
+
+        Integer result = personService.delete(person.getId());
+
+        assertEquals(1, result);
+
+        verify(personRepo, times(1)).deletePerson(person.getId());
     }
 
     @Test
     void deleteGroup() {
+        Person person = newPersonForTest();
+        Group group = newGroupForTest(person);
+
+        when(personRepo.deleteGroupFromPerson(person.getId(), group.getId())).thenReturn(1);
+
+        Integer result = personService.deleteGroup(person.getId(), group.getId());
+
+        assertEquals(1, result);
+
+        verify(personRepo, times(1)).deleteGroupFromPerson(person.getId(), group.getId());
     }
 
     @Test
     void addGroup() {
+        Person person = newPersonForTest();
+        Group group = newGroupForTest(person);
+
+        when(personRepo.addGroupToPerson(person.getId(), group)).thenReturn(1);
+
+        Integer result = personService.addGroup(person.getId(), group);
+
+        assertEquals(1, result);
+
+        verify(personRepo, times(1)).addGroupToPerson(person.getId(), group);
     }
 
     @Test
     void getMapSqlParameterSource() {
+        Person person = newPersonForTest();
+
+        MapSqlParameterSource parametersFromService = personService.getMapSqlParameterSource(person);
+        MapSqlParameterSource parametersFromTest = new MapSqlParameterSource();
+
+        parametersFromTest.addValue("id", person.getId());
+        parametersFromTest.addValue("firstname", person.getFirstName());
+        parametersFromTest.addValue("lastname", person.getLastName());
+        parametersFromTest.addValue("age", person.getAge());
+
+        assertEquals(parametersFromService.getValues(),parametersFromTest.getValues());
     }
+
+    public static Person newPersonForTest(){
+        Person person = new Person(CORRECT_ID, "Tester", "Rochester", 99, null);
+        return person;
+    }
+    private Group newGroupForTest(Person person) {
+        Group group = new Group(CORRECT_ID, "TesterGroup", null, person);
+        return group;
+    }
+
 }
