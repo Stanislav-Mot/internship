@@ -3,6 +3,8 @@ package com.internship.internship.controller;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
 import com.internship.internship.service.PersonService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,8 +29,8 @@ public class PersonController {
     }
 
     @PostMapping("/person")
-    public Integer addPerson(@RequestBody Person person) {
-        return personService.add(person);
+    public ResponseEntity<Integer> addPerson(@RequestBody Person person) {
+        return new ResponseEntity(personService.add(person) , HttpStatus.CREATED);
     }
 
     @PostMapping("/person/{id}/group")
@@ -36,14 +38,19 @@ public class PersonController {
         return personService.addGroup(id, group);
     }
 
-    @DeleteMapping("/person/{id}/group/{idGroup}")
+    @DeleteMapping("/person/{id}/group/{groupId}")
     public Integer deleteGroupFromPerson(@PathVariable Long id, @PathVariable Long groupId) {
         return personService.deleteGroup(id, groupId);
     }
 
     @PutMapping("/person")
-    public Integer updatePerson(@RequestBody Person person) {
-        return personService.update(person);
+    public ResponseEntity<Integer> updatePerson(@RequestBody Person person) {
+        Integer countUpdatedRow = personService.update(person);
+        if(countUpdatedRow > 0){
+            return new ResponseEntity<Integer>(countUpdatedRow, HttpStatus.ACCEPTED);
+        }else {
+            return new ResponseEntity<Integer>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
+        }
     }
 
     @DeleteMapping("/person/{id}")

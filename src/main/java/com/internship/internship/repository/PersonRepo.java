@@ -77,7 +77,7 @@ public class PersonRepo {
     }
 
     public Integer deleteGroupFromPerson(Long id, Long groupId) {
-        String sql = "delete from groups where id_person = ? and id= ?";
+        String sql = "delete from groups where id_person = ? and id = ?;";
         return jdbcTemplate.update(sql, id, groupId);
 
     }

@@ -1,9 +1,8 @@
 package com.internship.internship.controller;
 
-import static org.assertj.core.internal.bytebuddy.matcher.ElementMatchers.is;
+import static org.hamcrest.Matchers.containsStringIgnoringCase;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -11,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.internship.internship.exeption.DataNotFoundException;
+import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
 import com.internship.internship.service.PersonService;
 import org.hamcrest.Matchers;
@@ -41,6 +41,10 @@ class PersonControllerTest {
     @Autowired
     MockMvc mockMvc;
 
+    public static final Long CORRECT_ID = 999L;
+    public static final Long WRONG_ID = 9999L;
+
+
     @Test
     public void contextLoads() {
         Assertions.assertNotNull(personController);
@@ -48,8 +52,7 @@ class PersonControllerTest {
 
     @Test
     void getAllPersons() throws Exception {
-        Person person = new Person(999L);
-        person.setFirstName("Tester");
+        Person person = newPersonForTest();
         List<Person> persons = Arrays.asList(person);
 
         Mockito.when(personService.getAll()).thenReturn(persons);
@@ -61,74 +64,74 @@ class PersonControllerTest {
     }
     @Test
     void getPersonById() throws Exception {
-        Long personId = 999L;
-        long wrongPersonId = 4045L;
-        Person person = new Person(personId);
+        Person person = newPersonForTest();
 
-        Mockito.when(personService.getById(personId)).thenReturn(person);
+        Mockito.when(personService.getById(CORRECT_ID)).thenReturn(person);
 
-        mockMvc.perform(get("/person/{id}", personId)).andDo(print())
+        mockMvc.perform(get("/person/{id}", CORRECT_ID)).andDo(print())
             .andExpect(status().isOk())
-//            .andExpect(jsonPath("$", Matchers.hasSize(1)))
-            .andExpect(jsonPath("$..id", Matchers.contains(Math.toIntExact(personId))));
+            .andExpect(jsonPath("$..id", Matchers.contains(Math.toIntExact(CORRECT_ID))))
+            .andExpect(jsonPath("$..firstName", Matchers.contains("Tester")));
 
-        mockMvc.perform(get("/person/{id}", wrongPersonId))
+        Mockito.when(personService.getById(WRONG_ID)).thenThrow(DataNotFoundException.class).thenReturn(null);
+
+        mockMvc.perform(get("/person/{id}", WRONG_ID))
             .andExpect(status().isNotFound())
             .andExpect(result -> assertTrue(result.getResolvedException() instanceof DataNotFoundException));
+
+        verify(personService, times(2)).getById(Mockito.any());
+
     }
 
     @Test
     void addPerson() throws Exception {
-        Long personId = 999L;
-        Person person = new Person(personId);
+        Person person = newPersonForTest();
 
-        Mockito.when(personService.add(person)).thenReturn(1);
+        Mockito.when(personService.add(any(Person.class))).thenReturn(1);
 
         mockMvc.perform(post("/person")
-                .content(new ObjectMapper().writeValueAsString(person))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(person))
+                .characterEncoding("utf-8")
             ).andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$", Matchers.is(0)));
-    }
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$", Matchers.is(1)))
+            .andReturn();
 
-    @Test
-    void addGroupToPerson() {
-    }
-
-    @Test
-    void deleteGroupFromPerson() {
+        verify(personService, times(1)).add(Mockito.any(Person.class));
     }
 
     @Test
     void updatePerson() throws Exception {
-        Person person = new Person(999L);
+        Person person = newPersonForTest();
 
-        personService.add(person);
+        when(personService.update(any(Person.class))).thenReturn(1);
 
-        person.setFirstName("Tester");
-        person.setLastName("Tester_ov");
-        person.setAge(15);
-
-        personService.update(person);
-
-        when(personService.update(person)).thenReturn(0);
-
-        verify(personService, times(2));
         mockMvc.perform(put("/person")
-                .content(new ObjectMapper().writeValueAsString(person))
+                .content(asJsonString(person))
+                .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
             )
             .andDo(print())
-            .andExpect(status().isOk())
+            .andExpect(status().isAccepted())
             .andExpect(jsonPath("$", Matchers.is(1)));
 
+        mockMvc.perform(put("/person")
+                .content("Wrong JSON")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message", containsStringIgnoringCase("wrong JSON format")));
+
+        verify(personService, times(1)).update(Mockito.any(Person.class));
     }
 
     @Test
     void deletePerson() throws Exception {
-        Person person = new Person(999L);
+        Person person = newPersonForTest();
 
-        personService.add(person);
         Mockito.when(personService.delete(person.getId())).thenReturn(1);
 
         mockMvc.perform(delete("/person/{id}", person.getId()))
@@ -136,5 +139,58 @@ class PersonControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", Matchers.is(1)));
 
+        verify(personService, times(1)).delete(Mockito.any(Long.class));
+    }
+
+    @Test
+    void addGroupToPerson() throws Exception {
+        Person person = newPersonForTest();
+        Group group = newGroupForTest(person);
+        Mockito.when(personService.addGroup(any(Long.class),any(Group.class))).thenReturn(1);
+
+        mockMvc.perform(post("/person/{id}/group", person.getId())
+                .content(asJsonString(group))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+            ).andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", Matchers.is(1)));
+
+        verify(personService, times(1))
+            .addGroup(Mockito.any(Long.class), Mockito.any(Group.class));
+    }
+
+    @Test
+    void deleteGroupFromPerson() throws Exception {
+        Person person = newPersonForTest();
+        Group group = newGroupForTest(person);
+
+        Mockito.when(personService.deleteGroup(person.getId(), group.getId())).thenReturn(1);
+
+        mockMvc.perform(delete("/person/{id}/group/{idGroup}", person.getId(), group.getId()))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", Matchers.is(1)));
+
+        verify(personService, times(1)).deleteGroup(person.getId(), group.getId());
+    }
+
+
+    public static String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Person newPersonForTest(){
+        Person person = new Person(CORRECT_ID, "Tester", "Rochester", 99, null);
+        return person;
+    }
+
+    private Group newGroupForTest(Person person) {
+        Group group = new Group(CORRECT_ID, "TesterGroup", null, person);
+        return group;
     }
 }

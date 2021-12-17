@@ -20,31 +20,10 @@ import static org.mockito.Mockito.*;
 class PersonServiceTest {
 
     @InjectMocks
-    PersonService service;
+    PersonService personService;
 
     @Mock
-    PersonRepo dao;
-
-    @Test
-    public void testGetAllPersons()
-    {
-        List<Person> list = new ArrayList<Person>();
-        Person empOne = new Person(33L);
-        Person empTwo = new Person(44L);
-        Person empThree = new Person(55L);
-
-        list.add(empOne);
-        list.add(empTwo);
-        list.add(empThree);
-
-        Mockito.doReturn(list).when(dao).getAllPersons();
-        when(dao.getAllPersons()).thenReturn(list);
-
-        List<Person> empList = service.getAll();
-
-        assertEquals(3, empList.size());
-        verify(dao, times(1)).getAllPersons();
-    }
+    PersonRepo personRepo;
 
     @Test
     public void testCreateOrSavePerson()
@@ -60,8 +39,51 @@ class PersonServiceTest {
         parameters.addValue("lastname", person.getLastName());
         parameters.addValue("age", person.getAge());
 
-        service.add(person);
+        Mockito.doReturn(1).when(personRepo).addPerson(parameters);
 
-        verify(dao, times(1)).addPerson(eq(parameters));
+        verify(personRepo, times(1)).addPerson(eq(parameters));
+    }
+
+    @Test
+    void getById() {
+    }
+
+    @Test
+    void getAll() {
+        List<Person> list = new ArrayList<Person>();
+        list.add(new Person(33L));
+        list.add(new Person(44L));
+        list.add(new Person(55L));
+
+        when(personRepo.getAllPersons()).thenReturn(list);
+
+        List<Person> personList = personService.getAll();
+
+        assertEquals(3, personList.size());
+        verify(personRepo, times(1)).getAllPersons();
+    }
+
+    @Test
+    void add() {
+    }
+
+    @Test
+    void update() {
+    }
+
+    @Test
+    void delete() {
+    }
+
+    @Test
+    void deleteGroup() {
+    }
+
+    @Test
+    void addGroup() {
+    }
+
+    @Test
+    void getMapSqlParameterSource() {
     }
 }
