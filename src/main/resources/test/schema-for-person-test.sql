@@ -13,8 +13,9 @@ CREATE TABLE persons (
 
 CREATE TABLE groups (
     id INT8 NOT NULL  PRIMARY KEY,
+    id_person BIGINT NOT NULL,
     name VARCHAR(256),
-    id_person INT8 REFERENCES persons(id)
+    FOREIGN KEY (id_person) REFERENCES persons(id) ON DELETE CASCADE
 );
 
 

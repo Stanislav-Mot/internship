@@ -65,7 +65,7 @@ public class PersonRepo {
     }
 
     public List<Person> getAllPersons() {
-        String sql = "select * from persons p left join groups g on g.id_person = p.id";
+        String sql = "select * from persons";
 
         return jdbcTemplate.query(sql, new PersonMapper());
     }
@@ -76,9 +76,9 @@ public class PersonRepo {
 
     }
 
-    public Integer deleteGroupFromPerson(Long id, Long groupId) {
+    public Integer deleteGroupFromPerson(Long personId, Long groupId) {
         String sql = "delete from groups where id_person = ? and id = ?;";
-        return jdbcTemplate.update(sql, id, groupId);
+        return jdbcTemplate.update(sql, personId, groupId);
 
     }
 
