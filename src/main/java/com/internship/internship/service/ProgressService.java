@@ -46,7 +46,7 @@ public class ProgressService {
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("id", progress.getId());
-        parameters.addValue("taskId", taskID);
+        parameters.addValue("id_task", taskID);
         parameters.addValue("percents", progress.getPercents());
         return parameters;
     }

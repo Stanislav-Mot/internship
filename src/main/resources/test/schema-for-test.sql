@@ -50,6 +50,3 @@ ALTER TABLE progresses
 
 ALTER TABLE tasks
     ADD CONSTRAINT fk_person_task FOREIGN KEY (id_person) REFERENCES persons(id);
-
-ALTER TABLE tasks
-    ADD CONSTRAINT fk_progress_task FOREIGN KEY (id_progress) REFERENCES progresses(id);

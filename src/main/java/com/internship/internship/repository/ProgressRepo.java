@@ -52,23 +52,21 @@ public class ProgressRepo {
 
     public Integer addProgress(SqlParameterSource parameters) {
         String sql = "insert into progresses (id, id_task, percents) " +
-                "values (:id, :taskId, :percents);" +
-                "update tasks set id_progress = :id where id = :taskId";
+                "values (:id, :id_task, :percents);" +
+                "update tasks set id_progress = :id where id = :id_task";
 
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
 
     public Integer updateProgresses(SqlParameterSource parameters) {
-        String sql = "update tasks set id_progress= :id where id = taskId; " +
-                "update progresses set percents = :percents, " +
-            "id_task = :taskId where id = :id";
+        String sql = "update progresses set percents = :percents where id = :id";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
 
     public Integer deleteProgress(Long id) {
-        String sql = "update tasks set id_progress = null where id = ?;" +
+        String sql = "update tasks set id_progress = null where id_progress = ?;" +
                 "delete from progresses where id = ?";
 
         return jdbcTemplate.update(sql, id, id);
