@@ -14,9 +14,9 @@ public class Progress {
     public Progress() {
     }
 
-    public Progress(Long id, Long taskId, Short percents) {
+    public Progress(Long id, Task task, Short percents) {
         this.id = id;
-        this.task = new Task(taskId);
+        this.task = task;
         this.percents = percents;
     }
 
