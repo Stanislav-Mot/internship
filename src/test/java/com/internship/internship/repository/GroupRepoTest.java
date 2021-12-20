@@ -1,188 +1,136 @@
 package com.internship.internship.repository;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.internship.internship.controller.GroupController;
 import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
-import com.internship.internship.service.GroupService;
-import org.hamcrest.Matchers;
+import com.internship.internship.model.Task;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.Matchers.containsStringIgnoringCase;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.assertj.core.api.Assertions.from;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(GroupController.class)
+@SpringBootTest
+@ActiveProfiles("test")
+@TestPropertySource("/application-test.properties")
+@Sql(value = {"/test/schema-for-test.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(value = {"/test/data-for-group-test.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class GroupRepoTest {
 
-//    @MockBean
-//    GroupService groupService;
-//
-//    @Autowired
-//    GroupController groupController;
-//
-//    @Autowired
-//    MockMvc mockMvc;
-//
-//    public static final Long CORRECT_ID = 999L;
-//    public static final Long WRONG_ID = 9999L;
-//
-//    @Test
-//    void getAll() throws Exception {
-//        Group group = newGroupForTest();
-//        List<Group> groups = Arrays.asList(group);
-//
-//        Mockito.when(groupService.getAll()).thenReturn(groups);
-//
-//        mockMvc.perform(get("/person")).andDo(print())
-//            .andExpect(status().isOk())
-//            .andExpect(jsonPath("$..firstName", Matchers.contains("Tester")));
-//    }
-//
-//    @Test
-//    void getGroupById() {
-////        Person person = newPersonForTest();
-//
-//        Mockito.when(personService.getById(CORRECT_ID)).thenReturn(person);
-//
-//        mockMvc.perform(get("/person/{id}", CORRECT_ID)).andDo(print())
-//            .andExpect(status().isOk())
-//            .andExpect(jsonPath("$..id", Matchers.contains(Math.toIntExact(CORRECT_ID))))
-//            .andExpect(jsonPath("$..firstName", Matchers.contains("Tester")));
-//
-//        Mockito.when(personService.getById(WRONG_ID)).thenThrow(DataNotFoundException.class).thenReturn(null);
-//
-//        mockMvc.perform(get("/person/{id}", WRONG_ID))
-//            .andExpect(status().isNotFound())
-//            .andExpect(result -> assertTrue(result.getResolvedException() instanceof DataNotFoundException));
-//
-//        verify(personService, times(2)).getById(Mockito.any());
-//    }
-//
-//    @Test
-//    void addGroup() {
-////        Person person = newPersonForTest();
-//
-//        Mockito.when(personService.add(any(Person.class))).thenReturn(1);
-//
-//        mockMvc.perform(post("/person")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(asJsonString(person))
-//                .characterEncoding("utf-8")
-//            ).andDo(print())
-//            .andExpect(status().isCreated())
-//            .andExpect(jsonPath("$", Matchers.is(1)))
-//            .andReturn();
-//
-//        verify(personService, times(1)).add(Mockito.any(Person.class));
-//    }
-//
-//    @Test
-//    void updateGroup() {
-//        Person person = newPersonForTest();
-//
-//        when(personService.update(any(Person.class))).thenReturn(1);
-//
-//        mockMvc.perform(put("/person")
-//                .content(asJsonString(person))
-//                .accept(MediaType.APPLICATION_JSON)
-//                .contentType(MediaType.APPLICATION_JSON)
-//            )
-//            .andDo(print())
-//            .andExpect(status().isAccepted())
-//            .andExpect(jsonPath("$", Matchers.is(1)));
-//
-//        mockMvc.perform(put("/person")
-//                .content("Wrong JSON")
-//                .accept(MediaType.APPLICATION_JSON)
-//                .contentType(MediaType.APPLICATION_JSON)
-//            )
-//            .andDo(print())
-//            .andExpect(status().isBadRequest())
-//            .andExpect(jsonPath("$.message", containsStringIgnoringCase("wrong JSON format")));
-//
-//        verify(personService, times(1)).update(Mockito.any(Person.class));
-//    }
-//
-//    @Test
-//    void deleteGroup() {
-//        Person person = newPersonForTest();
-//
-//        Mockito.when(personService.delete(person.getId())).thenReturn(1);
-//
-//        mockMvc.perform(delete("/person/{id}", person.getId()))
-//            .andDo(print())
-//            .andExpect(status().isOk())
-//            .andExpect(jsonPath("$", Matchers.is(1)));
-//
-//        verify(personService, times(1)).delete(Mockito.any(Long.class));
-//    }
-//
-//    @Test
-//    void addTaskToGroup() {
-//        Person person = newPersonForTest();
-//        Group group = newGroupForTest(person);
-//        Mockito.when(personService.addGroup(any(Long.class),any(Group.class))).thenReturn(1);
-//
-//        mockMvc.perform(post("/person/{id}/group", person.getId())
-//                .content(asJsonString(group))
-//                .accept(MediaType.APPLICATION_JSON)
-//                .contentType(MediaType.APPLICATION_JSON)
-//            ).andDo(print())
-//            .andExpect(status().isOk())
-//            .andExpect(jsonPath("$", Matchers.is(1)));
-//
-//        verify(personService, times(1))
-//            .addGroup(Mockito.any(Long.class), Mockito.any(Group.class));
-//    }
-//
-//    @Test
-//    void deleteTaskFromGroup() {
-//        Person person = newPersonForTest();
-//        Group group = newGroupForTest(person);
-//
-//        Mockito.when(personService.deleteGroup(person.getId(), group.getId())).thenReturn(1);
-//
-//        mockMvc.perform(delete("/person/{id}/group/{idGroup}", person.getId(), group.getId()))
-//            .andDo(print())
-//            .andExpect(status().isOk())
-//            .andExpect(jsonPath("$", Matchers.is(1)));
-//
-//        verify(personService, times(1)).deleteGroup(person.getId(), group.getId());
-//    }
-//
-//    @Test
-//    void getTasksById() {
-//    }
-//
-//    public static String asJsonString(final Object obj) {
-//        try {
-//            return new ObjectMapper().writeValueAsString(obj);
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-//
-//    public static Group newGroupForTest(){
-//        Group group = new Group(CORRECT_ID, "Tester", null, new Person(99L));
-//        return group;
-//    }
+    private final Long CORRECT_ID = 999L;
+    private final Long ID_FOR_GET = 1L;
+    private final Long ID_FOR_UPDATE= 3L;
+    private final Long ID_FOR_DELETE= 4L;
+    private Integer countGroups = 3;
+
+    @Autowired
+    GroupRepo groupRepo;
+
+    @Test
+    void getGroupById() {
+        Group group = groupRepo.getGroupById(ID_FOR_GET);
+
+        Assertions.assertThat(group).returns("testGroup", from(Group::getName));
+    }
+
+    @Test
+    void getAll() {
+        List<Group> groups = groupRepo.getAll();
+
+        assertEquals(countGroups, groups.size());
+    }
+
+    @Test
+    void addGroup() {
+        MapSqlParameterSource parameters = getMapSqlParameterSource(newGroupForTest());
+
+        groupRepo.addGroup(parameters);
+        Iterable<Group> groups = groupRepo.getAll();
+
+        Assertions.assertThat(groups).extracting(Group::getName).contains("Tester");
+
+        countGroups += 1;
+    }
+
+    @Test
+    void updateGroup() {
+        Group groupForUpdate = new Group(ID_FOR_UPDATE, "nameUpdate", null, null);
+
+        Integer answer = groupRepo.updateGroup(groupForUpdate);
+
+        assertEquals(1, answer);
+
+        Group group = groupRepo.getGroupById(ID_FOR_UPDATE);
+
+        Assertions.assertThat(group).returns("nameUpdate", from(Group::getName));
+    }
+
+    @Test
+    void deleteGroup() {
+        Integer answer = groupRepo.deleteGroup(ID_FOR_DELETE);
+
+        assertEquals(1, answer);
+
+        Assertions.assertThatThrownBy(() ->
+            groupRepo.getGroupById(ID_FOR_DELETE)
+        ).isInstanceOf(DataNotFoundException.class);
+    }
+
+    @Test
+    void addTaskToGroup() {
+        Group group = groupRepo.getGroupById(ID_FOR_GET);
+        Task task = new Task(9999L);
+
+        Integer answer = groupRepo.addTaskToGroup(group.getId(),task);
+        assertEquals(1, answer);
+
+
+        Iterable<Task> tasks = groupRepo.getTasksById(ID_FOR_GET);
+
+        Assertions.assertThat(tasks).extracting(Task::getName).contains("do_something");
+    }
+
+    @Test
+    void deleteTaskFromGroup() {
+
+        Integer answer = groupRepo.deleteTaskFromGroup(1L, 8888L);
+
+        assertEquals(1, answer);
+
+        List<Task> tasks = groupRepo.getTasksById(1L);
+
+        Assertions.assertThat(tasks).extracting(Task::getName).isNotIn("for_delete");
+    }
+
+    @Test
+    void getTasksById() {
+        List<Task> tasks = groupRepo.getTasksById(ID_FOR_UPDATE);
+
+        Assertions.assertThat(tasks).extracting(Task::getName).contains("cleaning");
+    }
+
+    private Group newGroupForTest(){
+        Group group = new Group(CORRECT_ID, "Tester", null, new Person(1L));
+        return group;
+    }
+
+    private MapSqlParameterSource getMapSqlParameterSource(Group group) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+
+        parameters.addValue("id", group.getId());
+        parameters.addValue("name", group.getName());
+        parameters.addValue("id_person", group.getPerson().getId());
+        return parameters;
+    }
 }

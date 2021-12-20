@@ -36,13 +36,13 @@ public class GroupRepo {
     }
 
     public Integer addGroup(MapSqlParameterSource parameters) {
-        String sql = "insert into groups ( id, name) values (:id, :name)";
+        String sql = "insert into groups ( id, name, id_person) values (:id, :name, :id_person)";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
 
     public Integer updateGroup(Group group) {
-        String sql = "update groups name = ? where id = ?;";
+        String sql = "update groups set name = ? where id = ?;";
 
         return jdbcTemplate.update(sql, group.getName(), group.getId());
     }
@@ -61,9 +61,9 @@ public class GroupRepo {
         return jdbcTemplate.update(sql,id,task.getId());
     }
 
-    public Integer deleteTaskFromGroup(Long id, Long idTask) {
+    public Integer deleteTaskFromGroup(Long idGroup, Long idTask) {
         String sql = "delete from tasks_groups where id_task = ? and id_group = ?";
-        return jdbcTemplate.update(sql,id,idTask);
+        return jdbcTemplate.update(sql,idTask, idGroup);
     }
 
     public Group getGroupById(Long id) {
@@ -84,7 +84,7 @@ public class GroupRepo {
     }
 
     public List<Task> getTasksById(Long id) {
-        String sqlForGroup = "select * from groups g " +
+        String sqlForGroup = "select t.id, t.name, t.start_time, t.id_person,t.id_progress from groups g " +
             "join tasks_groups tg on g.id = tg.id_group " +
             "join tasks t on tg.id_task = t.id where g.id = ?";
 
