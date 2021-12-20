@@ -13,6 +13,15 @@ public class Task {
     private Progress progress;
     private List<Group> groupsList;
 
+    public Task(Long id, String name, String startTime, Person person, Progress progress, List<Group> groupsList) {
+        this.id = id;
+        this.name = name;
+        this.startTime = startTime;
+        this.person = person;
+        this.progress = progress;
+        this.groupsList = groupsList;
+    }
+
     public Task() {}
 
     public Task(Long id) {
