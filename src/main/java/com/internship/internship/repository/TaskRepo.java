@@ -54,8 +54,7 @@ public class TaskRepo {
 
     public Integer addTask(SqlParameterSource parameters) {
         String sql = "insert into tasks (id, name, start_time, id_person, id_progress) " +
-                "values (:id, :name, :date, :personId, :progressId);" +
-                "update progresses set id_task = :id where id = progressId";
+                "values (:id, :name, :date, :personId, :progressId);";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
@@ -69,7 +68,7 @@ public class TaskRepo {
     }
 
     public Integer deleteTask(Long id) {
-        String sql = "update progresses set id_task = null where id = ?; " +
+        String sql = "update progresses set id_task = null where id_task = ?; " +
                 "delete from tasks_groups where id_task = ?; " +
                 "delete from tasks where id = ?;";
 
