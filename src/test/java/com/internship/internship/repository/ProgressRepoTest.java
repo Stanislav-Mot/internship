@@ -1,8 +1,6 @@
 package com.internship.internship.repository;
 
 import com.internship.internship.exeption.DataNotFoundException;
-import com.internship.internship.model.Group;
-import com.internship.internship.model.Person;
 import com.internship.internship.model.Progress;
 import com.internship.internship.model.Task;
 import org.assertj.core.api.Assertions;
@@ -19,7 +17,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.from;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest

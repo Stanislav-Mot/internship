@@ -45,7 +45,6 @@ public class GroupService {
         return answer;
     }
 
-
     public Integer update(Group group) {
         Integer answer = groupRepo.updateGroup(group);
 

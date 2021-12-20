@@ -1,6 +1,5 @@
 package com.internship.internship.service;
 
-import com.internship.internship.model.Group;
 import com.internship.internship.model.Task;
 import com.internship.internship.repository.TaskRepo;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;

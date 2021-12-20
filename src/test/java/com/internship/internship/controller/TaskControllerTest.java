@@ -2,10 +2,7 @@ package com.internship.internship.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.internship.internship.exeption.DataNotFoundException;
-import com.internship.internship.model.Group;
-import com.internship.internship.model.Person;
 import com.internship.internship.model.Task;
-import com.internship.internship.service.GroupService;
 import com.internship.internship.service.TaskService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
@@ -23,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.Matchers.containsStringIgnoringCase;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;

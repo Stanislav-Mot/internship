@@ -30,7 +30,6 @@ public class ProgressService {
         return progressRepo.addProgress(parameters);
     }
 
-
     public Integer update(Progress progress) {
         MapSqlParameterSource parameters = getMapSqlParameterSource(progress);
 

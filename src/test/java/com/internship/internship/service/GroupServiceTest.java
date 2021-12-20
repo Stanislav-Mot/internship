@@ -4,7 +4,6 @@ import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
 import com.internship.internship.model.Task;
 import com.internship.internship.repository.GroupRepo;
-import com.internship.internship.repository.PersonRepo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,7 +14,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
