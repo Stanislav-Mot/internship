@@ -39,7 +39,7 @@ public class GroupController {
     }
 
     @PostMapping("/group/{id}/task")
-    public Integer addToTaskGroup(@PathVariable Long id, @RequestBody Task task) {
+    public Integer addTaskToGroup(@PathVariable Long id, @RequestBody Task task) {
         return groupService.addTask(id, task);
     }
 

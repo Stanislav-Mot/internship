@@ -76,16 +76,6 @@ public class TaskRepo {
         return jdbcTemplate.update(sql, id, id, id);
     }
 
-    public Integer addGroupToTask(Long id, Group group) {
-        String sql = "insert into tasks_groups (id_task, id_group) values (?,?) ";
-        return jdbcTemplate.update(sql, id, group.getId());
-    }
-
-    public Integer deleteGroupFromTask(Long id, Long idGroup) {
-        String sql = "delete from tasks_groups where id_task = ? and id_group = ?";
-        return jdbcTemplate.update(sql, id, idGroup);
-    }
-
     public List<Group> getGroupsById(Long id) {
         String sqlForGroup = "select * from tasks t join tasks_groups tg on t.id = tg.id_task " +
                 "join groups g on tg.id_group = g.id where t.id = ?";

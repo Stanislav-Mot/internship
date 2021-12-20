@@ -52,14 +52,6 @@ public class TaskService {
         return taskRepo.deleteTask(id);
     }
 
-    public Integer addGroup(Long id, Group group) {
-        return taskRepo.addGroupToTask(id, group);
-    }
-
-    public Integer deleteGroup(Long id, Long groupId) {
-        return taskRepo.deleteGroupFromTask(id, groupId);
-    }
-
     private MapSqlParameterSource getMapSqlParameterSource(Task task) {
         Long personId = (task.getPerson() != null) ? task.getPerson().getId() : null;
         Long progressId = (task.getProgress() != null) ? task.getProgress().getId() : null;
