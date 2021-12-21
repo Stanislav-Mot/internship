@@ -20,7 +20,7 @@ public class TaskRepo {
 
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    private static final Logger LOGGER = LoggerFactory.getLogger(GroupRepo.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GroupRepo.class); // тоже самое
 
     public TaskRepo(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;

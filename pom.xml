@@ -59,7 +59,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
+            <groupId>com.fasterxml.jackson.core</groupId> <!--зачем? она есть в спринг буте-->
             <artifactId>jackson-databind</artifactId>
             <version>LATEST</version>
         </dependency>

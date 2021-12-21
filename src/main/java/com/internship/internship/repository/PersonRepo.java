@@ -20,7 +20,7 @@ public class PersonRepo {
 
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    private static final Logger LOGGER = LoggerFactory.getLogger(GroupRepo.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GroupRepo.class); // Person repo
 
     public PersonRepo(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;

@@ -18,3 +18,5 @@ INSERT INTO tasks (id, name, start_time) VALUES
 INSERT INTO tasks_groups (id_task, id_group) VALUES
     (2, 1), (2,3), (4,3), (8888,1);
 
+
+-- тестовые ресурсы должны быть не main/resources, а в test/resources

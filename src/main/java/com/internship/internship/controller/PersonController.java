@@ -30,7 +30,7 @@ public class PersonController {
 
     @PostMapping("/person")
     public ResponseEntity<Integer> addPerson(@RequestBody Person person) {
-        return new ResponseEntity(personService.add(person) , HttpStatus.CREATED);
+        return new ResponseEntity(personService.add(person) , HttpStatus.CREATED); // нужно параметризировать<>
     }
 
     @PostMapping("/person/{id}/group")
@@ -47,9 +47,9 @@ public class PersonController {
     public ResponseEntity<Integer> updatePerson(@RequestBody Person person) {
         Integer countUpdatedRow = personService.update(person);
         if(countUpdatedRow > 0){
-            return new ResponseEntity<Integer>(countUpdatedRow, HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(countUpdatedRow, HttpStatus.ACCEPTED);  // Достаточно пустых <>
         }else {
-            return new ResponseEntity<Integer>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
+            return new ResponseEntity<>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
         }
     }
 

@@ -31,11 +31,11 @@ public class GroupController {
     @PostMapping("/group")
     public ResponseEntity<Integer> addGroup(@RequestBody Group group) {
         Integer countUpdatedRow = groupService.add(group);
-        if(countUpdatedRow > 0){
+        if(countUpdatedRow > 0){ // что с форматированием? после if должен быть пробел
             return new ResponseEntity<Integer>(countUpdatedRow, HttpStatus.CREATED);
-        }else {
+        }else { // перед else тоже
             return new ResponseEntity<Integer>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
-        }
+        } // используй автоформатирование
     }
 
     @PostMapping("/group/{id}/task")
@@ -58,7 +58,7 @@ public class GroupController {
         }
     }
 
-    @DeleteMapping("/group/{id}")
+    @DeleteMapping("/group/{id}") // почему у тебя с апдейтом логика разделена на accepted/not modified, а для delete - нет?
     public Integer delete(@PathVariable Long id) {
         return groupService.delete(id);
     }

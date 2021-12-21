@@ -30,9 +30,7 @@ public class GroupRepo {
     public List<Group> getAll() {
         String sql = "select * from groups g left join persons p on p.id = g.id_person";
 
-        List<Group> groupsList = jdbcTemplate.query(sql, new GroupMapper());
-
-        return groupsList;
+        return jdbcTemplate.query(sql, new GroupMapper()); // можно заинлайнить
     }
 
     public Integer addGroup(MapSqlParameterSource parameters) {

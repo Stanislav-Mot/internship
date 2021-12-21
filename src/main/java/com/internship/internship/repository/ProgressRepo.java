@@ -18,7 +18,7 @@ public class ProgressRepo {
 
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    private static final Logger LOGGER = LoggerFactory.getLogger(GroupRepo.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GroupRepo.class); // ProgressRepo
 
     public ProgressRepo(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -34,7 +34,7 @@ public class ProgressRepo {
         try {
             progress = jdbcTemplate.queryForObject(sql, new ProgressMapper(), id);
         }
-        catch (EmptyResultDataAccessException exception) {
+        catch (EmptyResultDataAccessException exception) { // используй автоформатирование
             LOGGER.debug("handling 404 error on getProgressById method");
 
             throw new DataNotFoundException(String.format("Progress Id %d is not found", id));

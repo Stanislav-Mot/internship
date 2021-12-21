@@ -6,6 +6,7 @@ import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
 import com.internship.internship.model.Task;
 import com.internship.internship.service.GroupService;
+import lombok.SneakyThrows;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.containsStringIgnoringCase;
@@ -35,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class GroupControllerTest {
 
     @MockBean
-    GroupService groupService;
+    GroupService groupService; // поля приватные
 
     @Autowired
     GroupController groupController;
@@ -46,7 +48,7 @@ class GroupControllerTest {
     public static final Long CORRECT_ID = 999L;
     public static final Long WRONG_ID = 9999L;
 
-    @Test
+    @Test // методы в junit5 package-private
     public void contextLoads() {
         Assertions.assertNotNull(groupController);
     }
@@ -74,7 +76,7 @@ class GroupControllerTest {
     @Test
     void getAllGroups() throws Exception {
         Group group = newGroupForTest();
-        List<Group> groups = Arrays.asList(group);
+        List<Group> groups = Collections.singletonList(group);
 
         Mockito.when(groupService.getAll()).thenReturn(groups);
 
@@ -104,7 +106,6 @@ class GroupControllerTest {
     @Test
     void addToTaskGroup() throws Exception {
         Group group = newGroupForTest();
-        Task task = newTaskForTest();
         Mockito.when(groupService.addTask(any(Long.class),any(Task.class))).thenReturn(1);
 
         mockMvc.perform(post("/group/{id}/task", group.getId())
@@ -175,21 +176,17 @@ class GroupControllerTest {
         verify(groupService, times(1)).delete(Mockito.any(Long.class));
     }
 
+    @SneakyThrows
     private String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return new ObjectMapper().writeValueAsString(obj);
     }
 
     private Group newGroupForTest(){
-        Group group = new Group(CORRECT_ID, "Tester", null, new Person(1L));
-        return group;
+        return new Group(CORRECT_ID, "Tester", null, new Person(1L));
     }
+
     private Task newTaskForTest() {
-        Task task = new Task(CORRECT_ID, "TesterGroup", "2021-06-09", null, null, null);
-        return task;
+        return new Task(CORRECT_ID, "TesterGroup", "2021-06-09", null, null, null);
     }
 
 }
