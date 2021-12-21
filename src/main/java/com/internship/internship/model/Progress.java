@@ -20,8 +20,8 @@ public class Progress {
         this.percents = percents;
     }
 
-    public Progress(Long id_progress) {
-        this.id = id_progress;
+    public Progress(Long progressId) {
+        this.id = progressId;
     }
 
     public Long getId() {

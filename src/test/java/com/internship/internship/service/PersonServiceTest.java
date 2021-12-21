@@ -19,13 +19,11 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class PersonServiceTest {
 
+    private final Long CORRECT_ID = 999L;
     @InjectMocks
-    PersonService personService;
-
+    private PersonService personService;
     @Mock
-    PersonRepo personRepo;
-
-    public static final Long CORRECT_ID = 999L;
+    private PersonRepo personRepo;
 
     @Test
     void getById() {
@@ -134,16 +132,14 @@ class PersonServiceTest {
         parametersFromTest.addValue("lastname", person.getLastName());
         parametersFromTest.addValue("age", person.getAge());
 
-        assertEquals(parametersFromService.getValues(),parametersFromTest.getValues());
+        assertEquals(parametersFromService.getValues(), parametersFromTest.getValues());
     }
 
-    public static Person newPersonForTest(){
-        Person person = new Person(CORRECT_ID, "Tester", "Rochester", 99, null);
-        return person;
-    }
     private Group newGroupForTest(Person person) {
-        Group group = new Group(CORRECT_ID, "TesterGroup", null, person);
-        return group;
+        return new Group(CORRECT_ID, "TesterGroup", null, person);
     }
 
+    private Person newPersonForTest() {
+        return new Person(CORRECT_ID, "Tester", "Rochester", 99, null);
+    }
 }

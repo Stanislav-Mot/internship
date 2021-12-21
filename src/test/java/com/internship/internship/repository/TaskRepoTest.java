@@ -24,18 +24,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @ActiveProfiles("test")
 @TestPropertySource("/application-test.properties")
-@Sql(value = {"/test/schema-for-test.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@Sql(value = {"/test/data-for-task-test.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql("/schema-for-test.sql")
+@Sql("/data-for-task-test.sql")
 class TaskRepoTest {
 
     private final Long CORRECT_ID = 999L;
     private final Long ID_FOR_GET = 2L;
-    private final Long ID_FOR_UPDATE= 9999L;
-    private final Long ID_FOR_DELETE= 8888L;
-    private Integer countTasks = 5;
-
+    private final Long ID_FOR_UPDATE = 9999L;
+    private final Long ID_FOR_DELETE = 8888L;
     @Autowired
-    TaskRepo taskRepo;
+    private TaskRepo taskRepo;
+    private Integer countTasks = 5;
 
     @Test
     void getTaskById() {
@@ -65,7 +64,7 @@ class TaskRepoTest {
 
     @Test
     void updateTask() {
-        Task taskFroUpdate = new Task(ID_FOR_UPDATE,"updated", "2001-01-01",null,null,null);
+        Task taskFroUpdate = new Task(ID_FOR_UPDATE, "updated", "2001-01-01", null, null, null);
 
         Integer answer = taskRepo.updateTask(getMapSqlParameterSource(taskFroUpdate));
 
@@ -82,9 +81,7 @@ class TaskRepoTest {
 
         assertEquals(1, answer);
 
-        Assertions.assertThatThrownBy(() ->
-            taskRepo.getTaskById(ID_FOR_DELETE)
-        ).isInstanceOf(DataNotFoundException.class);
+        Assertions.assertThatThrownBy(() -> taskRepo.getTaskById(ID_FOR_DELETE)).isInstanceOf(DataNotFoundException.class);
     }
 
     @Test
@@ -95,8 +92,7 @@ class TaskRepoTest {
     }
 
     private Task newTaskForTest() {
-        Task task = new Task(CORRECT_ID, "Tester", "2021-06-09", null, null, null);
-        return task;
+        return new Task(CORRECT_ID, "Tester", "2021-06-09", null, null, null);
     }
 
     private MapSqlParameterSource getMapSqlParameterSource(Task task) {
@@ -109,8 +105,7 @@ class TaskRepoTest {
         parameters.addValue("name", task.getName());
         parameters.addValue("personId", personId);
         parameters.addValue("progressId", progressId);
-        parameters.addValue("date", date
-        );
+        parameters.addValue("date", date);
         return parameters;
     }
 }

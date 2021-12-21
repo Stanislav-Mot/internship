@@ -19,13 +19,11 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ProgressServiceTest {
 
+    private final Long CORRECT_ID = 999L;
     @InjectMocks
-    ProgressService progressService;
-
+    private ProgressService progressService;
     @Mock
-    ProgressRepo progressRepo;
-
-    public static final Long CORRECT_ID = 999L;
+    private ProgressRepo progressRepo;
 
     @Test
     void getById() {
@@ -95,7 +93,6 @@ class ProgressServiceTest {
     }
 
     private Progress newProgressForTest() {
-        Progress progress = new Progress(CORRECT_ID, new Task(9L), (short) 99);
-        return progress;
+        return new Progress(CORRECT_ID, new Task(9L), (short) 99);
     }
 }

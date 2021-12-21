@@ -30,20 +30,20 @@ public class ProgressController {
     @PostMapping("/progress")
     public ResponseEntity<Integer> addProgress(@RequestBody Progress progress) {
         Integer countUpdatedRow = progressService.add(progress);
-        if(countUpdatedRow > 0){
-            return new ResponseEntity<Integer>(countUpdatedRow, HttpStatus.CREATED);
-        }else {
-            return new ResponseEntity<Integer>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
+        if (countUpdatedRow > 0) {
+            return new ResponseEntity<>(countUpdatedRow, HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
         }
     }
 
     @PutMapping("/progress")
     public ResponseEntity<Integer> updateTask(@RequestBody Progress progress) {
         Integer countUpdatedRow = progressService.update(progress);
-        if(countUpdatedRow > 0){
-            return new ResponseEntity<Integer>(countUpdatedRow, HttpStatus.ACCEPTED);
-        }else {
-            return new ResponseEntity<Integer>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
+        if (countUpdatedRow > 0) {
+            return new ResponseEntity<>(countUpdatedRow, HttpStatus.ACCEPTED);
+        } else {
+            return new ResponseEntity<>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
         }
     }
 

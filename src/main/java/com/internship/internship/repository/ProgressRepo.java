@@ -16,9 +16,9 @@ import java.util.List;
 @Repository
 public class ProgressRepo {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProgressRepo.class);
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    private static final Logger LOGGER = LoggerFactory.getLogger(GroupRepo.class); // ProgressRepo
 
     public ProgressRepo(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -26,21 +26,14 @@ public class ProgressRepo {
     }
 
     public Progress getProgressById(Long id) {
-        String sql = "select * from progresses p " +
-            "left join tasks t on p.id = t.id_progress where p.id = ?";
-
-        Progress progress;
-
+        String sql = "select * from progresses p " + "left join tasks t on p.id = t.id_progress where p.id = ?";
         try {
-            progress = jdbcTemplate.queryForObject(sql, new ProgressMapper(), id);
-        }
-        catch (EmptyResultDataAccessException exception) { // используй автоформатирование
+            return jdbcTemplate.queryForObject(sql, new ProgressMapper(), id);
+        } catch (EmptyResultDataAccessException exception) {
             LOGGER.debug("handling 404 error on getProgressById method");
 
             throw new DataNotFoundException(String.format("Progress Id %d is not found", id));
         }
-
-        return progress;
     }
 
     public List<Progress> getAllProgresses() {
@@ -51,9 +44,7 @@ public class ProgressRepo {
 
 
     public Integer addProgress(SqlParameterSource parameters) {
-        String sql = "insert into progresses (id, id_task, percents) " +
-                "values (:id, :id_task, :percents);" +
-                "update tasks set id_progress = :id where id = :id_task";
+        String sql = "insert into progresses (id, id_task, percents) " + "values (:id, :id_task, :percents);" + "update tasks set id_progress = :id where id = :id_task";
 
 
         return namedParameterJdbcTemplate.update(sql, parameters);
@@ -66,8 +57,7 @@ public class ProgressRepo {
     }
 
     public Integer deleteProgress(Long id) {
-        String sql = "update tasks set id_progress = null where id_progress = ?;" +
-                "delete from progresses where id = ?";
+        String sql = "update tasks set id_progress = null where id_progress = ?;" + "delete from progresses where id = ?";
 
         return jdbcTemplate.update(sql, id, id);
     }

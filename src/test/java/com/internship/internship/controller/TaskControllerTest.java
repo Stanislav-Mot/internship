@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.model.Task;
 import com.internship.internship.service.TaskService;
+import lombok.SneakyThrows;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -32,20 +33,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(TaskController.class)
 class TaskControllerTest {
 
-    @MockBean
-    TaskService taskService;
-
-    @Autowired
-    TaskController taskController;
-
-    @Autowired
-    MockMvc mockMvc;
-
     public static final Long CORRECT_ID = 999L;
     public static final Long WRONG_ID = 9999L;
+    @MockBean
+    private TaskService taskService;
+    @Autowired
+    private TaskController taskController;
+    @Autowired
+    private MockMvc mockMvc;
 
     @Test
-    public void contextLoads() {
+    void contextLoads() {
         Assertions.assertNotNull(taskController);
     }
 
@@ -139,16 +137,13 @@ class TaskControllerTest {
 
         verify(taskService, times(1)).delete(Mockito.any(Long.class));
     }
+
+    @SneakyThrows
     private String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return new ObjectMapper().writeValueAsString(obj);
     }
 
     private Task newTaskForTest() {
-        Task task = new Task(CORRECT_ID, "Tester", "2021-06-09", null, null, null);
-        return task;
+        return new Task(CORRECT_ID, "Tester", "2021-06-09", null, null, null);
     }
 }

@@ -18,9 +18,9 @@ import java.util.List;
 @Repository
 public class PersonRepo {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PersonRepo.class);
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    private static final Logger LOGGER = LoggerFactory.getLogger(GroupRepo.class); // Person repo
 
     public PersonRepo(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -52,16 +52,13 @@ public class PersonRepo {
 
     public Person getPersonById(Long id) {
         String sql = "select * from persons p where p.id = ?";
-        Person person;
         try {
-            person = jdbcTemplate.queryForObject(sql, new PersonMapper(), id);
-        }
-        catch (EmptyResultDataAccessException exception) {
+            return jdbcTemplate.queryForObject(sql, new PersonMapper(), id);
+        } catch (EmptyResultDataAccessException exception) {
             LOGGER.debug("handling 404 error on getPersonById method");
 
             throw new DataNotFoundException(String.format("Person Id %d is not found", id));
         }
-        return person;
     }
 
     public List<Person> getAllPersons() {

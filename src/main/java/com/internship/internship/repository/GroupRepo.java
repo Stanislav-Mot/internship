@@ -18,9 +18,9 @@ import java.util.List;
 @Repository
 public class GroupRepo {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(GroupRepo.class);
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    private static final Logger LOGGER = LoggerFactory.getLogger(GroupRepo.class);
 
     public GroupRepo(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -30,7 +30,7 @@ public class GroupRepo {
     public List<Group> getAll() {
         String sql = "select * from groups g left join persons p on p.id = g.id_person";
 
-        return jdbcTemplate.query(sql, new GroupMapper()); // можно заинлайнить
+        return jdbcTemplate.query(sql, new GroupMapper());
     }
 
     public Integer addGroup(MapSqlParameterSource parameters) {
@@ -49,36 +49,31 @@ public class GroupRepo {
         String deleteConstrains = "delete from tasks_groups where id_group = ?;";
         String deleteGroupSql = "delete from groups where id = ?;";
 
-        jdbcTemplate.update(deleteConstrains,id);
+        jdbcTemplate.update(deleteConstrains, id);
 
-        return jdbcTemplate.update(deleteGroupSql,id);
+        return jdbcTemplate.update(deleteGroupSql, id);
     }
 
     public Integer addTaskToGroup(Long id, Task task) {
         String sql = "insert into tasks_groups (id_group, id_task) values (?,?) ";
-        return jdbcTemplate.update(sql,id,task.getId());
+        return jdbcTemplate.update(sql, id, task.getId());
     }
 
     public Integer deleteTaskFromGroup(Long idGroup, Long idTask) {
         String sql = "delete from tasks_groups where id_task = ? and id_group = ?";
-        return jdbcTemplate.update(sql,idTask, idGroup);
+
+        return jdbcTemplate.update(sql, idTask, idGroup);
     }
 
     public Group getGroupById(Long id) {
-        String sql = "select * from groups g left join persons p on p.id = g.id_person " +
-            "where g.id = ?";
-
-        Group group;
-        try{
-            group = jdbcTemplate.queryForObject(sql, new GroupMapper(),id);
-        }
-        catch (EmptyResultDataAccessException exception) {
+        String sql = "select * from groups g left join persons p on p.id = g.id_person where g.id = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, new GroupMapper(), id);
+        } catch (EmptyResultDataAccessException exception) {
             LOGGER.debug("handling 404 error on getGroupById method");
 
             throw new DataNotFoundException(String.format("Group Id %d is not found", id));
         }
-        return group;
-
     }
 
     public List<Task> getTasksById(Long id) {
@@ -86,8 +81,6 @@ public class GroupRepo {
             "join tasks_groups tg on g.id = tg.id_group " +
             "join tasks t on tg.id_task = t.id where g.id = ?";
 
-        List<Task> tasksList = jdbcTemplate.query(sqlForGroup, new TaskMapper(), id);
-
-        return tasksList;
+        return jdbcTemplate.query(sqlForGroup, new TaskMapper(), id);
     }
 }

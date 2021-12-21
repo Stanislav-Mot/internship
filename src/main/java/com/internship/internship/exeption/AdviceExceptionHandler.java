@@ -16,20 +16,18 @@ import java.util.Date;
 public class AdviceExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(DataNotFoundException.class)
-    // Зачем здесь wildcard, если ты явно возвращаешь ErrorDetails
     public ResponseEntity<ErrorDetails> dataNotFoundExceptionHandling(Exception exception, WebRequest request) {
         return new ResponseEntity<>(new ErrorDetails(new Date(), exception.getMessage(), request.getDescription(false)), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(Exception.class)
-    // Зачем здесь wildcard, если ты явно возвращаешь ErrorDetails
     public ResponseEntity<ErrorDetails> globalExceptionHandling(Exception exception, WebRequest request) {
         return new ResponseEntity<>(new ErrorDetails(new Date(), exception.getMessage(), request.getDescription(false)), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        Response response = new Response("wrong JSON format",ex.getMessage());
+        Response response = new Response("wrong JSON format", ex.getMessage());
         return new ResponseEntity<>(response, status);
     }
 }

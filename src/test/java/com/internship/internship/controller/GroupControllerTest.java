@@ -19,7 +19,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,20 +35,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(GroupController.class)
 class GroupControllerTest {
 
-    @MockBean
-    GroupService groupService; // поля приватные
-
-    @Autowired
-    GroupController groupController;
-
-    @Autowired
-    MockMvc mockMvc;
-
     public static final Long CORRECT_ID = 999L;
     public static final Long WRONG_ID = 9999L;
+    @MockBean
+    private GroupService groupService;
+    @Autowired
+    private GroupController groupController;
+    @Autowired
+    private MockMvc mockMvc;
 
-    @Test // методы в junit5 package-private
-    public void contextLoads() {
+    @Test
+    void contextLoads() {
         Assertions.assertNotNull(groupController);
     }
 
@@ -106,7 +102,7 @@ class GroupControllerTest {
     @Test
     void addToTaskGroup() throws Exception {
         Group group = newGroupForTest();
-        Mockito.when(groupService.addTask(any(Long.class),any(Task.class))).thenReturn(1);
+        Mockito.when(groupService.addTask(any(Long.class), any(Task.class))).thenReturn(1);
 
         mockMvc.perform(post("/group/{id}/task", group.getId())
                 .content(asJsonString(group))
@@ -181,7 +177,7 @@ class GroupControllerTest {
         return new ObjectMapper().writeValueAsString(obj);
     }
 
-    private Group newGroupForTest(){
+    private Group newGroupForTest() {
         return new Group(CORRECT_ID, "Tester", null, new Person(1L));
     }
 

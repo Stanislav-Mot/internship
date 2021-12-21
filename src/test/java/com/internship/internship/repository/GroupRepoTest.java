@@ -24,18 +24,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @ActiveProfiles("test")
 @TestPropertySource("/application-test.properties")
-@Sql("/test/schema-for-test.sql") // before_test_method - по дефолту, можно не указывать
-@Sql(value = {"/test/data-for-group-test.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql("/schema-for-test.sql")
+@Sql("/data-for-group-test.sql")
 class GroupRepoTest {
 
     private final Long CORRECT_ID = 999L;
     private final Long ID_FOR_GET = 1L;
-    private final Long ID_FOR_UPDATE= 3L;
-    private final Long ID_FOR_DELETE= 4L;
-    private Integer countGroups = 3;
-
+    private final Long ID_FOR_UPDATE = 3L;
+    private final Long ID_FOR_DELETE = 4L;
     @Autowired
-    GroupRepo groupRepo;
+    private GroupRepo groupRepo;
+    private Integer countGroups = 3;
 
     @Test
     void getGroupById() {
@@ -82,9 +81,7 @@ class GroupRepoTest {
 
         assertEquals(1, answer);
 
-        Assertions.assertThatThrownBy(() ->
-            groupRepo.getGroupById(ID_FOR_DELETE)
-        ).isInstanceOf(DataNotFoundException.class);
+        Assertions.assertThatThrownBy(() -> groupRepo.getGroupById(ID_FOR_DELETE)).isInstanceOf(DataNotFoundException.class);
     }
 
     @Test
@@ -92,7 +89,7 @@ class GroupRepoTest {
         Group group = groupRepo.getGroupById(ID_FOR_GET);
         Task task = new Task(9999L);
 
-        Integer answer = groupRepo.addTaskToGroup(group.getId(),task);
+        Integer answer = groupRepo.addTaskToGroup(group.getId(), task);
         assertEquals(1, answer);
 
 
@@ -120,9 +117,8 @@ class GroupRepoTest {
         Assertions.assertThat(tasks).extracting(Task::getName).contains("cleaning");
     }
 
-    private Group newGroupForTest(){
-        Group group = new Group(CORRECT_ID, "Tester", null, new Person(1L));
-        return group;
+    private Group newGroupForTest() {
+        return new Group(CORRECT_ID, "Tester", null, new Person(1L));
     }
 
     private MapSqlParameterSource getMapSqlParameterSource(Group group) {

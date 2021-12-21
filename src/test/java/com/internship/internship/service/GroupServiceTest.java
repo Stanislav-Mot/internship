@@ -20,13 +20,11 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class GroupServiceTest {
 
+    private final Long CORRECT_ID = 999L;
     @InjectMocks
-    GroupService groupService;
-
+    private GroupService groupService;
     @Mock
-    GroupRepo groupRepo;
-
-    public static final Long CORRECT_ID = 999L;
+    private GroupRepo groupRepo;
 
     @Test
     void getById() {
@@ -124,12 +122,10 @@ class GroupServiceTest {
     }
 
     private Group newGroupForTest() {
-        Group group = new Group(CORRECT_ID, "Tester", null, new Person(1L));
-        return group;
+        return new Group(CORRECT_ID, "Tester", null, new Person(1L));
     }
 
     private Task newTaskForTest() {
-        Task task = new Task(CORRECT_ID, "TesterGroup", "2021-06-09", null, null, null);
-        return task;
+        return new Task(CORRECT_ID, "TesterGroup", "2021-06-09", null, null, null);
     }
 }

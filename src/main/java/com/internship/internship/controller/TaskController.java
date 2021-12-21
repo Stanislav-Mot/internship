@@ -30,21 +30,22 @@ public class TaskController {
     @PostMapping("/task")
     public ResponseEntity<Integer> addTask(@RequestBody Task task) {
         Integer countUpdatedRow = taskService.add(task);
-        if(countUpdatedRow > 0){
-            return new ResponseEntity<Integer>(countUpdatedRow, HttpStatus.CREATED);
-        }else {
-            return new ResponseEntity<Integer>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
+        if (countUpdatedRow > 0) {
+            return new ResponseEntity<>(countUpdatedRow, HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
         }
     }
 
     @PutMapping("/task")
     public ResponseEntity<Integer> updateTask(@RequestBody Task task) {
         Integer countUpdatedRow = taskService.update(task);
-        if(countUpdatedRow > 0){
-            return new ResponseEntity<Integer>(countUpdatedRow, HttpStatus.ACCEPTED);
-        }else {
-            return new ResponseEntity<Integer>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
-        }    }
+        if (countUpdatedRow > 0) {
+            return new ResponseEntity<>(countUpdatedRow, HttpStatus.ACCEPTED);
+        } else {
+            return new ResponseEntity<>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
+        }
+    }
 
     @DeleteMapping("/task/{id}")
     public Integer delete(@PathVariable Long id) {

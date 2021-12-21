@@ -22,7 +22,8 @@ public class Task {
         this.groupsList = groupsList;
     }
 
-    public Task() {}
+    public Task() {
+    }
 
     public Task(Long id) {
         this.id = id;

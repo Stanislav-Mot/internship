@@ -18,13 +18,11 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class TaskServiceTest {
 
+    private final Long CORRECT_ID = 999L;
     @InjectMocks
-    TaskService taskService;
-
+    private TaskService taskService;
     @Mock
-    TaskRepo taskRepo;
-
-    public static final Long CORRECT_ID = 999L;
+    private TaskRepo taskRepo;
 
     @Test
     void getById() {
@@ -94,7 +92,6 @@ class TaskServiceTest {
     }
 
     private Task newTaskForTest() {
-        Task task = new Task(CORRECT_ID, "TesterGroup", "2021-06-09", null, null, null);
-        return task;
+        return new Task(CORRECT_ID, "TesterGroup", "2021-06-09", null, null, null);
     }
 }

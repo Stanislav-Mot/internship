@@ -23,18 +23,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @ActiveProfiles("test")
 @TestPropertySource("/application-test.properties")
-@Sql(value = {"/test/schema-for-test.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@Sql(value = {"/test/data-for-progress-test.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql("/schema-for-test.sql")
+@Sql("/data-for-progress-test.sql")
 class ProgressRepoTest {
 
     private final Long CORRECT_ID = 999L;
     private final Long ID_FOR_GET = 11L;
-    private final Long ID_FOR_UPDATE= 12L;
-    private final Long ID_FOR_DELETE= 13L;
-    private Integer countProgresses = 4;
-
+    private final Long ID_FOR_UPDATE = 12L;
+    private final Long ID_FOR_DELETE = 13L;
     @Autowired
-    ProgressRepo progressRepo;
+    private ProgressRepo progressRepo;
+    private Integer countProgresses = 4;
 
     @Test
     void getProgressById() {
@@ -64,8 +63,7 @@ class ProgressRepoTest {
 
     @Test
     void updateProgresses() {
-        MapSqlParameterSource parameters = getMapSqlParameterSource(
-            new Progress(ID_FOR_UPDATE, new Task(9999L), (short) 34));
+        MapSqlParameterSource parameters = getMapSqlParameterSource(new Progress(ID_FOR_UPDATE, new Task(9999L), (short) 34));
 
         Integer answer = progressRepo.updateProgresses(parameters);
 
@@ -73,7 +71,7 @@ class ProgressRepoTest {
 
         Progress progress = progressRepo.getProgressById(ID_FOR_UPDATE);
 
-        Assertions.assertThat(progress).returns((short)34, from(Progress::getPercents));
+        Assertions.assertThat(progress).returns((short) 34, from(Progress::getPercents));
 
     }
 
@@ -83,9 +81,7 @@ class ProgressRepoTest {
 
         assertEquals(1, answer);
 
-        Assertions.assertThatThrownBy(() ->
-            progressRepo.getProgressById(ID_FOR_DELETE)
-        ).isInstanceOf(DataNotFoundException.class);
+        Assertions.assertThatThrownBy(() -> progressRepo.getProgressById(ID_FOR_DELETE)).isInstanceOf(DataNotFoundException.class);
     }
 
     private MapSqlParameterSource getMapSqlParameterSource(Progress progress) {
@@ -98,7 +94,6 @@ class ProgressRepoTest {
     }
 
     private Progress newProgressForTest() {
-        Progress progress = new Progress(CORRECT_ID, new Task(8877L), (short) 99);
-        return progress;
+        return new Progress(CORRECT_ID, new Task(8877L), (short) 99);
     }
 }

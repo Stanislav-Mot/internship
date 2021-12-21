@@ -23,25 +23,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @ActiveProfiles("test")
 @TestPropertySource("/application-test.properties")
-@Sql(value = {"/test/schema-for-test.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@Sql(value = {"/test/data-for-person-test.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql("/schema-for-test.sql")
+@Sql("/data-for-person-test.sql")
 class PersonRepoTest {
 
     private final Long CORRECT_ID = 999L;
     private final Long ID_FOR_GET = 1L;
-    private final Long ID_FOR_UPDATE= 2L;
-    private final Long ID_FOR_DELETE= 4L;
-    private final Long ID_PERSON_FOR_DELETE_GROUP= 3L;
-    private final Long ID_GROUP_FOR_DELETE= 3L;
-
-    private Integer COUNT_PERSONS = 4;
-
+    private final Long ID_FOR_UPDATE = 2L;
+    private final Long ID_FOR_DELETE = 4L;
+    private final Long ID_PERSON_FOR_DELETE_GROUP = 3L;
+    private final Long ID_GROUP_FOR_DELETE = 3L;
     @Autowired
-    PersonRepo personRepo;
+    private PersonRepo personRepo;
+    private Integer COUNT_PERSONS = 4;
 
     @Test
     void getPersonById() {
-
         Person person = personRepo.getPersonById(ID_FOR_GET);
 
         Assertions.assertThat(person).returns("GetTester", from(Person::getFirstName));
@@ -49,7 +46,6 @@ class PersonRepoTest {
 
     @Test
     void getAllPersons() {
-
         List<Person> persons = personRepo.getAllPersons();
 
         assertEquals(COUNT_PERSONS, persons.size());
@@ -82,7 +78,6 @@ class PersonRepoTest {
         Assertions.assertThat(person).returns("firstNameUpdate", from(Person::getFirstName));
         Assertions.assertThat(person).returns("lastNameUpdate", from(Person::getLastName));
         Assertions.assertThat(person).returns(34, from(Person::getAge));
-
     }
 
     @Test
@@ -91,9 +86,8 @@ class PersonRepoTest {
 
         assertEquals(1, answer);
 
-        Assertions.assertThatThrownBy(() ->
-            personRepo.getPersonById(ID_FOR_DELETE)
-        ).isInstanceOf(DataNotFoundException.class);
+        Assertions.assertThatThrownBy(() -> personRepo.getPersonById(ID_FOR_DELETE))
+            .isInstanceOf(DataNotFoundException.class);
     }
 
     @Test
@@ -101,9 +95,8 @@ class PersonRepoTest {
         Person person = personRepo.getPersonById(ID_FOR_GET);
         Group group = new Group(9999L, "testGroup", null, person);
 
-        Integer answer = personRepo.addGroupToPerson(person.getId(),group);
+        Integer answer = personRepo.addGroupToPerson(person.getId(), group);
         assertEquals(1, answer);
-
 
         Iterable<Group> groups = personRepo.getGroupsById(ID_FOR_GET);
 
@@ -130,8 +123,7 @@ class PersonRepoTest {
     }
 
     private Person newPersonForTest() {
-        Person person = new Person(CORRECT_ID, "AddTester", "Tester", 99, null);
-        return person;
+        return new Person(CORRECT_ID, "AddTester", "Tester", 99, null);
     }
 
     private MapSqlParameterSource getMapSqlParameterSource(Person person) {

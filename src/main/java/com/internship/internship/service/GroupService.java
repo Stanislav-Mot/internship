@@ -28,7 +28,7 @@ public class GroupService {
     public List<Group> getAll() {
         List<Group> groupsList = groupRepo.getAll();
 
-        for (Group group: groupsList) {
+        for (Group group : groupsList) {
             group.setTasks(groupRepo.getTasksById(group.getId()));
         }
 
@@ -48,7 +48,7 @@ public class GroupService {
     public Integer update(Group group) {
         Integer answer = groupRepo.updateGroup(group);
 
-        return  answer;
+        return answer;
     }
 
     public Integer delete(Long id) {

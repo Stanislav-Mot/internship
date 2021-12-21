@@ -5,6 +5,7 @@ import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.model.Progress;
 import com.internship.internship.model.Task;
 import com.internship.internship.service.ProgressService;
+import lombok.SneakyThrows;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.containsStringIgnoringCase;
@@ -33,20 +35,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(ProgressController.class)
 class ProgressControllerTest {
 
-    @MockBean
-    ProgressService progressService;
-
-    @Autowired
-    ProgressController progressController;
-
-    @Autowired
-    MockMvc mockMvc;
-
     public static final Long CORRECT_ID = 999L;
     public static final Long WRONG_ID = 9999L;
+    @MockBean
+    private ProgressService progressService;
+    @Autowired
+    private ProgressController progressController;
+    @Autowired
+    private MockMvc mockMvc;
 
     @Test
-    public void contextLoads() {
+    void contextLoads() {
         Assertions.assertNotNull(progressController);
     }
 
@@ -74,7 +73,7 @@ class ProgressControllerTest {
     @Test
     void getAllProgress() throws Exception {
         Progress progress = newProgressForTest();
-        List<Progress> progresses = Arrays.asList(progress);
+        List<Progress> progresses = Collections.singletonList(progress);
 
         Mockito.when(progressService.getAll()).thenReturn(progresses);
 
@@ -143,16 +142,12 @@ class ProgressControllerTest {
         verify(progressService, times(1)).delete(Mockito.any(Long.class));
     }
 
+    @SneakyThrows
     private String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return new ObjectMapper().writeValueAsString(obj);
     }
 
-    private Progress newProgressForTest(){
-        Progress progress = new Progress(CORRECT_ID, new Task(9L), (short) 99);
-        return progress;
+    private Progress newProgressForTest() {
+        return new Progress(CORRECT_ID, new Task(9L), (short) 99);
     }
 }
