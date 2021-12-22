@@ -1,6 +1,5 @@
 package com.internship.internship.service;
 
-import com.internship.internship.model.Group;
 import com.internship.internship.model.Task;
 import com.internship.internship.repository.TaskRepo;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -50,14 +49,6 @@ public class TaskService {
 
     public Integer delete(Long id) {
         return taskRepo.deleteTask(id);
-    }
-
-    public Integer addGroup(Long id, Group group) {
-        return taskRepo.addGroupToTask(id, group);
-    }
-
-    public Integer deleteGroup(Long id, Long groupId) {
-        return taskRepo.deleteGroupFromTask(id, groupId);
     }
 
     private MapSqlParameterSource getMapSqlParameterSource(Task task) {

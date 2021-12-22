@@ -1,8 +1,9 @@
 package com.internship.internship.controller;
 
-import com.internship.internship.model.Group;
 import com.internship.internship.model.Task;
 import com.internship.internship.service.TaskService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,23 +28,23 @@ public class TaskController {
     }
 
     @PostMapping("/task")
-    public Integer addTask(@RequestBody Task task) {
-        return taskService.add(task);
-    }
-
-    @PostMapping("/task/{id}/group")
-    public Integer addGroupToTask(@PathVariable Long id, @RequestBody Group group) {
-        return taskService.addGroup(id, group);
-    }
-
-    @DeleteMapping("/task/{id}/group/{idGroup}")
-    public Integer deleteGroupFromTask(@PathVariable Long id, @PathVariable Long groupId) {
-        return taskService.deleteGroup(id, groupId);
+    public ResponseEntity<Integer> addTask(@RequestBody Task task) {
+        Integer countUpdatedRow = taskService.add(task);
+        if (countUpdatedRow > 0) {
+            return new ResponseEntity<>(countUpdatedRow, HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
+        }
     }
 
     @PutMapping("/task")
-    public Integer updateTask(@RequestBody Task task) {
-        return taskService.update(task);
+    public ResponseEntity<Integer> updateTask(@RequestBody Task task) {
+        Integer countUpdatedRow = taskService.update(task);
+        if (countUpdatedRow > 0) {
+            return new ResponseEntity<>(countUpdatedRow, HttpStatus.ACCEPTED);
+        } else {
+            return new ResponseEntity<>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
+        }
     }
 
     @DeleteMapping("/task/{id}")

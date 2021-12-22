@@ -18,11 +18,7 @@ public class PersonService {
     }
 
     public Person getById(Long id) {
-        Person person = personRepo.getPersonById(id);
-
-        person.setGroupTasks(personRepo.getGroupsById(id));
-
-        return person;
+        return personRepo.getPersonById(id);
     }
 
     public List<Person> getAll() {
@@ -35,21 +31,13 @@ public class PersonService {
     }
 
     public Integer add(Person person) {
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
-        parameters.addValue("id", person.getId());
-        parameters.addValue("firstname", person.getFirstName());
-        parameters.addValue("lastname", person.getLastName());
-        parameters.addValue("age", person.getAge());
+        MapSqlParameterSource parameters = getMapSqlParameterSource(person);
 
         return personRepo.addPerson(parameters);
     }
 
     public Integer update(Person person) {
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
-        parameters.addValue("id", person.getId());
-        parameters.addValue("firstname", person.getFirstName());
-        parameters.addValue("lastname", person.getLastName());
-        parameters.addValue("age", person.getAge());
+        MapSqlParameterSource parameters = getMapSqlParameterSource(person);
 
         return personRepo.updatePerson(parameters);
     }
@@ -66,4 +54,14 @@ public class PersonService {
         return personRepo.addGroupToPerson(id, group);
     }
 
+    public MapSqlParameterSource getMapSqlParameterSource(Person person) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+
+        parameters.addValue("id", person.getId());
+        parameters.addValue("firstname", person.getFirstName());
+        parameters.addValue("lastname", person.getLastName());
+        parameters.addValue("age", person.getAge());
+
+        return parameters;
+    }
 }

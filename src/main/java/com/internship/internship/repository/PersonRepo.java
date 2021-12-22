@@ -1,9 +1,13 @@
 package com.internship.internship.repository;
 
+import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.mapper.GroupMapper;
 import com.internship.internship.mapper.PersonMapper;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -14,6 +18,7 @@ import java.util.List;
 @Repository
 public class PersonRepo {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PersonRepo.class);
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -33,7 +38,7 @@ public class PersonRepo {
         String sql = "update persons set firstname = :firstname," +
             " lastname = :lastname, age = :age where id = :id;";
 
-        return jdbcTemplate.update(sql, parameters);
+        return namedParameterJdbcTemplate.update(sql, parameters);
     }
 
     public Integer deletePerson(Long id) {
@@ -47,12 +52,17 @@ public class PersonRepo {
 
     public Person getPersonById(Long id) {
         String sql = "select * from persons p where p.id = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, new PersonMapper(), id);
+        } catch (EmptyResultDataAccessException exception) {
+            LOGGER.debug("handling 404 error on getPersonById method");
 
-        return jdbcTemplate.queryForObject(sql, new PersonMapper(), id);
+            throw new DataNotFoundException(String.format("Person Id %d is not found", id));
+        }
     }
 
     public List<Person> getAllPersons() {
-        String sql = "select * from persons p left join groups g on g.id_person = p.id";
+        String sql = "select * from persons";
 
         return jdbcTemplate.query(sql, new PersonMapper());
     }
@@ -63,9 +73,9 @@ public class PersonRepo {
 
     }
 
-    public Integer deleteGroupFromPerson(Long id, Long groupId) {
-        String sql = "delete from groups where id_person = ? and id= ?";
-        return jdbcTemplate.update(sql, id, groupId);
+    public Integer deleteGroupFromPerson(Long personId, Long groupId) {
+        String sql = "delete from groups where id_person = ? and id = ?;";
+        return jdbcTemplate.update(sql, personId, groupId);
 
     }
 
