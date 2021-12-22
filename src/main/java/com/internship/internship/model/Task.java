@@ -10,6 +10,10 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 public class Task {
+    
+    public Task(Long id) {
+        this.id = id;
+    }
 
     private Long id;
     private String name;
