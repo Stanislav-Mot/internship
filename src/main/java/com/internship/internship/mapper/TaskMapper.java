@@ -19,12 +19,12 @@ public class TaskMapper implements RowMapper<Task> {
         task.setName(rs.getString("name"));
         task.setStartTime(rs.getString("start_time"));
 
-        Long personID = rs.getLong("id_person");
+        long personID = rs.getLong("id_person");
         if (personID > 0) {
             task.setPerson(new Person(personID));
         }
 
-        Long progressID = rs.getLong("id_progress");
+        long progressID = rs.getLong("id_progress");
         if (progressID > 0) {
             task.setProgress(new Progress(progressID));
         }

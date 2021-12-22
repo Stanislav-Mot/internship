@@ -61,8 +61,7 @@ public class TaskService {
         parameters.addValue("name", task.getName());
         parameters.addValue("personId", personId);
         parameters.addValue("progressId", progressId);
-        parameters.addValue("date", date
-        );
+        parameters.addValue("date", date);
         return parameters;
     }
 }

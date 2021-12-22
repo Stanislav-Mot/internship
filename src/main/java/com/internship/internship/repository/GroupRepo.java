@@ -70,7 +70,7 @@ public class GroupRepo {
         try {
             return jdbcTemplate.queryForObject(sql, new GroupMapper(), id);
         } catch (EmptyResultDataAccessException exception) {
-            LOGGER.debug("handling 404 error on getGroupById method");
+            LOGGER.error("handling 404 error on getGroupById method");
 
             throw new DataNotFoundException(String.format("Group Id %d is not found", id));
         }

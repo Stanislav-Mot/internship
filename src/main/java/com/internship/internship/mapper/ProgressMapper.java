@@ -17,7 +17,7 @@ public class ProgressMapper implements RowMapper<Progress> {
         progress.setId(rs.getLong("id"));
         progress.setPercents(rs.getShort("percents"));
 
-        Long taskID = rs.getLong("id_task");
+        long taskID = rs.getLong("id_task");
         if (taskID > 0) {
             progress.setTask(new Task(taskID));
         }
