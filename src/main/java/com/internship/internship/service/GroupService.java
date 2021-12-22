@@ -20,7 +20,7 @@ public class GroupService {
     public Group getById(Long id) {
         Group group = groupRepo.getGroupById(id);
 
-        group.setTasks(groupRepo.getTasksById(id));
+        group.setTasks(groupRepo.getTasksById(id)); //  все сборки объекта перенеси в репозиторий
 
         return group;
     }
@@ -39,33 +39,22 @@ public class GroupService {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("id", group.getId());
         parameters.addValue("name", group.getName());
-
-        Integer answer = groupRepo.addGroup(parameters);
-
-        return answer;
+        return groupRepo.addGroup(parameters);
     }
 
     public Integer update(Group group) {
-        Integer answer = groupRepo.updateGroup(group);
-
-        return answer;
+        return groupRepo.updateGroup(group);
     }
 
     public Integer delete(Long id) {
-        Integer answer = groupRepo.deleteGroup(id);
-
-        return answer;
+        return groupRepo.deleteGroup(id);
     }
 
     public Integer addTask(Long id, Task task) {
-        Integer answer = groupRepo.addTaskToGroup(id, task);
-
-        return answer;
+        return groupRepo.addTaskToGroup(id, task);
     }
 
     public Integer deleteTask(Long id, Long taskId) {
-        Integer answer = groupRepo.deleteTaskFromGroup(id, taskId);
-
-        return answer;
+        return groupRepo.deleteTaskFromGroup(id, taskId);
     }
 }

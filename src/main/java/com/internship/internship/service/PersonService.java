@@ -25,7 +25,7 @@ public class PersonService {
         List<Person> personList = personRepo.getAllPersons();
 
         for (Person person : personList) {
-            person.setGroupTasks(personRepo.getGroupsById(person.getId()));
+            person.setGroups(personRepo.getGroupsById(person.getId()));
         }
         return personList;
     }
