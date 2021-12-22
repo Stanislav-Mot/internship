@@ -115,7 +115,13 @@ class PersonControllerTest {
         Group group = newGroupForTest(person);
         Mockito.when(personService.addGroup(any(Long.class), any(Group.class))).thenReturn(1);
 
-        mockMvc.perform(post("/person/{id}/group", person.getId()).content(asJsonString(group)).accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk()).andExpect(jsonPath("$", Matchers.is(1)));
+        mockMvc.perform(post("/person/{id}/group", person.getId())
+                .content(asJsonString(group))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Matchers.is(1)));
 
         verify(personService, times(1)).addGroup(Mockito.any(Long.class), Mockito.any(Group.class));
     }

@@ -64,4 +64,8 @@ public class TaskService {
         parameters.addValue("date", date);
         return parameters;
     }
+
+    public Task search(String json) {
+        return null;
+    }
 }
