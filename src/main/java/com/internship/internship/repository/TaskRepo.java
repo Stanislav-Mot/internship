@@ -2,6 +2,7 @@ package com.internship.internship.repository;
 
 import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.mapper.GroupMapper;
+import com.internship.internship.mapper.PersonMapper;
 import com.internship.internship.mapper.TaskMapper;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Task;
@@ -81,6 +82,26 @@ public class TaskRepo {
     }
 
     public List<Task> search(MapSqlParameterSource mapSqlParameterSource) {
-        return null;
-    }
+        String sql =
+                "with t_firstname as( " +
+                "   SELECT * from persons where p.firstname = :firstName" +
+                ")," +
+                "t_lastname AS(" +
+                "   SELECT * from persons p where p.lastname= 'lastName'" +
+                ")," +
+                "t_age as(" +
+                "SELECT * from persons p where p.age BETWEEN :exactAge and (case WHEN :rangeAge = null then :exactAge else :rangeAge end)" +
+                ")" +
+                "select * from (case when (select count(*) from t_firstname) = 0 then t_lastname " +
+                "               WHEN (SELECT COUNT(*) FROM t_lastname) = 0 THEN t_firstname " +
+                "               ELSE (SELECT * from t_firstname join t_lastname on t_firstname.id = t_lastname.id)" +
+                "              ) as join_1 " +
+                "              JOIN " +
+                "               (case when (select count(*) from t_age) = 0 then t_lastname " +
+                "               WHEN (SELECT COUNT(*) FROM t_lastname) = 0 THEN t_age " +
+                "               ELSE (SELECT * from t_age join t_lastname on t_age.id = t_lastname.id)" +
+                "              ) as join_2 " +
+                "              on join_1.id = join_2.id";
+
+        return jdbcTemplate.query(sql, new TaskMapper(), mapSqlParameterSource);    }
 }

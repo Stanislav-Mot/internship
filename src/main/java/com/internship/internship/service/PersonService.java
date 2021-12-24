@@ -56,7 +56,6 @@ public class PersonService {
     }
 
     public List<Person> search(SearchPerson parameters) {
-
         MapSqlParameterSource mapSqlParameterSource = getMapSqlParameterSource(parameters);
 
         return personRepo.search(mapSqlParameterSource);
@@ -69,23 +68,38 @@ public class PersonService {
         parameters.addValue("firstname", person.getFirstName());
         parameters.addValue("lastname", person.getLastName());
         parameters.addValue("age", person.getAge());
-
         return parameters;
     }
 
     private MapSqlParameterSource getMapSqlParameterSource(SearchPerson parameters) {
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 
-        String firstName = (parameters.getFirstName() != null) ? parameters.getFirstName() : null;
-        String lastName = (parameters.getLastName() != null) ? parameters.getLastName() : null;
-        Integer exactAge = (parameters.getExactAge() != null) ? parameters.getExactAge() : null;
-        Integer rangeAge = (parameters.getRangeAge() != null) ? parameters.getRangeAge() : null;
+        String str =  parameters.getLastName();
 
         mapSqlParameterSource.addValue("id", parameters.getId());
-        mapSqlParameterSource.addValue("firstName", firstName);
-        mapSqlParameterSource.addValue("lastName", lastName);
-        mapSqlParameterSource.addValue("exactAge", exactAge);
-        mapSqlParameterSource.addValue("rangeAge", rangeAge);
+        if(parameters.getFirstName() != null){
+            mapSqlParameterSource.addValue("firstName", parameters.getFirstName());
+        }else {
+            mapSqlParameterSource.addValue("firstName", null, 0);
+        }
+
+        if(parameters.getLastName() != null){
+            mapSqlParameterSource.addValue("lastName", parameters.getLastName());
+        }else {
+            mapSqlParameterSource.addValue("lastName", null, 0);
+        }
+
+        if(parameters.getExactAge() != null){
+            mapSqlParameterSource.addValue("exactAge", parameters.getExactAge());
+        }else {
+            mapSqlParameterSource.addValue("exactAge", null, 0);
+        }
+
+        if(parameters.getRangeAge() != null){
+            mapSqlParameterSource.addValue("rangeAge", parameters.getRangeAge());
+        }else {
+            mapSqlParameterSource.addValue("rangeAge", null, 0);
+        }
 
         return mapSqlParameterSource;
     }

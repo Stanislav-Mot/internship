@@ -87,7 +87,13 @@ public class PersonRepo {
         return jdbcTemplate.query(sqlForGroup, new GroupMapper(), id);
     }
 
-    public List<Person> search(MapSqlParameterSource mapSqlParameterSource) {
-        return null;
+    public List<Person> search(SqlParameterSource sqlParameterSource) {
+        String sql =
+                "select * from persons where (cast(:firstName as VARCHAR) is null or persons.firstname = :firstName) " +
+                        "and (cast(:lastName as VARCHAR) is null or persons.lastname = :lastName) " +
+                        "and (cast(:exactAge as SMALLINT) is null or persons.age <= cast(:exactAge as SMALLINT)) " +
+                        "and (case WHEN cast(:rangeAge as SMALLINT) is null then (cast(:exactAge as SMALLINT)  else cast(:rangeAge as SMALLINT) end))";
+
+        return namedParameterJdbcTemplate.query(sql, sqlParameterSource ,new PersonMapper());
     }
 }
