@@ -1,6 +1,7 @@
 package com.internship.internship.service;
 
 import com.internship.internship.model.Task;
+import com.internship.internship.model.search.SearchTask;
 import com.internship.internship.repository.TaskRepo;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Service;
@@ -51,6 +52,12 @@ public class TaskService {
         return taskRepo.deleteTask(id);
     }
 
+    public List<Task> search(SearchTask parameters) {
+        MapSqlParameterSource mapSqlParameterSource = getMapSqlParameterSource(parameters);
+
+        return taskRepo.search(mapSqlParameterSource);
+    }
+
     private MapSqlParameterSource getMapSqlParameterSource(Task task) {
         Long personId = (task.getPerson() != null) ? task.getPerson().getId() : null;
         Long progressId = (task.getProgress() != null) ? task.getProgress().getId() : null;
@@ -65,7 +72,21 @@ public class TaskService {
         return parameters;
     }
 
-    public Task search(String json) {
-        return null;
+    private MapSqlParameterSource getMapSqlParameterSource(SearchTask parameters) {
+        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+
+        String name = (parameters.getName() != null) ? parameters.getName() : null;
+        Short fromProgress = (parameters.getFromProgress() != null) ? parameters.getFromProgress() : null;
+        Short toProgress = (parameters.getToProgress() != null) ? parameters.getToProgress() : null;
+        String fromStartTime = (parameters.getFromStartTime() != null) ? parameters.getFromStartTime() : null;
+        String toStartTime = (parameters.getToStartTime() != null) ? parameters.getToStartTime() : null;
+
+        mapSqlParameterSource.addValue("id", parameters.getId());
+        mapSqlParameterSource.addValue("name", name);
+        mapSqlParameterSource.addValue("fromProgress", fromProgress);
+        mapSqlParameterSource.addValue("toProgress", toProgress);
+        mapSqlParameterSource.addValue("fromStartTime", fromStartTime);
+        mapSqlParameterSource.addValue("toStartTime", toStartTime);
+        return mapSqlParameterSource;
     }
 }

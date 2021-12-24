@@ -2,6 +2,8 @@ package com.internship.internship.controller;
 
 import com.internship.internship.model.Person;
 import com.internship.internship.model.Task;
+import com.internship.internship.model.search.SearchPerson;
+import com.internship.internship.model.search.SearchTask;
 import com.internship.internship.service.PersonService;
 import com.internship.internship.service.TaskService;
 import org.springframework.http.HttpStatus;
@@ -9,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 import static com.internship.internship.util.JsonHelper.isValidJSON;
 
@@ -24,20 +28,20 @@ public class SearchController {
     }
 
     @PostMapping("/search/person")
-    public ResponseEntity<Person> getPersonByParameters(@RequestBody String json) {
-        Person person = isValidJSON(json) ? personService.search(json) : null;
+    public ResponseEntity<List<Person>> getPersonsByParameters(@RequestBody SearchPerson parameters) {
+        List<Person> persons = personService.search(parameters);
 
-        return (person != null) ?
-                new ResponseEntity<>(person, HttpStatus.OK) :
+        return (persons != null) ?
+                new ResponseEntity<>(persons, HttpStatus.OK) :
                 new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
     @PostMapping("/search/task")
-    public ResponseEntity<Task> getTaskByParameters(@RequestBody String json) {
-        Task task = isValidJSON(json) ? taskService.search(json) : null;
+    public ResponseEntity<List<Task>> getTasksByParameters(@RequestBody SearchTask parameters) {
+        List<Task> tasks = taskService.search(parameters);
 
-        return (task != null) ?
-                new ResponseEntity<>(task, HttpStatus.OK) :
+        return (tasks != null) ?
+                new ResponseEntity<>(tasks, HttpStatus.OK) :
                 new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 }

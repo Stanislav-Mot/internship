@@ -2,6 +2,7 @@ package com.internship.internship.service;
 
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
+import com.internship.internship.model.search.SearchPerson;
 import com.internship.internship.repository.PersonRepo;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Service;
@@ -54,6 +55,13 @@ public class PersonService {
         return personRepo.addGroupToPerson(id, group);
     }
 
+    public List<Person> search(SearchPerson parameters) {
+
+        MapSqlParameterSource mapSqlParameterSource = getMapSqlParameterSource(parameters);
+
+        return personRepo.search(mapSqlParameterSource);
+    }
+
     public MapSqlParameterSource getMapSqlParameterSource(Person person) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
 
@@ -65,8 +73,20 @@ public class PersonService {
         return parameters;
     }
 
-    public Person search(String json) {
+    private MapSqlParameterSource getMapSqlParameterSource(SearchPerson parameters) {
+        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 
-        return null;
+        String firstName = (parameters.getFirstName() != null) ? parameters.getFirstName() : null;
+        String lastName = (parameters.getLastName() != null) ? parameters.getLastName() : null;
+        Integer exactAge = (parameters.getExactAge() != null) ? parameters.getExactAge() : null;
+        Integer rangeAge = (parameters.getRangeAge() != null) ? parameters.getRangeAge() : null;
+
+        mapSqlParameterSource.addValue("id", parameters.getId());
+        mapSqlParameterSource.addValue("firstName", firstName);
+        mapSqlParameterSource.addValue("lastName", lastName);
+        mapSqlParameterSource.addValue("exactAge", exactAge);
+        mapSqlParameterSource.addValue("rangeAge", rangeAge);
+
+        return mapSqlParameterSource;
     }
 }

@@ -1,11 +1,16 @@
 package com.internship.internship.controller;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.model.Person;
+import com.internship.internship.model.Task;
+import com.internship.internship.model.search.SearchPerson;
+import com.internship.internship.model.search.SearchTask;
 import com.internship.internship.service.PersonService;
 import com.internship.internship.service.TaskService;
 import io.swagger.v3.core.util.Json;
+import lombok.SneakyThrows;
 import org.checkerframework.checker.units.qual.A;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
@@ -19,11 +24,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Collections;
+import java.util.List;
+
+import static org.hamcrest.Matchers.containsStringIgnoringCase;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -48,40 +56,70 @@ class SearchControllerTest {
     }
 
     @Test
-    void getPersonByParameters() throws Exception {
+    void getPersonsByParameters() throws Exception {
         Person person = newPersonForTest();
-        String correctJson = "{\"id\":5,\"firstName\":\"Ivan\",\"lastName\":\"Ivanov\",\"age\":23,\"groups\":null}";
-        String incorrectJson = "incorrect";
+        SearchPerson parameters = new SearchPerson(CORRECT_ID, "Tester", null, null, null);
+        List<Person> list = Collections.singletonList(person);
 
-        Mockito.when(personService.search(correctJson)).thenReturn(person);
+        Mockito.when(personService.search(parameters)).thenReturn(list);
 
         mockMvc.perform(post("/search/person")
-                .content(correctJson)
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(asJsonString(parameters))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$..id", Matchers.contains(Math.toIntExact(CORRECT_ID))))
                 .andExpect(jsonPath("$..firstName", Matchers.contains("Tester")));
 
-        Mockito.when(personService.search(incorrectJson))
-                .thenThrow(JsonParseException.class).thenReturn(null);
-
         mockMvc.perform(post("/search/person")
-                .content(incorrectJson)
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof DataNotFoundException));
+                        .content("Wrong JSON")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message", containsStringIgnoringCase("wrong JSON format")));
 
-        verify(personService, times(2)).search(Mockito.any(String.class));
+
+        verify(personService, times(1)).search(Mockito.any(SearchPerson.class));
     }
 
     @Test
-    void getTaskByParameters() {
+    void getTasksByParameters() throws Exception {
+        Task task = newTaskForTest();
+        SearchTask parameters = new SearchTask(CORRECT_ID, "Tester", null, null, null, null);
+        List<Task> list = Collections.singletonList(task);
+
+        Mockito.when(taskService.search(parameters)).thenReturn(list);
+
+        mockMvc.perform(post("/search/task")
+                        .content(asJsonString(parameters))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$..name", Matchers.contains("Tester")));
+
+        mockMvc.perform(post("/search/person")
+                        .content("Wrong JSON")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message", containsStringIgnoringCase("wrong JSON format")));
+
+        verify(taskService, times(1)).search(Mockito.any(SearchTask.class));
     }
 
     private Person newPersonForTest() {
         return new Person(CORRECT_ID, "Tester", "Rochester", 99, null);
+    }
+
+    private Task newTaskForTest() {
+        return new Task(CORRECT_ID, "Tester", "2021-06-09", null, null, null);
+    }
+
+    @SneakyThrows
+    private String asJsonString(final Object obj) {
+        return new ObjectMapper().writeValueAsString(obj);
     }
 }

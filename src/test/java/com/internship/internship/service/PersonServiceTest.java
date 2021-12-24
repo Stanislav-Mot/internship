@@ -2,6 +2,9 @@ package com.internship.internship.service;
 
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
+import com.internship.internship.model.Task;
+import com.internship.internship.model.search.SearchPerson;
+import com.internship.internship.model.search.SearchTask;
 import com.internship.internship.repository.PersonRepo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -133,6 +137,20 @@ class PersonServiceTest {
         parametersFromTest.addValue("age", person.getAge());
 
         assertEquals(parametersFromService.getValues(), parametersFromTest.getValues());
+    }
+
+    @Test
+    void search() {
+        SearchPerson parameters = new SearchPerson(CORRECT_ID, "Tester", null, null, null);
+        Person person = newPersonForTest();
+        List<Person> list = Collections.singletonList(person);
+
+        when(personRepo.search(any(MapSqlParameterSource.class))).thenReturn(list);
+
+        List<Person> personList = personService.search(parameters);
+
+        assertEquals(1, personList.size());
+        verify(personRepo, times(1)).search(any(MapSqlParameterSource.class));
     }
 
     private Group newGroupForTest(Person person) {
