@@ -1,13 +1,11 @@
 package com.internship.internship.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.internship.internship.model.Person;
 import com.internship.internship.model.Task;
 import com.internship.internship.model.search.SearchPerson;
 import com.internship.internship.model.search.SearchTask;
 import com.internship.internship.service.PersonService;
 import com.internship.internship.service.TaskService;
-import lombok.SneakyThrows;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -23,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Collections;
 import java.util.List;
 
+import static com.internship.internship.util.Helper.*;
 import static org.hamcrest.Matchers.containsStringIgnoringCase;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -123,19 +122,4 @@ class SearchControllerTest {
 
         verify(personService, times(1)).searchByTokenInName(Mockito.any(String.class));
     }
-
-    private Person newPersonForTest() {
-        return new Person(CORRECT_ID, "Tester", "Rochester", 99, null);
-    }
-
-    private Task newTaskForTest() {
-        return new Task(CORRECT_ID, "Tester", "2021-06-09", null, null, null);
-    }
-
-    @SneakyThrows
-    private String asJsonString(final Object obj) {
-        return new ObjectMapper().writeValueAsString(obj);
-    }
-
-
 }

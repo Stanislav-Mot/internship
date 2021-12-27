@@ -16,6 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
+import static com.internship.internship.service.ProgressService.getMapSqlParameterSource;
 import static org.assertj.core.api.Assertions.from;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -51,7 +52,7 @@ class ProgressRepoTest {
 
     @Test
     void addProgress() {
-        MapSqlParameterSource parameters = getMapSqlParameterSource(newProgressForTest());
+        MapSqlParameterSource parameters = getMapSqlParameterSource(new Progress(CORRECT_ID, new Task(8877L), (short) 99));
 
         progressRepo.addProgress(parameters);
         Iterable<Progress> progresses = progressRepo.getAllProgresses();
@@ -82,18 +83,5 @@ class ProgressRepoTest {
         assertEquals(1, answer);
 
         Assertions.assertThatThrownBy(() -> progressRepo.getProgressById(ID_FOR_DELETE)).isInstanceOf(DataNotFoundException.class);
-    }
-
-    private MapSqlParameterSource getMapSqlParameterSource(Progress progress) {
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
-
-        parameters.addValue("id", progress.getId());
-        parameters.addValue("id_task", progress.getTask().getId());
-        parameters.addValue("percents", progress.getPercents());
-        return parameters;
-    }
-
-    private Progress newProgressForTest() {
-        return new Progress(CORRECT_ID, new Task(8877L), (short) 99);
     }
 }

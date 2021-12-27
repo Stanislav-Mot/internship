@@ -16,6 +16,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static com.internship.internship.util.Helper.newGroupForTest;
+import static com.internship.internship.util.Helper.newPersonForTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -164,14 +166,4 @@ class PersonServiceTest {
         assertEquals(1, personList.size());
         verify(personRepo, times(1)).searchByTokenInName(any(Map.class));
     }
-
-    private Group newGroupForTest(Person person) {
-        return new Group(CORRECT_ID, "TesterGroup", null, person);
-    }
-
-    private Person newPersonForTest() {
-        return new Person(CORRECT_ID, "Tester", "Rochester", 99, null);
-    }
-
-
 }

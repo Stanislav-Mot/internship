@@ -20,6 +20,40 @@ public class PersonService {
         this.personRepo = personRepo;
     }
 
+    public static MapSqlParameterSource getMapSqlParameterSource(Person person) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+
+        parameters.addValue("id", person.getId());
+        parameters.addValue("firstname", person.getFirstName());
+        parameters.addValue("lastname", person.getLastName());
+        parameters.addValue("age", person.getAge());
+        return parameters;
+    }
+
+    public static MapSqlParameterSource getMapSqlParameterSource(SearchPerson parameters) {
+        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+
+        Long id = parameters.getId() != null ? parameters.getId() : null;
+        String firstName = parameters.getFirstName() != null ? parameters.getFirstName() : null;
+        String lastName = parameters.getLastName() != null ? parameters.getLastName() : null;
+        Integer exactAge = parameters.getExactAge() != null ? parameters.getExactAge() : null;
+        Integer rangeAge = parameters.getRangeAge() != null ? parameters.getRangeAge() : null;
+
+        mapSqlParameterSource.addValue("id", id);
+        mapSqlParameterSource.addValue("firstName", firstName);
+        mapSqlParameterSource.addValue("lastName", lastName);
+        mapSqlParameterSource.addValue("exactAge", exactAge);
+        mapSqlParameterSource.addValue("rangeAge", rangeAge);
+
+        return mapSqlParameterSource;
+    }
+
+    public static Map<String, Object> getMapParamFromToken(String token) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("token", "%" + token + "%");
+        return params;
+    }
+
     public Person getById(Long id) {
         return personRepo.getPersonById(id);
     }
@@ -65,39 +99,5 @@ public class PersonService {
 
     public List<Person> searchByTokenInName(String token) {
         return personRepo.searchByTokenInName(getMapParamFromToken(token));
-    }
-
-    public MapSqlParameterSource getMapSqlParameterSource(Person person) {
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
-
-        parameters.addValue("id", person.getId());
-        parameters.addValue("firstname", person.getFirstName());
-        parameters.addValue("lastname", person.getLastName());
-        parameters.addValue("age", person.getAge());
-        return parameters;
-    }
-
-    public static MapSqlParameterSource getMapSqlParameterSource(SearchPerson parameters) {
-        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-
-        Long id = parameters.getId() != null ? parameters.getId() : null;
-        String firstName = parameters.getFirstName() != null ? parameters.getFirstName() : null;
-        String lastName = parameters.getLastName() != null ? parameters.getLastName() : null;
-        Integer exactAge = parameters.getExactAge() != null ? parameters.getExactAge() : null;
-        Integer rangeAge = parameters.getRangeAge() != null ? parameters.getRangeAge() : null;
-
-        mapSqlParameterSource.addValue("id", id);
-        mapSqlParameterSource.addValue("firstName", firstName);
-        mapSqlParameterSource.addValue("lastName", lastName);
-        mapSqlParameterSource.addValue("exactAge", exactAge);
-        mapSqlParameterSource.addValue("rangeAge", rangeAge);
-
-        return mapSqlParameterSource;
-    }
-
-    public static Map<String, Object> getMapParamFromToken(String token) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("token", "%" + token + "%");
-        return params;
     }
 }

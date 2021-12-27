@@ -18,6 +18,38 @@ public class TaskService {
         this.taskRepo = taskRepo;
     }
 
+    public static MapSqlParameterSource getMapSqlParameterSource(Task task) {
+        Long personId = (task.getPerson() != null) ? task.getPerson().getId() : null;
+        Long progressId = (task.getProgress() != null) ? task.getProgress().getId() : null;
+        Date date = (task.getStartTime() != null) ? Date.valueOf(task.getStartTime()) : null;
+
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("id", task.getId());
+        parameters.addValue("name", task.getName());
+        parameters.addValue("personId", personId);
+        parameters.addValue("progressId", progressId);
+        parameters.addValue("date", date);
+        return parameters;
+    }
+
+    public static MapSqlParameterSource getMapSqlParameterSource(SearchTask parameters) {
+        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+
+        String name = (parameters.getName() != null) ? parameters.getName() : null;
+        Short fromProgress = (parameters.getFromProgress() != null) ? parameters.getFromProgress() : null;
+        Short toProgress = (parameters.getToProgress() != null) ? parameters.getToProgress() : null;
+        String fromStartTime = (parameters.getFromStartTime() != null) ? parameters.getFromStartTime() : null;
+        String toStartTime = (parameters.getToStartTime() != null) ? parameters.getToStartTime() : null;
+
+        mapSqlParameterSource.addValue("id", parameters.getId());
+        mapSqlParameterSource.addValue("name", name);
+        mapSqlParameterSource.addValue("fromProgress", fromProgress);
+        mapSqlParameterSource.addValue("toProgress", toProgress);
+        mapSqlParameterSource.addValue("fromStartTime", fromStartTime);
+        mapSqlParameterSource.addValue("toStartTime", toStartTime);
+        return mapSqlParameterSource;
+    }
+
     public Task getById(Long id) {
         Task task = taskRepo.getTaskById(id);
 
@@ -56,37 +88,5 @@ public class TaskService {
         MapSqlParameterSource mapSqlParameterSource = getMapSqlParameterSource(parameters);
 
         return taskRepo.search(mapSqlParameterSource);
-    }
-
-    private MapSqlParameterSource getMapSqlParameterSource(Task task) {
-        Long personId = (task.getPerson() != null) ? task.getPerson().getId() : null;
-        Long progressId = (task.getProgress() != null) ? task.getProgress().getId() : null;
-        Date date = (task.getStartTime() != null) ? Date.valueOf(task.getStartTime()) : null;
-
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
-        parameters.addValue("id", task.getId());
-        parameters.addValue("name", task.getName());
-        parameters.addValue("personId", personId);
-        parameters.addValue("progressId", progressId);
-        parameters.addValue("date", date);
-        return parameters;
-    }
-
-    public static MapSqlParameterSource getMapSqlParameterSource(SearchTask parameters) {
-        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-
-        String name = (parameters.getName() != null) ? parameters.getName() : null;
-        Short fromProgress = (parameters.getFromProgress() != null) ? parameters.getFromProgress() : null;
-        Short toProgress = (parameters.getToProgress() != null) ? parameters.getToProgress() : null;
-        String fromStartTime = (parameters.getFromStartTime() != null) ? parameters.getFromStartTime() : null;
-        String toStartTime = (parameters.getToStartTime() != null) ? parameters.getToStartTime() : null;
-
-        mapSqlParameterSource.addValue("id", parameters.getId());
-        mapSqlParameterSource.addValue("name", name);
-        mapSqlParameterSource.addValue("fromProgress", fromProgress);
-        mapSqlParameterSource.addValue("toProgress", toProgress);
-        mapSqlParameterSource.addValue("fromStartTime", fromStartTime);
-        mapSqlParameterSource.addValue("toStartTime", toStartTime);
-        return mapSqlParameterSource;
     }
 }

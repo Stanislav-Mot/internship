@@ -18,6 +18,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
+import static com.internship.internship.service.PersonService.getMapSqlParameterSource;
+import static com.internship.internship.util.Helper.newPersonForTest;
 import static org.assertj.core.api.Assertions.from;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -61,7 +63,7 @@ class PersonRepoTest {
         personRepo.addPerson(parameters);
         Iterable<Person> persons = personRepo.getAllPersons();
 
-        Assertions.assertThat(persons).extracting(Person::getFirstName).contains("AddTester");
+        Assertions.assertThat(persons).extracting(Person::getFirstName).contains("Tester");
 
         COUNT_PERSONS += 1;
     }
@@ -135,13 +137,11 @@ class PersonRepoTest {
         personRepo.addPerson(getMapSqlParameterSource(person_two));
         personRepo.addPerson(getMapSqlParameterSource(person_three));
 
-        List<Person> personList = personRepo.search(PersonService.
-                getMapSqlParameterSource(new SearchPerson(null, "SearchTest", null, 39, null)));
+        List<Person> personList = personRepo.search(getMapSqlParameterSource(new SearchPerson(null, "SearchTest", null, 39, null)));
 
         assertEquals(1, personList.size());
 
-        personList = personRepo.search(PersonService.
-                getMapSqlParameterSource(new SearchPerson(null, null, null, 29, 39)));
+        personList = personRepo.search(getMapSqlParameterSource(new SearchPerson(null, null, null, 29, 39)));
 
         assertEquals(2, personList.size());
     }
@@ -156,20 +156,4 @@ class PersonRepoTest {
 
         assertEquals(1, personList.size());
     }
-
-    private Person newPersonForTest() {
-        return new Person(CORRECT_ID, "AddTester", "Tester", 99, null);
-    }
-
-    private MapSqlParameterSource getMapSqlParameterSource(Person person) {
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
-
-        parameters.addValue("id", person.getId());
-        parameters.addValue("firstname", person.getFirstName());
-        parameters.addValue("lastname", person.getLastName());
-        parameters.addValue("age", person.getAge());
-        return parameters;
-    }
-
-
 }
