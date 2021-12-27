@@ -2,9 +2,7 @@ package com.internship.internship.service;
 
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
-import com.internship.internship.model.Task;
 import com.internship.internship.model.search.SearchPerson;
-import com.internship.internship.model.search.SearchTask;
 import com.internship.internship.repository.PersonRepo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +14,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -153,6 +152,19 @@ class PersonServiceTest {
         verify(personRepo, times(1)).search(any(MapSqlParameterSource.class));
     }
 
+    @Test
+    void searchByTokenInName() {
+        Person person = newPersonForTest();
+        List<Person> list = Collections.singletonList(person);
+
+        when(personRepo.searchByTokenInName(any(Map.class))).thenReturn(list);
+
+        List<Person> personList = personService.searchByTokenInName(person.getFirstName());
+
+        assertEquals(1, personList.size());
+        verify(personRepo, times(1)).searchByTokenInName(any(Map.class));
+    }
+
     private Group newGroupForTest(Person person) {
         return new Group(CORRECT_ID, "TesterGroup", null, person);
     }
@@ -160,4 +172,6 @@ class PersonServiceTest {
     private Person newPersonForTest() {
         return new Person(CORRECT_ID, "Tester", "Rochester", 99, null);
     }
+
+
 }

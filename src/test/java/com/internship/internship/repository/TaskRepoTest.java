@@ -3,6 +3,8 @@ package com.internship.internship.repository;
 import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Task;
+import com.internship.internship.model.search.SearchTask;
+import com.internship.internship.service.TaskService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,6 +34,7 @@ class TaskRepoTest {
     private final Long ID_FOR_GET = 2L;
     private final Long ID_FOR_UPDATE = 9999L;
     private final Long ID_FOR_DELETE = 8888L;
+    private final Long ID_FOR_SEARCH = 2348L;
     @Autowired
     private TaskRepo taskRepo;
     private Integer countTasks = 5;
@@ -89,6 +92,17 @@ class TaskRepoTest {
         List<Group> groups = taskRepo.getGroupsById(2L);
 
         Assertions.assertThat(groups).extracting(Group::getName).contains("cleaning");
+    }
+
+    @Test
+    void search() {
+        Task taskFroSearch = new Task(ID_FOR_SEARCH, "searching", "2001-01-01", null, null, null);
+        taskRepo.addTask(getMapSqlParameterSource(taskFroSearch));
+
+        List<Task> tasks = taskRepo.search(TaskService.getMapSqlParameterSource(
+                new SearchTask(ID_FOR_SEARCH, "searching", "2000-01-01", "2002-01-01")));
+
+        assertEquals(1, tasks.size());
     }
 
     private Task newTaskForTest() {

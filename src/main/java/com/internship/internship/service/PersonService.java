@@ -64,9 +64,7 @@ public class PersonService {
     }
 
     public List<Person> searchByTokenInName(String token) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("token", "%" + token + "%");
-        return personRepo.searchByTokenInName(params);
+        return personRepo.searchByTokenInName(getMapParamFromToken(token));
     }
 
     public MapSqlParameterSource getMapSqlParameterSource(Person person) {
@@ -79,36 +77,27 @@ public class PersonService {
         return parameters;
     }
 
-    private MapSqlParameterSource getMapSqlParameterSource(SearchPerson parameters) {
+    public static MapSqlParameterSource getMapSqlParameterSource(SearchPerson parameters) {
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 
-        String str = parameters.getLastName();
+        Long id = parameters.getId() != null ? parameters.getId() : null;
+        String firstName = parameters.getFirstName() != null ? parameters.getFirstName() : null;
+        String lastName = parameters.getLastName() != null ? parameters.getLastName() : null;
+        Integer exactAge = parameters.getExactAge() != null ? parameters.getExactAge() : null;
+        Integer rangeAge = parameters.getRangeAge() != null ? parameters.getRangeAge() : null;
 
-        mapSqlParameterSource.addValue("id", parameters.getId());
-        if (parameters.getFirstName() != null) {
-            mapSqlParameterSource.addValue("firstName", parameters.getFirstName());
-        } else {
-            mapSqlParameterSource.addValue("firstName", null, 0);
-        }
-
-        if (parameters.getLastName() != null) {
-            mapSqlParameterSource.addValue("lastName", parameters.getLastName());
-        } else {
-            mapSqlParameterSource.addValue("lastName", null, 0);
-        }
-
-        if (parameters.getExactAge() != null) {
-            mapSqlParameterSource.addValue("exactAge", parameters.getExactAge());
-        } else {
-            mapSqlParameterSource.addValue("exactAge", null, 0);
-        }
-
-        if (parameters.getRangeAge() != null) {
-            mapSqlParameterSource.addValue("rangeAge", parameters.getRangeAge());
-        } else {
-            mapSqlParameterSource.addValue("rangeAge", null, 0);
-        }
+        mapSqlParameterSource.addValue("id", id);
+        mapSqlParameterSource.addValue("firstName", firstName);
+        mapSqlParameterSource.addValue("lastName", lastName);
+        mapSqlParameterSource.addValue("exactAge", exactAge);
+        mapSqlParameterSource.addValue("rangeAge", rangeAge);
 
         return mapSqlParameterSource;
+    }
+
+    public static Map<String, Object> getMapParamFromToken(String token) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("token", "%" + token + "%");
+        return params;
     }
 }

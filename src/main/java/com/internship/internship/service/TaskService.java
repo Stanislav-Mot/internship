@@ -72,7 +72,7 @@ public class TaskService {
         return parameters;
     }
 
-    private MapSqlParameterSource getMapSqlParameterSource(SearchTask parameters) {
+    public static MapSqlParameterSource getMapSqlParameterSource(SearchTask parameters) {
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 
         String name = (parameters.getName() != null) ? parameters.getName() : null;

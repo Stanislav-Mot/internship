@@ -1,17 +1,13 @@
 package com.internship.internship.controller;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.model.Person;
 import com.internship.internship.model.Task;
 import com.internship.internship.model.search.SearchPerson;
 import com.internship.internship.model.search.SearchTask;
 import com.internship.internship.service.PersonService;
 import com.internship.internship.service.TaskService;
-import io.swagger.v3.core.util.Json;
 import lombok.SneakyThrows;
-import org.checkerframework.checker.units.qual.A;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -28,10 +24,9 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.containsStringIgnoringCase;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -110,6 +105,25 @@ class SearchControllerTest {
         verify(taskService, times(1)).search(Mockito.any(SearchTask.class));
     }
 
+    @Test
+    void searchPersonByTokenInName() throws Exception {
+        String token = "ster";
+        Person person = newPersonForTest();
+        List<Person> list = Collections.singletonList(person);
+
+        Mockito.when(personService.searchByTokenInName(token)).thenReturn(list);
+
+        mockMvc.perform(post("/search/personByToken")
+                        .content(token)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$..firstName", Matchers.contains("Tester")));
+
+        verify(personService, times(1)).searchByTokenInName(Mockito.any(String.class));
+    }
+
     private Person newPersonForTest() {
         return new Person(CORRECT_ID, "Tester", "Rochester", 99, null);
     }
@@ -122,4 +136,6 @@ class SearchControllerTest {
     private String asJsonString(final Object obj) {
         return new ObjectMapper().writeValueAsString(obj);
     }
+
+
 }
