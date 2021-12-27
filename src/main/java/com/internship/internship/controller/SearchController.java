@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static com.internship.internship.util.JsonHelper.isValidJSON;
-
 @RestController
 public class SearchController {
 
@@ -30,6 +28,15 @@ public class SearchController {
     @PostMapping("/search/person")
     public ResponseEntity<List<Person>> getPersonsByParameters(@RequestBody SearchPerson parameters) {
         List<Person> persons = personService.search(parameters);
+
+        return (persons != null) ?
+                new ResponseEntity<>(persons, HttpStatus.OK) :
+                new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    }
+
+    @PostMapping("/search/personByToken")
+    public ResponseEntity<List<Person>> searchPersonByTokenInName(@RequestBody String token) {
+        List<Person> persons = personService.searchByTokenInName(token);
 
         return (persons != null) ?
                 new ResponseEntity<>(persons, HttpStatus.OK) :

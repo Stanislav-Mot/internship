@@ -9,12 +9,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class PersonRepo {
@@ -30,14 +30,14 @@ public class PersonRepo {
 
     public Integer addPerson(SqlParameterSource parameters) {
         String sql = "insert into persons (id, firstname, lastname, age) " +
-            "values (:id, :firstname, :lastname, :age);";
+                "values (:id, :firstname, :lastname, :age);";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
 
     public Integer updatePerson(SqlParameterSource parameters) {
         String sql = "update persons set firstname = :firstname," +
-            " lastname = :lastname, age = :age where id = :id;";
+                " lastname = :lastname, age = :age where id = :id;";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
@@ -82,18 +82,25 @@ public class PersonRepo {
 
     public List<Group> getGroupsById(Long id) {
         String sqlForGroup =
-            "select * from persons p join groups g on p.id = g.id_person where p.id = ?";
+                "select * from persons p join groups g on p.id = g.id_person where p.id = ?";
 
         return jdbcTemplate.query(sqlForGroup, new GroupMapper(), id);
     }
 
     public List<Person> search(SqlParameterSource sqlParameterSource) {
         String sql =
-                "select * from persons where (cast(:firstName as VARCHAR) is null or persons.firstname = :firstName) " +
-                        "and (cast(:lastName as VARCHAR) is null or persons.lastname = :lastName) " +
-                        "and (cast(:exactAge as SMALLINT) is null or persons.age <= cast(:exactAge as SMALLINT)) " +
-                        "and (case WHEN cast(:rangeAge as SMALLINT) is null then (cast(:exactAge as SMALLINT)  else cast(:rangeAge as SMALLINT) end))";
+                "select * from persons where (cast(:firstName as VARCHAR) is null or persons.firstname = :firstName) \n" +
+                        "and (cast(:lastName as VARCHAR) is null or persons.lastname = :lastName) \n" +
+                        "and (cast(:exactAge as SMALLINT) is null or persons.age >= cast(:exactAge as SMALLINT)) \n" +
+                        "and (cast(:rangeAge as SMALLINT) is null or persons.age <= cast(:rangeAge as SMALLINT)) \n" +
+                        "and (cast(:rangeAge as SMALLINT) is not null or persons.age <= cast(:exactAge as SMALLINT)) ";
 
-        return namedParameterJdbcTemplate.query(sql, sqlParameterSource ,new PersonMapper());
+        return namedParameterJdbcTemplate.query(sql, sqlParameterSource, new PersonMapper());
+    }
+
+
+    public List<Person> searchByTokenInName(Map<String, Object> params) {
+        String sql = "select * from persons where CONCAT(firstname, ' ' , lastname) like :token";
+        return namedParameterJdbcTemplate.query(sql, params, new PersonMapper());
     }
 }

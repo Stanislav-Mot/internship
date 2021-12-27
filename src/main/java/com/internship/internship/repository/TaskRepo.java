@@ -2,7 +2,6 @@ package com.internship.internship.repository;
 
 import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.mapper.GroupMapper;
-import com.internship.internship.mapper.PersonMapper;
 import com.internship.internship.mapper.TaskMapper;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Task;
@@ -31,9 +30,9 @@ public class TaskRepo {
 
     public Task getTaskById(Long id) {
         String sql = "select * from tasks t " +
-            "left join persons p on p.id = t.id_person " +
-            "left join progresses pr on pr.id = t.id_progress " +
-            "where t.id = ?";
+                "left join persons p on p.id = t.id_person " +
+                "left join progresses pr on pr.id = t.id_progress " +
+                "where t.id = ?";
         try {
             return jdbcTemplate.queryForObject(sql, new TaskMapper(), id);
         } catch (EmptyResultDataAccessException exception) {
@@ -45,63 +44,51 @@ public class TaskRepo {
 
     public List<Task> getAllTasks() {
         String sql = "select * from tasks t " +
-            "left join persons p on p.id = t.id_person " +
-            "left join progresses pr on pr.id = t.id_progress";
+                "left join persons p on p.id = t.id_person " +
+                "left join progresses pr on pr.id = t.id_progress";
 
         return jdbcTemplate.query(sql, new TaskMapper());
     }
 
     public Integer addTask(SqlParameterSource parameters) {
         String sql = "insert into tasks (id, name, start_time, id_person, id_progress) " +
-            "values (:id, :name, :date, :personId, :progressId);";
+                "values (:id, :name, :date, :personId, :progressId);";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
 
     public Integer updateTask(SqlParameterSource parameters) {
         String sql = "update tasks set name = :name," +
-            "start_time = :date, id_person = :personId, " +
-            "id_progress = :progressId where id = :id";
+                "start_time = :date, id_person = :personId, " +
+                "id_progress = :progressId where id = :id";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
 
     public Integer deleteTask(Long id) {
         String sql = "update progresses set id_task = null where id_task = ?; " +
-            "delete from tasks_groups where id_task = ?; " +
-            "delete from tasks where id = ?;";
+                "delete from tasks_groups where id_task = ?; " +
+                "delete from tasks where id = ?;";
 
         return jdbcTemplate.update(sql, id, id, id);
     }
 
     public List<Group> getGroupsById(Long id) {
         String sqlForGroup = "select * from tasks t join tasks_groups tg on t.id = tg.id_task " +
-            "join groups g on tg.id_group = g.id where t.id = ?";
+                "join groups g on tg.id_group = g.id where t.id = ?";
 
         return jdbcTemplate.query(sqlForGroup, new GroupMapper(), id);
     }
 
     public List<Task> search(MapSqlParameterSource mapSqlParameterSource) {
         String sql =
-                "with t_firstname as( " +
-                "   SELECT * from persons where p.firstname = :firstName" +
-                ")," +
-                "t_lastname AS(" +
-                "   SELECT * from persons p where p.lastname= 'lastName'" +
-                ")," +
-                "t_age as(" +
-                "SELECT * from persons p where p.age BETWEEN :exactAge and (case WHEN :rangeAge = null then :exactAge else :rangeAge end)" +
-                ")" +
-                "select * from (case when (select count(*) from t_firstname) = 0 then t_lastname " +
-                "               WHEN (SELECT COUNT(*) FROM t_lastname) = 0 THEN t_firstname " +
-                "               ELSE (SELECT * from t_firstname join t_lastname on t_firstname.id = t_lastname.id)" +
-                "              ) as join_1 " +
-                "              JOIN " +
-                "               (case when (select count(*) from t_age) = 0 then t_lastname " +
-                "               WHEN (SELECT COUNT(*) FROM t_lastname) = 0 THEN t_age " +
-                "               ELSE (SELECT * from t_age join t_lastname on t_age.id = t_lastname.id)" +
-                "              ) as join_2 " +
-                "              on join_1.id = join_2.id";
+                "select * from tasks LEFT join progresses on tasks.id = progresses.id_task\n" +
+                        "where cast(:name as VARCHAR) is null or tasks.name = :name\n" +
+                        "and (cast(:fromStartTime as date) is null or cast(:toStartTime as date) is null)\n" +
+                        "or tasks.start_time BETWEEN :fromStartTime::timestamp and :toStartTime::timestamp \n" +
+                        "and (cast(:fromProgress as SMALLINT) is null or cast(:toProgress as SMALLINT) is null)\n" +
+                        "Or progresses.percents BETWEEN :fromProgress and :toProgress ";
 
-        return jdbcTemplate.query(sql, new TaskMapper(), mapSqlParameterSource);    }
+        return namedParameterJdbcTemplate.query(sql, mapSqlParameterSource, new TaskMapper());
+    }
 }
