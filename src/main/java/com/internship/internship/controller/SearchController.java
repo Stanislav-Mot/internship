@@ -31,11 +31,11 @@ public class SearchController {
 
         return (persons != null) ?
                 new ResponseEntity<>(persons, HttpStatus.OK) :
-                new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+                new ResponseEntity<>(null, HttpStatus.NOT_FOUND); // null в методы не передается.
     }
 
     @PostMapping("/search/personByToken")
-    public ResponseEntity<List<Person>> searchPersonByTokenInName(@RequestBody String token) {
+    public ResponseEntity<List<Person>> searchPersonByTokenInName(@RequestBody String token) { // зачем одну стрингу в тело тащить, можно просто в reqParam
         List<Person> persons = personService.searchByTokenInName(token);
 
         return (persons != null) ?

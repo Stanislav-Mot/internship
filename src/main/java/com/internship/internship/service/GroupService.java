@@ -20,7 +20,7 @@ public class GroupService {
     public Group getById(Long id) {
         Group group = groupRepo.getGroupById(id);
 
-        group.setTasks(groupRepo.getTasksById(id)); //  все сборки объекта перенеси в репозиторий
+        group.setTasks(groupRepo.getTasksById(id)); //  все сборки объекта перенеси в репозиторий -- остается актуальным
 
         return group;
     }

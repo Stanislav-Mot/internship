@@ -29,12 +29,12 @@ public class GroupController {
     }
 
     @PostMapping("/group")
-    public ResponseEntity<Integer> addGroup(@RequestBody Group group) {
+    public ResponseEntity<Integer> addGroup(@RequestBody Group group) { //метод просто add/save
         Integer countUpdatedRow = groupService.add(group);
         if (countUpdatedRow > 0) {
             return new ResponseEntity<>(countUpdatedRow, HttpStatus.CREATED);
         } else {
-            return new ResponseEntity<>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
+            return new ResponseEntity<>(countUpdatedRow, HttpStatus.NOT_MODIFIED); // в каком случае у тебя будет not_modified?
         }
     }
 
@@ -43,7 +43,7 @@ public class GroupController {
         return groupService.addTask(id, task);
     }
 
-    @DeleteMapping("/group/{id}/task/{idTask}")
+    @DeleteMapping("/group/{id}/task/{idTask}") // это скорее put а не delete. ты ничего не удаляешь, просто рвешь связь
     public Integer deleteTaskFromGroup(@PathVariable Long id, @PathVariable Long idTask) {
         return groupService.deleteTask(id, idTask);
     }

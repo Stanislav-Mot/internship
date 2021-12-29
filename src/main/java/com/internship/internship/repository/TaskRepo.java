@@ -36,7 +36,7 @@ public class TaskRepo {
         try {
             return jdbcTemplate.queryForObject(sql, new TaskMapper(), id);
         } catch (EmptyResultDataAccessException exception) {
-            LOGGER.debug("handling 404 error on getTaskById method");
+            LOGGER.debug("handling 404 error on getTaskById method"); // почему debug level?
 
             throw new DataNotFoundException(String.format("Task Id %d is not found", id));
         }
@@ -82,8 +82,8 @@ public class TaskRepo {
 
     public List<Task> search(MapSqlParameterSource mapSqlParameterSource) {
         String sql =
-                "select * from tasks LEFT join progresses on tasks.id = progresses.id_task\n" +
-                        "where cast(:name as VARCHAR) is null or tasks.name = :name\n" +
+                "select * from tasks LEFT join progresses on tasks.id = progresses.id_task\n" + // зачем перенос строки
+                        "where cast(:name as VARCHAR) is null or tasks.name = :name\n" + // мне кажется без каста будет тут везде работать (кроме даты)
                         "and (cast(:fromStartTime as date) is null or cast(:toStartTime as date) is null)\n" +
                         "or tasks.start_time BETWEEN :fromStartTime::timestamp and :toStartTime::timestamp \n" +
                         "and (cast(:fromProgress as SMALLINT) is null or cast(:toProgress as SMALLINT) is null)\n" +

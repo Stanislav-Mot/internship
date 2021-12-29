@@ -11,7 +11,7 @@ public class SearchTask {
     private Long id;
     private String name;
     private String fromStartTime;
-    private String ToStartTime;
+    private String ToStartTime; // формат имени переменной. также - в каком формате пользователь должен воодить дату? нигде не отражено и не проверяется
     private Short fromProgress;
     private Short toProgress;
 

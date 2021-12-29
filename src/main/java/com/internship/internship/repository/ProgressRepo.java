@@ -26,7 +26,8 @@ public class ProgressRepo {
     }
 
     public Progress getProgressById(Long id) {
-        String sql = "select * from progresses p " + "left join tasks t on p.id = t.id_progress where p.id = ?";
+        String sql = "select * from progresses p  " +
+                "left join tasks t on p.id = t.id_progress where p.id = ?"; // зачем пробелами разделять, лучше отформатировать вот так
         try {
             return jdbcTemplate.queryForObject(sql, new ProgressMapper(), id);
         } catch (EmptyResultDataAccessException exception) {

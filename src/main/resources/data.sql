@@ -1,3 +1,4 @@
+-- имена таблиц в ед. числе
 INSERT INTO groups (id, name) VALUES
         (1, 'asda'), (3, 'dfgsdfg');
 

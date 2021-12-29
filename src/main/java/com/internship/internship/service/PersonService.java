@@ -34,7 +34,8 @@ public class PersonService {
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 
         Long id = parameters.getId() != null ? parameters.getId() : null;
-        String firstName = parameters.getFirstName() != null ? parameters.getFirstName() : null;
+//        String firstName = parameters.getFirstName() != null ? parameters.getFirstName() : null; // а че ета?)
+        String firstName = parameters.getFirstName(); // Вот так же можно
         String lastName = parameters.getLastName() != null ? parameters.getLastName() : null;
         Integer exactAge = parameters.getExactAge() != null ? parameters.getExactAge() : null;
         Integer rangeAge = parameters.getRangeAge() != null ? parameters.getRangeAge() : null;

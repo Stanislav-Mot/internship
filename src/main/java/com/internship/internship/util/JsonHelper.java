@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
-public class JsonHelper {
+public class JsonHelper { // зачем?
 
     public static boolean isValidJSON(final String json) {
         boolean valid = false;

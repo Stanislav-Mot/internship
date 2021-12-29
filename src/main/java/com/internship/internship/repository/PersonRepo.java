@@ -88,13 +88,19 @@ public class PersonRepo {
     }
 
     public List<Person> search(SqlParameterSource sqlParameterSource) {
+//        String sql =
+//                "select * from persons where (cast(:firstName as VARCHAR) is null or persons.firstname = :firstName) \n" +
+//                        "and (cast(:lastName as VARCHAR) is null or persons.lastname = :lastName) \n" +
+//                        "and (cast(:exactAge as SMALLINT) is null or persons.age >= cast(:exactAge as SMALLINT)) \n" +
+//                        "and (cast(:rangeAge as SMALLINT) is null or persons.age <= cast(:rangeAge as SMALLINT)) \n" +
+//                        "and (cast(:rangeAge as SMALLINT) is not null or persons.age <= cast(:exactAge as SMALLINT)) ";
+
+        // Не совсем понял что тут за логика. можно сделать minAge, maxAge
         String sql =
                 "select * from persons where (cast(:firstName as VARCHAR) is null or persons.firstname = :firstName) \n" +
                         "and (cast(:lastName as VARCHAR) is null or persons.lastname = :lastName) \n" +
-                        "and (cast(:exactAge as SMALLINT) is null or persons.age >= cast(:exactAge as SMALLINT)) \n" +
-                        "and (cast(:rangeAge as SMALLINT) is null or persons.age <= cast(:rangeAge as SMALLINT)) \n" +
-                        "and (cast(:rangeAge as SMALLINT) is not null or persons.age <= cast(:exactAge as SMALLINT)) ";
-
+                        "and (cast(:minAge as SMALLINT) is null or persons.age >= cast(:minAge as SMALLINT)) \n" +
+                        "and (cast(:maxAge as SMALLINT) is null or persons.age <= cast(:maxAge as SMALLINT)) \n";
         return namedParameterJdbcTemplate.query(sql, sqlParameterSource, new PersonMapper());
     }
 
