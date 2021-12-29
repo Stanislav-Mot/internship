@@ -29,36 +29,41 @@ public class TaskRepo {
     }
 
     public Task getTaskById(Long id) {
-        String sql = "select * from tasks t " +
-                "left join persons p on p.id = t.id_person " +
-                "left join progresses pr on pr.id = t.id_progress " +
+        String sql = "select * from task t " +
+                "left join person p on p.id = t.id_person " +
+                "left join progress pr on pr.id = t.id_progress " +
                 "where t.id = ?";
         try {
-            return jdbcTemplate.queryForObject(sql, new TaskMapper(), id);
+            Task task = jdbcTemplate.queryForObject(sql, new TaskMapper(), id);
+            task.setGroupsList(getGroupsById(id));
+            return task;
         } catch (EmptyResultDataAccessException exception) {
-            LOGGER.debug("handling 404 error on getTaskById method"); // почему debug level?
+            LOGGER.warn("handling 404 error on getTaskById method");
 
             throw new DataNotFoundException(String.format("Task Id %d is not found", id));
         }
     }
 
     public List<Task> getAllTasks() {
-        String sql = "select * from tasks t " +
-                "left join persons p on p.id = t.id_person " +
-                "left join progresses pr on pr.id = t.id_progress";
-
-        return jdbcTemplate.query(sql, new TaskMapper());
+        String sql = "select * from task t " +
+                "left join person p on p.id = t.id_person " +
+                "left join progress pr on pr.id = t.id_progress";
+        List<Task> tasks = jdbcTemplate.query(sql, new TaskMapper());
+        for (Task task : tasks) {
+            task.setGroupsList(getGroupsById(task.getId()));
+        }
+        return tasks;
     }
 
     public Integer addTask(SqlParameterSource parameters) {
-        String sql = "insert into tasks (id, name, start_time, id_person, id_progress) " +
+        String sql = "insert into task (id, name, start_time, id_person, id_progress) " +
                 "values (:id, :name, :date, :personId, :progressId);";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
 
     public Integer updateTask(SqlParameterSource parameters) {
-        String sql = "update tasks set name = :name," +
+        String sql = "update task set name = :name," +
                 "start_time = :date, id_person = :personId, " +
                 "id_progress = :progressId where id = :id";
 
@@ -66,28 +71,28 @@ public class TaskRepo {
     }
 
     public Integer deleteTask(Long id) {
-        String sql = "update progresses set id_task = null where id_task = ?; " +
-                "delete from tasks_groups where id_task = ?; " +
-                "delete from tasks where id = ?;";
+        String sql = "update progress set id_task = null where id_task = ?; " +
+                "delete from task_group where id_task = ?; " +
+                "delete from task where id = ?;";
 
         return jdbcTemplate.update(sql, id, id, id);
     }
 
     public List<Group> getGroupsById(Long id) {
-        String sqlForGroup = "select * from tasks t join tasks_groups tg on t.id = tg.id_task " +
-                "join groups g on tg.id_group = g.id where t.id = ?";
+        String sqlForGroup = "select * from task t join task_group tg on t.id = tg.id_task " +
+                "join groupOfTasks g on tg.id_group = g.id where t.id = ?";
 
         return jdbcTemplate.query(sqlForGroup, new GroupMapper(), id);
     }
 
     public List<Task> search(MapSqlParameterSource mapSqlParameterSource) {
         String sql =
-                "select * from tasks LEFT join progresses on tasks.id = progresses.id_task\n" + // зачем перенос строки
-                        "where cast(:name as VARCHAR) is null or tasks.name = :name\n" + // мне кажется без каста будет тут везде работать (кроме даты)
-                        "and (cast(:fromStartTime as date) is null or cast(:toStartTime as date) is null)\n" +
-                        "or tasks.start_time BETWEEN :fromStartTime::timestamp and :toStartTime::timestamp \n" +
-                        "and (cast(:fromProgress as SMALLINT) is null or cast(:toProgress as SMALLINT) is null)\n" +
-                        "Or progresses.percents BETWEEN :fromProgress and :toProgress ";
+                "select * from task LEFT join progress on task.id = progress.id_task " +
+                        "where cast(:name as VARCHAR) is null or task.name = :name " +
+                        "and (cast(:fromStartTime as date) is null or cast(:toStartTime as date) is null) " +
+                        "or task.start_time BETWEEN :fromStartTime::timestamp and :toStartTime::timestamp " +
+                        "and (cast(:fromProgress as SMALLINT) is null or cast(:toProgress as SMALLINT) is null) " +
+                        "Or progress.percents BETWEEN :fromProgress and :toProgress;";
 
         return namedParameterJdbcTemplate.query(sql, mapSqlParameterSource, new TaskMapper());
     }

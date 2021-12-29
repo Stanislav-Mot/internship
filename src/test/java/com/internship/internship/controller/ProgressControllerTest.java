@@ -134,7 +134,7 @@ class ProgressControllerTest {
 
         mockMvc.perform(delete("/progress/{id}", progress.getId()))
                 .andDo(print())
-                .andExpect(status().isOk())
+                .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
         verify(progressService, times(1)).delete(Mockito.any(Long.class));

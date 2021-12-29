@@ -19,17 +19,17 @@ public class GroupController {
     }
 
     @GetMapping("/group/{id}")
-    public Group getGroup(@PathVariable Long id) {
+    public Group get(@PathVariable Long id) {
         return groupService.getById(id);
     }
 
     @GetMapping("/group")
-    public List<Group> getAllGroups() {
+    public List<Group> getAll() {
         return groupService.getAll();
     }
 
     @PostMapping("/group")
-    public ResponseEntity<Integer> addGroup(@RequestBody Group group) { //метод просто add/save
+    public ResponseEntity<Integer> add(@RequestBody Group group) {
         Integer countUpdatedRow = groupService.add(group);
         if (countUpdatedRow > 0) {
             return new ResponseEntity<>(countUpdatedRow, HttpStatus.CREATED);
@@ -39,17 +39,23 @@ public class GroupController {
     }
 
     @PostMapping("/group/{id}/task")
+    @ResponseStatus(HttpStatus.CREATED)
     public Integer addTaskToGroup(@PathVariable Long id, @RequestBody Task task) {
         return groupService.addTask(id, task);
     }
 
-    @DeleteMapping("/group/{id}/task/{idTask}") // это скорее put а не delete. ты ничего не удаляешь, просто рвешь связь
-    public Integer deleteTaskFromGroup(@PathVariable Long id, @PathVariable Long idTask) {
-        return groupService.deleteTask(id, idTask);
+    @PutMapping("/group/{id}/task/{idTask}")
+    public ResponseEntity<Integer> updateConstraints(@PathVariable Long id, @PathVariable Long idTask) {
+        Integer countUpdatedRow = groupService.deleteTask(id, idTask);
+        if (countUpdatedRow > 0) {
+            return new ResponseEntity<>(countUpdatedRow, HttpStatus.ACCEPTED);
+        } else {
+            return new ResponseEntity<>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
+        }
     }
 
     @PutMapping("/group")
-    public ResponseEntity<Integer> updateGroup(@RequestBody Group group) {
+    public ResponseEntity<Integer> update(@RequestBody Group group) {
         Integer countUpdatedRow = groupService.update(group);
         if (countUpdatedRow > 0) {
             return new ResponseEntity<>(countUpdatedRow, HttpStatus.ACCEPTED);
@@ -59,8 +65,12 @@ public class GroupController {
     }
 
     @DeleteMapping("/group/{id}")
-    // почему у тебя с апдейтом логика разделена на accepted/not modified, а для delete - нет?
-    public Integer delete(@PathVariable Long id) {
-        return groupService.delete(id);
+    public ResponseEntity<Integer> delete(@PathVariable Long id) {
+        Integer countUpdatedRow = groupService.delete(id);
+        if (countUpdatedRow > 0) {
+            return new ResponseEntity<>(countUpdatedRow, HttpStatus.ACCEPTED);
+        } else {
+            return new ResponseEntity<>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
+        }
     }
 }

@@ -1,30 +1,30 @@
-DROP TABLE IF EXISTS groups CASCADE;
-DROP TABLE IF EXISTS persons CASCADE;
-DROP TABLE IF EXISTS progresses CASCADE;
-DROP TABLE IF EXISTS tasks CASCADE;
-DROP TABLE IF EXISTS tasks_groups CASCADE;
+DROP TABLE IF EXISTS groupOfTasks CASCADE;
+DROP TABLE IF EXISTS person CASCADE;
+DROP TABLE IF EXISTS progress CASCADE;
+DROP TABLE IF EXISTS task CASCADE;
+DROP TABLE IF EXISTS task_group CASCADE;
 
-CREATE TABLE persons (
+CREATE TABLE person (
     id INT8 NOT NULL PRIMARY KEY,
     firstname VARCHAR(256),
     lastname VARCHAR(256),
     age SMALLINT
 );
 
-CREATE TABLE groups (
+CREATE TABLE groupOfTasks (
     id INT8 NOT NULL  PRIMARY KEY,
     name VARCHAR(256),
-    id_person INT8 REFERENCES persons(id)
+    id_person INT8 REFERENCES person(id)
 );
 
 
-CREATE TABLE progresses (
+CREATE TABLE progress (
     id INT8 NOT NULL PRIMARY KEY,
     id_task INT8,
     percents INT8
 );
 
-CREATE TABLE tasks (
+CREATE TABLE task (
     id INT8 NOT NULL PRIMARY KEY,
     name VARCHAR(256),
     start_time DATE,
@@ -32,25 +32,19 @@ CREATE TABLE tasks (
     id_progress INT8
 );
 
-CREATE TABLE tasks_groups(
+CREATE TABLE task_group(
     id_task INT8,
     id_group INT8,
     PRIMARY KEY (id_task, id_group)
 );
 
-ALTER TABLE tasks_groups
-    ADD CONSTRAINT fk_tasks_groups_1 FOREIGN KEY (id_task) REFERENCES tasks(id),
-    ADD CONSTRAINT fk_tasks_groups_2 FOREIGN KEY (id_group) REFERENCES groups(id);
+ALTER TABLE task_group
+    ADD CONSTRAINT fk_task_group_1 FOREIGN KEY (id_task) REFERENCES task(id);
+ALTER TABLE task_group
+    ADD CONSTRAINT fk_task_group_2 FOREIGN KEY (id_group) REFERENCES groupOfTasks(id);
 
-ALTER TABLE progresses
-    ADD CONSTRAINT fk_person FOREIGN KEY (id_task) REFERENCES tasks(id);
+ALTER TABLE progress
+    ADD CONSTRAINT fk_person FOREIGN KEY (id_task) REFERENCES task(id);
 
-ALTER TABLE tasks
-    ADD CONSTRAINT fk_person_task FOREIGN KEY (id_person) REFERENCES persons(id),
-    ADD CONSTRAINT fk_progress_task FOREIGN KEY (id_progress) REFERENCES progresses(id);
-
---ALTER TABLE groups
---    ADD CONSTRAINT fk_person_group FOREIGN KEY (id_person) REFERENCES persons(id);
---
---ALTER TABLE persons
---    ADD CONSTRAINT fk_groups FOREIGN KEY (id_groups) REFERENCES groups(id);
+ALTER TABLE task
+    ADD CONSTRAINT fk_person_task FOREIGN KEY (id_person) REFERENCES person(id);

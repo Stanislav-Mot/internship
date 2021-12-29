@@ -8,9 +8,7 @@ import com.internship.internship.service.PersonService;
 import com.internship.internship.service.TaskService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,16 +29,12 @@ public class SearchController {
 
         return (persons != null) ?
                 new ResponseEntity<>(persons, HttpStatus.OK) :
-                new ResponseEntity<>(null, HttpStatus.NOT_FOUND); // null в методы не передается.
+                new ResponseEntity<>(persons, HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("/search/personByToken")
-    public ResponseEntity<List<Person>> searchPersonByTokenInName(@RequestBody String token) { // зачем одну стрингу в тело тащить, можно просто в reqParam
-        List<Person> persons = personService.searchByTokenInName(token);
-
-        return (persons != null) ?
-                new ResponseEntity<>(persons, HttpStatus.OK) :
-                new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    @GetMapping("/search/personByToken")
+    public List<Person> searchPersonByTokenInName(@RequestParam String token) {
+        return personService.searchByTokenInName(token);
     }
 
     @PostMapping("/search/task")
@@ -49,6 +43,6 @@ public class SearchController {
 
         return (tasks != null) ?
                 new ResponseEntity<>(tasks, HttpStatus.OK) :
-                new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+                new ResponseEntity<>(tasks, HttpStatus.NOT_FOUND);
     }
 }

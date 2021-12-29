@@ -96,7 +96,7 @@ class TaskServiceTest {
 
     @Test
     void search() {
-        SearchTask parameters = new SearchTask(CORRECT_ID, "Tester", null, null, null, null);
+        SearchTask parameters = new SearchTask("Tester", null, null, null, null);
         Task task = newTaskForTest();
         List<Task> list = Collections.singletonList(task);
 

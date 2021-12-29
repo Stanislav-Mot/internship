@@ -35,37 +35,20 @@ public class TaskService {
     public static MapSqlParameterSource getMapSqlParameterSource(SearchTask parameters) {
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 
-        String name = (parameters.getName() != null) ? parameters.getName() : null;
-        Short fromProgress = (parameters.getFromProgress() != null) ? parameters.getFromProgress() : null;
-        Short toProgress = (parameters.getToProgress() != null) ? parameters.getToProgress() : null;
-        String fromStartTime = (parameters.getFromStartTime() != null) ? parameters.getFromStartTime() : null;
-        String toStartTime = (parameters.getToStartTime() != null) ? parameters.getToStartTime() : null;
-
-        mapSqlParameterSource.addValue("id", parameters.getId());
-        mapSqlParameterSource.addValue("name", name);
-        mapSqlParameterSource.addValue("fromProgress", fromProgress);
-        mapSqlParameterSource.addValue("toProgress", toProgress);
-        mapSqlParameterSource.addValue("fromStartTime", fromStartTime);
-        mapSqlParameterSource.addValue("toStartTime", toStartTime);
+        mapSqlParameterSource.addValue("name", parameters.getName());
+        mapSqlParameterSource.addValue("fromProgress", parameters.getFromProgress());
+        mapSqlParameterSource.addValue("toProgress", parameters.getToProgress());
+        mapSqlParameterSource.addValue("fromStartTime", parameters.getMinStartTime());
+        mapSqlParameterSource.addValue("toStartTime", parameters.getMaxStartTime());
         return mapSqlParameterSource;
     }
 
     public Task getById(Long id) {
-        Task task = taskRepo.getTaskById(id);
-
-        task.setGroupsList(taskRepo.getGroupsById(id));
-
-        return task;
+        return taskRepo.getTaskById(id);
     }
 
     public List<Task> getAll() {
-        List<Task> taskList = taskRepo.getAllTasks();
-
-        for (Task task : taskList) {
-            task.setGroupsList(taskRepo.getGroupsById(task.getId()));
-        }
-
-        return taskList;
+        return taskRepo.getAllTasks();
     }
 
     public Integer add(Task task) {

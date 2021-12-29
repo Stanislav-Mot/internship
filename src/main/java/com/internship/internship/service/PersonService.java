@@ -33,24 +33,17 @@ public class PersonService {
     public static MapSqlParameterSource getMapSqlParameterSource(SearchPerson parameters) {
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 
-        Long id = parameters.getId() != null ? parameters.getId() : null;
-//        String firstName = parameters.getFirstName() != null ? parameters.getFirstName() : null; // а че ета?)
-        String firstName = parameters.getFirstName(); // Вот так же можно
-        String lastName = parameters.getLastName() != null ? parameters.getLastName() : null;
-        Integer exactAge = parameters.getExactAge() != null ? parameters.getExactAge() : null;
-        Integer rangeAge = parameters.getRangeAge() != null ? parameters.getRangeAge() : null;
-
-        mapSqlParameterSource.addValue("id", id);
-        mapSqlParameterSource.addValue("firstName", firstName);
-        mapSqlParameterSource.addValue("lastName", lastName);
-        mapSqlParameterSource.addValue("exactAge", exactAge);
-        mapSqlParameterSource.addValue("rangeAge", rangeAge);
+        mapSqlParameterSource.addValue("firstName", parameters.getFirstName());
+        mapSqlParameterSource.addValue("lastName", parameters.getLastName());
+        mapSqlParameterSource.addValue("exactAge", parameters.getExactAge());
+        mapSqlParameterSource.addValue("rangeAge", parameters.getRangeAge());
 
         return mapSqlParameterSource;
     }
 
     public static Map<String, Object> getMapParamFromToken(String token) {
         Map<String, Object> params = new HashMap<>();
+        System.out.println(token);
         params.put("token", "%" + token + "%");
         return params;
     }
@@ -60,12 +53,7 @@ public class PersonService {
     }
 
     public List<Person> getAll() {
-        List<Person> personList = personRepo.getAllPersons();
-
-        for (Person person : personList) {
-            person.setGroups(personRepo.getGroupsById(person.getId()));
-        }
-        return personList;
+        return personRepo.getAllPersons();
     }
 
     public Integer add(Person person) {

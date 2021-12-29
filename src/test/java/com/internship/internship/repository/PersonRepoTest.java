@@ -137,11 +137,11 @@ class PersonRepoTest {
         personRepo.addPerson(getMapSqlParameterSource(person_two));
         personRepo.addPerson(getMapSqlParameterSource(person_three));
 
-        List<Person> personList = personRepo.search(getMapSqlParameterSource(new SearchPerson(null, "SearchTest", null, 39, null)));
+        List<Person> personList = personRepo.search(getMapSqlParameterSource(new SearchPerson("SearchTest", null, 39, null)));
 
         assertEquals(1, personList.size());
 
-        personList = personRepo.search(getMapSqlParameterSource(new SearchPerson(null, null, null, 29, 39)));
+        personList = personRepo.search(getMapSqlParameterSource(new SearchPerson(null, null, 29, 39)));
 
         assertEquals(2, personList.size());
     }

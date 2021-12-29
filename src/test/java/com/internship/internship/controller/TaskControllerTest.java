@@ -132,7 +132,7 @@ class TaskControllerTest {
 
         mockMvc.perform(delete("/task/{id}", task.getId()))
                 .andDo(print())
-                .andExpect(status().isOk())
+                .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
         verify(taskService, times(1)).delete(Mockito.any(Long.class));

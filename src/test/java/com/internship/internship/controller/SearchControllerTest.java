@@ -25,6 +25,7 @@ import static com.internship.internship.util.Helper.*;
 import static org.hamcrest.Matchers.containsStringIgnoringCase;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -52,7 +53,7 @@ class SearchControllerTest {
     @Test
     void getPersonsByParameters() throws Exception {
         Person person = newPersonForTest();
-        SearchPerson parameters = new SearchPerson(CORRECT_ID, "Tester", null, null, null);
+        SearchPerson parameters = new SearchPerson("Tester", null, null, null);
         List<Person> list = Collections.singletonList(person);
 
         Mockito.when(personService.search(parameters)).thenReturn(list);
@@ -80,7 +81,7 @@ class SearchControllerTest {
     @Test
     void getTasksByParameters() throws Exception {
         Task task = newTaskForTest();
-        SearchTask parameters = new SearchTask(CORRECT_ID, "Tester", null, null, null, null);
+        SearchTask parameters = new SearchTask("Tester", null, null, null, null);
         List<Task> list = Collections.singletonList(task);
 
         Mockito.when(taskService.search(parameters)).thenReturn(list);
@@ -112,10 +113,8 @@ class SearchControllerTest {
 
         Mockito.when(personService.searchByTokenInName(token)).thenReturn(list);
 
-        mockMvc.perform(post("/search/personByToken")
-                        .content(token)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/search/personByToken")
+                        .param("token", token))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..firstName", Matchers.contains("Tester")));

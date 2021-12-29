@@ -15,6 +15,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.List;
 
 import static com.internship.internship.service.TaskService.getMapSqlParameterSource;
@@ -100,7 +102,8 @@ class TaskRepoTest {
         taskRepo.addTask(getMapSqlParameterSource(taskFroSearch));
 
         List<Task> tasks = taskRepo.search(getMapSqlParameterSource(
-                new SearchTask(ID_FOR_SEARCH, "searching", "2000-01-01", "2002-01-01")));
+                new SearchTask("searching", LocalDateTime.now(),
+                        LocalDateTime.of(2015, Month.JULY, 29, 19, 30, 40))));
 
         assertEquals(1, tasks.size());
     }
