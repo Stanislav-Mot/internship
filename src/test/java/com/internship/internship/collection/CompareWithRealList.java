@@ -11,25 +11,21 @@ public class CompareWithRealList {
     private List<Integer> realList = new ArrayList<>();
 
     @Test
-    void realAddTest(){
-//      realList = IntStream.generate(() -> new Random().nextInt(90)).limit(100000).boxed().collect(Collectors.toList());
-
+    void realAddTest() {
         for (int i = 0; i < 100000; i++) {
             realList.add(i);
         }
     }
 
     @Test
-    void trustAddTest(){
-//        trustList = IntStream.generate(() -> new Random().nextInt(90)).limit(100000).boxed().collect(Collectors.toList());
+    void trustAddTest() {
         for (int i = 0; i < 100000; i++) {
             trustList.add(i);
         }
     }
 
     @Test
-    void realRemoveTest(){
-//      realList = IntStream.generate(() -> new Random().nextInt(90)).limit(100000).boxed().collect(Collectors.toList());
+    void realRemoveTest() {
 
         for (int i = 0; i < 100000; i++) {
             realList.add(i);
@@ -40,8 +36,8 @@ public class CompareWithRealList {
     }
 
     @Test
-    void trustRemoveTest(){
-//        trustList = IntStream.generate(() -> new Random().nextInt(90)).limit(100000).boxed().collect(Collectors.toList());
+    void trustRemoveTest() {
+
         for (int i = 0; i < 100000; i++) {
             trustList.add(i);
         }
