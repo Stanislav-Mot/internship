@@ -1,5 +1,7 @@
 package com.internship.internship.service;
 
+import com.internship.internship.dto.TaskDto;
+import com.internship.internship.mapper.TaskDtoMapper;
 import com.internship.internship.model.Task;
 import com.internship.internship.model.search.SearchTask;
 import com.internship.internship.repository.TaskRepo;
@@ -8,12 +10,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.internship.internship.util.Helper.newTaskDtoForTest;
 import static com.internship.internship.util.Helper.newTaskForTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -33,7 +37,7 @@ class TaskServiceTest {
 
         when(taskRepo.getTaskById(task.getId())).thenReturn(task);
 
-        Task taskFromService = taskService.getById(task.getId());
+        TaskDto taskFromService = taskService.getById(task.getId());
 
         assertEquals(taskFromService, task);
 
@@ -49,7 +53,7 @@ class TaskServiceTest {
 
         when(taskRepo.getAllTasks()).thenReturn(list);
 
-        List<Task> taskList = taskService.getAll();
+        List<TaskDto> taskList = taskService.getAll();
 
         assertEquals(3, taskList.size());
         verify(taskRepo, times(1)).getAllTasks();
@@ -57,11 +61,11 @@ class TaskServiceTest {
 
     @Test
     void add() {
-        Task task = newTaskForTest();
+        TaskDto taskDto = newTaskDtoForTest();
 
         when(taskRepo.addTask(any(MapSqlParameterSource.class))).thenReturn(1);
 
-        Integer result = taskService.add(task);
+        Integer result = taskService.add(taskDto);
 
         assertEquals(1, result);
 
@@ -70,11 +74,11 @@ class TaskServiceTest {
 
     @Test
     void update() {
-        Task task = newTaskForTest();
+        TaskDto taskDto = newTaskDtoForTest();
 
         when(taskRepo.updateTask(any(MapSqlParameterSource.class))).thenReturn(1);
 
-        Integer result = taskService.update(task);
+        Integer result = taskService.update(taskDto);
 
         assertEquals(1, result);
 
@@ -102,7 +106,7 @@ class TaskServiceTest {
 
         when(taskRepo.search(any(MapSqlParameterSource.class))).thenReturn(list);
 
-        List<Task> taskList = taskService.search(parameters);
+        List<TaskDto> taskList = taskService.search(parameters);
 
         assertEquals(1, taskList.size());
         verify(taskRepo, times(1)).search(any(MapSqlParameterSource.class));

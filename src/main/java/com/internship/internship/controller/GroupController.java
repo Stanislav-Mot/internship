@@ -1,5 +1,6 @@
 package com.internship.internship.controller;
 
+import com.internship.internship.dto.GroupDto;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Task;
 import com.internship.internship.service.GroupService;
@@ -19,18 +20,18 @@ public class GroupController {
     }
 
     @GetMapping("/group/{id}")
-    public Group get(@PathVariable Long id) {
+    public GroupDto get(@PathVariable Long id) {
         return groupService.getById(id);
     }
 
     @GetMapping("/group")
-    public List<Group> getAll() {
+    public List<GroupDto> getAll() {
         return groupService.getAll();
     }
 
     @PostMapping("/group")
-    public ResponseEntity<Integer> add(@RequestBody Group group) {
-        Integer countUpdatedRow = groupService.add(group);
+    public ResponseEntity<Integer> add(@RequestBody GroupDto groupDto) {
+        Integer countUpdatedRow = groupService.add(groupDto);
         if (countUpdatedRow > 0) {
             return new ResponseEntity<>(countUpdatedRow, HttpStatus.CREATED);
         } else {
@@ -55,8 +56,8 @@ public class GroupController {
     }
 
     @PutMapping("/group")
-    public ResponseEntity<Integer> update(@RequestBody Group group) {
-        Integer countUpdatedRow = groupService.update(group);
+    public ResponseEntity<Integer> update(@RequestBody GroupDto groupDto) {
+        Integer countUpdatedRow = groupService.update(groupDto);
         if (countUpdatedRow > 0) {
             return new ResponseEntity<>(countUpdatedRow, HttpStatus.ACCEPTED);
         } else {

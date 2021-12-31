@@ -1,20 +1,23 @@
 package com.internship.internship.service;
 
+import com.internship.internship.dto.GroupDto;
+import com.internship.internship.mapper.GroupDtoMapper;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Task;
 import com.internship.internship.repository.GroupRepo;
+import org.hibernate.mapping.Any;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.internship.internship.util.Helper.newGroupForTest;
-import static com.internship.internship.util.Helper.newTaskForTest;
+import static com.internship.internship.util.Helper.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -26,14 +29,17 @@ class GroupServiceTest {
     private GroupService groupService;
     @Mock
     private GroupRepo groupRepo;
+    @Mock
+    private GroupDtoMapper mapper;
 
     @Test
     void getById() {
         Group group = newGroupForTest();
 
         when(groupRepo.getGroupById(group.getId())).thenReturn(group);
+        when(mapper.convertToDto(group)).thenReturn(any(GroupDto.class));
 
-        Group groupFromService = groupService.getById(group.getId());
+        GroupDto groupFromService = groupService.getById(group.getId());
 
         assertEquals(groupFromService, group);
 
@@ -49,7 +55,7 @@ class GroupServiceTest {
 
         when(groupRepo.getAll()).thenReturn(list);
 
-        List<Group> groupList = groupService.getAll();
+        List<GroupDto> groupList = groupService.getAll();
 
         assertEquals(3, groupList.size());
         verify(groupRepo, times(1)).getAll();
@@ -57,11 +63,11 @@ class GroupServiceTest {
 
     @Test
     void add() {
-        Group group = newGroupForTest();
+        GroupDto groupDto = newGroupDtoForTest();
 
         when(groupRepo.addGroup(any(MapSqlParameterSource.class))).thenReturn(1);
 
-        Integer result = groupService.add(group);
+        Integer result = groupService.add(groupDto);
 
         assertEquals(1, result);
 
@@ -70,11 +76,11 @@ class GroupServiceTest {
 
     @Test
     void update() {
-        Group group = newGroupForTest();
+        GroupDto groupDto = newGroupDtoForTest();
 
         when(groupRepo.updateGroup(any(Group.class))).thenReturn(1);
 
-        Integer result = groupService.update(group);
+        Integer result = groupService.update(groupDto);
 
         assertEquals(1, result);
 

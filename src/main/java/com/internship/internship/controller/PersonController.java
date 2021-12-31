@@ -1,5 +1,7 @@
 package com.internship.internship.controller;
 
+import com.internship.internship.dto.GroupDto;
+import com.internship.internship.dto.PersonDto;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
 import com.internship.internship.service.PersonService;
@@ -19,25 +21,25 @@ public class PersonController {
     }
 
     @GetMapping("/person/{id}")
-    public Person getId(@PathVariable Long id) {
+    public PersonDto getId(@PathVariable Long id) {
         return personService.getById(id);
     }
 
     @GetMapping("/person")
-    public List<Person> getAll() {
+    public List<PersonDto> getAll() {
         return personService.getAll();
     }
 
     @PostMapping("/person")
     @ResponseStatus(HttpStatus.CREATED)
-    public Integer add(@RequestBody Person person) { // просто save/add
-        return personService.add(person);
+    public Integer add(@RequestBody PersonDto personDto) { // просто save/add
+        return personService.add(personDto);
     }
 
     @PostMapping("/person/{id}/group")
     @ResponseStatus(HttpStatus.CREATED)
-    public Integer addGroupToPerson(@PathVariable Long id, @RequestBody Group group) {
-        return personService.addGroup(id, group);
+    public Integer addGroupToPerson(@PathVariable Long id, @RequestBody GroupDto groupDto) {
+        return personService.addGroup(id, groupDto);
     }
 
     @PutMapping("/person/{id}/group/{groupId}")
@@ -51,8 +53,8 @@ public class PersonController {
     }
 
     @PutMapping("/person")
-    public ResponseEntity<Integer> update(@RequestBody Person person) {
-        Integer countUpdatedRow = personService.update(person);
+    public ResponseEntity<Integer> update(@RequestBody PersonDto personDto) {
+        Integer countUpdatedRow = personService.update(personDto);
         if (countUpdatedRow > 0) {
             return new ResponseEntity<>(countUpdatedRow, HttpStatus.ACCEPTED);
         } else {

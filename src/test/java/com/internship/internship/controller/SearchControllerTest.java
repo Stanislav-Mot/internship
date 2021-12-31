@@ -1,5 +1,9 @@
 package com.internship.internship.controller;
 
+import com.internship.internship.dto.PersonDto;
+import com.internship.internship.dto.TaskDto;
+import com.internship.internship.mapper.PersonDtoMapper;
+import com.internship.internship.mapper.TaskDtoMapper;
 import com.internship.internship.model.Person;
 import com.internship.internship.model.Task;
 import com.internship.internship.model.search.SearchPerson;
@@ -52,9 +56,10 @@ class SearchControllerTest {
 
     @Test
     void getPersonsByParameters() throws Exception {
-        Person person = newPersonForTest();
+        PersonDto personDto = newPersonDtoForTest();
+
         SearchPerson parameters = new SearchPerson("Tester", null, null, null);
-        List<Person> list = Collections.singletonList(person);
+        List<PersonDto> list = Collections.singletonList(personDto);
 
         Mockito.when(personService.search(parameters)).thenReturn(list);
 
@@ -80,9 +85,10 @@ class SearchControllerTest {
 
     @Test
     void getTasksByParameters() throws Exception {
-        Task task = newTaskForTest();
+        TaskDto taskDto = newTaskDtoForTest();
+
         SearchTask parameters = new SearchTask("Tester", null, null, null, null);
-        List<Task> list = Collections.singletonList(task);
+        List<TaskDto> list = Collections.singletonList(taskDto);
 
         Mockito.when(taskService.search(parameters)).thenReturn(list);
 
@@ -108,8 +114,9 @@ class SearchControllerTest {
     @Test
     void searchPersonByTokenInName() throws Exception {
         String token = "ster";
-        Person person = newPersonForTest();
-        List<Person> list = Collections.singletonList(person);
+        PersonDto personDto = newPersonDtoForTest();
+
+        List<PersonDto> list = Collections.singletonList(personDto);
 
         Mockito.when(personService.searchByTokenInName(token)).thenReturn(list);
 

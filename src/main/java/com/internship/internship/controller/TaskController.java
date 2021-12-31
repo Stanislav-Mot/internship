@@ -1,5 +1,6 @@
 package com.internship.internship.controller;
 
+import com.internship.internship.dto.TaskDto;
 import com.internship.internship.model.Task;
 import com.internship.internship.service.TaskService;
 import org.springframework.http.HttpStatus;
@@ -18,18 +19,18 @@ public class TaskController {
     }
 
     @GetMapping("/task/{id}")
-    public Task getId(@PathVariable Long id) {
+    public TaskDto getId(@PathVariable Long id) {
         return taskService.getById(id);
     }
 
     @GetMapping("/task")
-    public List<Task> getAll() {
+    public List<TaskDto> getAll() {
         return taskService.getAll();
     }
 
     @PostMapping("/task")
-    public ResponseEntity<Integer> add(@RequestBody Task task) {
-        Integer countUpdatedRow = taskService.add(task);
+    public ResponseEntity<Integer> add(@RequestBody TaskDto taskDto) {
+        Integer countUpdatedRow = taskService.add(taskDto);
         if (countUpdatedRow > 0) {
             return new ResponseEntity<>(countUpdatedRow, HttpStatus.CREATED);
         } else {
@@ -38,8 +39,8 @@ public class TaskController {
     }
 
     @PutMapping("/task")
-    public ResponseEntity<Integer> update(@RequestBody Task task) {
-        Integer countUpdatedRow = taskService.update(task);
+    public ResponseEntity<Integer> update(@RequestBody TaskDto taskDto) {
+        Integer countUpdatedRow = taskService.update(taskDto);
         if (countUpdatedRow > 0) {
             return new ResponseEntity<>(countUpdatedRow, HttpStatus.ACCEPTED);
         } else {
