@@ -1,7 +1,6 @@
 package com.internship.internship.service;
 
 import com.internship.internship.model.Progress;
-import com.internship.internship.model.Task;
 import com.internship.internship.repository.ProgressRepo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +12,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.internship.internship.util.Helper.newProgressForTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -90,9 +90,5 @@ class ProgressServiceTest {
         assertEquals(1, result);
 
         verify(progressRepo, times(1)).deleteProgress(progress.getId());
-    }
-
-    private Progress newProgressForTest() {
-        return new Progress(CORRECT_ID, new Task(9L), (short) 99);
     }
 }

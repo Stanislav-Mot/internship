@@ -16,6 +16,16 @@ public class ProgressService {
         this.progressRepo = progressRepo;
     }
 
+    public static MapSqlParameterSource getMapSqlParameterSource(Progress progress) {
+        Long taskID = (progress.getTask() != null) ? progress.getTask().getId() : null;
+
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("id", progress.getId());
+        parameters.addValue("id_task", taskID);
+        parameters.addValue("percents", progress.getPercents());
+        return parameters;
+    }
+
     public Progress getById(Long id) {
         return progressRepo.getProgressById(id);
     }
@@ -38,15 +48,5 @@ public class ProgressService {
 
     public Integer delete(Long id) {
         return progressRepo.deleteProgress(id);
-    }
-
-    private MapSqlParameterSource getMapSqlParameterSource(Progress progress) {
-        Long taskID = (progress.getTask() != null) ? progress.getTask().getId() : null;
-
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
-        parameters.addValue("id", progress.getId());
-        parameters.addValue("id_task", taskID);
-        parameters.addValue("percents", progress.getPercents());
-        return parameters;
     }
 }

@@ -2,11 +2,14 @@ package com.internship.internship.service;
 
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
+import com.internship.internship.model.search.SearchPerson;
 import com.internship.internship.repository.PersonRepo;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class PersonService {
@@ -17,17 +20,40 @@ public class PersonService {
         this.personRepo = personRepo;
     }
 
+    public static MapSqlParameterSource getMapSqlParameterSource(Person person) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+
+        parameters.addValue("id", person.getId());
+        parameters.addValue("firstname", person.getFirstName());
+        parameters.addValue("lastname", person.getLastName());
+        parameters.addValue("age", person.getAge());
+        return parameters;
+    }
+
+    public static MapSqlParameterSource getMapSqlParameterSource(SearchPerson parameters) {
+        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+
+        mapSqlParameterSource.addValue("firstName", parameters.getFirstName());
+        mapSqlParameterSource.addValue("lastName", parameters.getLastName());
+        mapSqlParameterSource.addValue("exactAge", parameters.getExactAge());
+        mapSqlParameterSource.addValue("rangeAge", parameters.getRangeAge());
+
+        return mapSqlParameterSource;
+    }
+
+    public static Map<String, Object> getMapParamFromToken(String token) {
+        Map<String, Object> params = new HashMap<>();
+        System.out.println(token);
+        params.put("token", "%" + token + "%");
+        return params;
+    }
+
     public Person getById(Long id) {
         return personRepo.getPersonById(id);
     }
 
     public List<Person> getAll() {
-        List<Person> personList = personRepo.getAllPersons();
-
-        for (Person person : personList) {
-            person.setGroups(personRepo.getGroupsById(person.getId()));
-        }
-        return personList;
+        return personRepo.getAllPersons();
     }
 
     public Integer add(Person person) {
@@ -54,14 +80,13 @@ public class PersonService {
         return personRepo.addGroupToPerson(id, group);
     }
 
-    public MapSqlParameterSource getMapSqlParameterSource(Person person) {
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
+    public List<Person> search(SearchPerson parameters) {
+        MapSqlParameterSource mapSqlParameterSource = getMapSqlParameterSource(parameters);
 
-        parameters.addValue("id", person.getId());
-        parameters.addValue("firstname", person.getFirstName());
-        parameters.addValue("lastname", person.getLastName());
-        parameters.addValue("age", person.getAge());
+        return personRepo.search(mapSqlParameterSource);
+    }
 
-        return parameters;
+    public List<Person> searchByTokenInName(String token) {
+        return personRepo.searchByTokenInName(getMapParamFromToken(token));
     }
 }
