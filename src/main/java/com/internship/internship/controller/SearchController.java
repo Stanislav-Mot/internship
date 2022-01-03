@@ -25,12 +25,8 @@ public class SearchController {
     }
 
     @PostMapping("/search/person")
-    public ResponseEntity<List<PersonDto>> getPersonsByParameters(@Valid @RequestBody SearchPerson parameters) {
-        List<PersonDto> persons = personService.search(parameters);
-
-        return (persons != null) ?
-                new ResponseEntity<>(persons, HttpStatus.OK) :
-                new ResponseEntity<>(persons, HttpStatus.NOT_FOUND);
+    public List<PersonDto> getPersonsByParameters(@Valid @RequestBody SearchPerson parameters) {
+        return personService.search(parameters);
     }
 
     @GetMapping("/search/personByToken")
@@ -39,11 +35,7 @@ public class SearchController {
     }
 
     @PostMapping("/search/task")
-    public ResponseEntity<List<TaskDto>> getTasksByParameters(@Valid @RequestBody SearchTask parameters) {
-        List<TaskDto> tasks = taskService.search(parameters);
-
-        return (tasks != null) ?
-                new ResponseEntity<>(tasks, HttpStatus.OK) :
-                new ResponseEntity<>(tasks, HttpStatus.NOT_FOUND);
+    public List<TaskDto> getTasksByParameters(@Valid @RequestBody SearchTask parameters) {
+        return taskService.search(parameters);
     }
 }

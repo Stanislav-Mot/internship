@@ -33,33 +33,18 @@ public class ProgressController {
 
     @Validated(Transfer.New.class)
     @PostMapping("/progress")
-    public ResponseEntity<Integer> add(@Valid @RequestBody ProgressDto progressDto) {
-        Integer countUpdatedRow = progressService.add(progressDto);
-        if (countUpdatedRow > 0) {
-            return new ResponseEntity<>(countUpdatedRow, HttpStatus.CREATED);
-        } else {
-            return new ResponseEntity<>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
-        }
+    public Integer add(@Valid @RequestBody ProgressDto progressDto) {
+        return progressService.add(progressDto);
     }
 
     @Validated(Transfer.Update.class)
     @PutMapping("/progress")
-    public ResponseEntity<Integer> update(@Valid @RequestBody ProgressDto progressDto) {
-        Integer countUpdatedRow = progressService.update(progressDto);
-        if (countUpdatedRow > 0) {
-            return new ResponseEntity<>(countUpdatedRow, HttpStatus.ACCEPTED);
-        } else {
-            return new ResponseEntity<>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
-        }
+    public Integer update(@Valid @RequestBody ProgressDto progressDto) {
+        return progressService.update(progressDto);
     }
 
     @DeleteMapping("/progress/{id}")
-    public ResponseEntity<Integer> delete(@PathVariable Long id) {
-        Integer countUpdatedRow = progressService.delete(id);
-        if (countUpdatedRow > 0) {
-            return new ResponseEntity<>(countUpdatedRow, HttpStatus.ACCEPTED);
-        } else {
-            return new ResponseEntity<>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
-        }
+    public Integer delete(@PathVariable Long id) {
+        return progressService.delete(id);
     }
 }

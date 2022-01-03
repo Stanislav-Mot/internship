@@ -47,33 +47,18 @@ public class PersonController {
     }
 
     @PutMapping("/person/{id}/group/{groupId}")
-    public ResponseEntity<Integer> updateConstraints(@PathVariable Long id, @PathVariable Long groupId) {
-        Integer countUpdatedRow = personService.deleteGroup(id, groupId);
-        if (countUpdatedRow > 0) {
-            return new ResponseEntity<>(countUpdatedRow, HttpStatus.ACCEPTED);
-        } else {
-            return new ResponseEntity<>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
-        }
+    public Integer updateConstraints(@PathVariable Long id, @PathVariable Long groupId) {
+        return personService.deleteGroup(id, groupId);
     }
 
     @Validated(Transfer.Update.class)
     @PutMapping("/person")
-    public ResponseEntity<Integer> update(@Valid @RequestBody PersonDto personDto) {
-        Integer countUpdatedRow = personService.update(personDto);
-        if (countUpdatedRow > 0) {
-            return new ResponseEntity<>(countUpdatedRow, HttpStatus.ACCEPTED);
-        } else {
-            return new ResponseEntity<>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
-        }
+    public Integer update(@Valid @RequestBody PersonDto personDto) {
+        return personService.update(personDto);
     }
 
     @DeleteMapping("/person/{id}")
-    public ResponseEntity<Integer> delete(@PathVariable Long id) {
-        Integer countUpdatedRow = personService.delete(id);
-        if (countUpdatedRow > 0) {
-            return new ResponseEntity<>(countUpdatedRow, HttpStatus.ACCEPTED);
-        } else {
-            return new ResponseEntity<>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
-        }
+    public Integer delete(@PathVariable Long id) {
+        return personService.delete(id);
     }
 }
