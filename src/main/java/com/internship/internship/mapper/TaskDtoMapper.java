@@ -8,17 +8,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class TaskDtoMapper {
 
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     public TaskDtoMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
     }
 
-    public TaskDto convertToDto(Task task){
+    public TaskDto convertToDto(Task task) {
         return modelMapper.map(task, TaskDto.class);
     }
 
-    public Task convertToEntity(TaskDto taskDto){
+    public Task convertToEntity(TaskDto taskDto) {
         return modelMapper.map(taskDto, Task.class);
     }
 }

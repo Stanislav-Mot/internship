@@ -2,6 +2,7 @@ package com.internship.internship.service;
 
 import com.internship.internship.dto.GroupDto;
 import com.internship.internship.dto.PersonDto;
+import com.internship.internship.mapper.GroupDtoMapper;
 import com.internship.internship.mapper.PersonDtoMapper;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
@@ -12,7 +13,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import java.util.ArrayList;
@@ -27,21 +27,26 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class PersonServiceTest {
 
-    private final Long CORRECT_ID = 999L;
     @InjectMocks
     private PersonService personService;
     @Mock
     private PersonRepo personRepo;
+    @Mock
+    private PersonDtoMapper mapper;
+    @Mock
+    private GroupDtoMapper groupDtoMapper;
 
     @Test
     void getById() {
         Person person = newPersonForTest();
+        PersonDto personDto = newPersonDtoForTest();
 
         when(personRepo.getPersonById(person.getId())).thenReturn(person);
+        when(mapper.convertToDto(person)).thenReturn(personDto);
 
         PersonDto personFromService = personService.getById(person.getId());
 
-        assertEquals(personFromService, person);
+        assertEquals(personFromService, personDto);
 
         verify(personRepo, times(1)).getPersonById(person.getId());
     }
@@ -64,8 +69,10 @@ class PersonServiceTest {
     @Test
     void add() {
         PersonDto personDto = newPersonDtoForTest();
+        Person person = newPersonForTest();
 
         when(personRepo.addPerson(any(MapSqlParameterSource.class))).thenReturn(1);
+        when(mapper.convertToEntity(personDto)).thenReturn(person);
 
         Integer result = personService.add(personDto);
 
@@ -77,8 +84,10 @@ class PersonServiceTest {
     @Test
     void update() {
         PersonDto personDto = newPersonDtoForTest();
+        Person person = newPersonForTest();
 
         when(personRepo.updatePerson(any(MapSqlParameterSource.class))).thenReturn(1);
+        when(mapper.convertToEntity(personDto)).thenReturn(person);
 
         Integer result = personService.update(personDto);
 
@@ -114,25 +123,27 @@ class PersonServiceTest {
         verify(personRepo, times(1)).deleteGroupFromPerson(person.getId(), group.getId());
     }
 
-//    @Test
-//    void addGroup() {
-//        Person person = newPersonForTest();
-//        Group group = newGroupForTest(person);
-//
-//        when(personRepo.addGroupToPerson(person.getId(), group)).thenReturn(1);
-//
-//        Integer result = personService.addGroup(person.getId(), group);
-//
-//        assertEquals(1, result);
-//
-//        verify(personRepo, times(1)).addGroupToPerson(person.getId(), group);
-//    }
+    @Test
+    void addGroup() {
+        PersonDto personDto = newPersonDtoForTest();
+        Group group = newGroupForTest();
+        GroupDto groupDto = newGroupDtoForTest();
+
+        when(personRepo.addGroupToPerson(personDto.getId(), group)).thenReturn(1);
+        when(groupDtoMapper.convertToEntity(groupDto)).thenReturn(group);
+
+        Integer result = personService.addGroup(personDto.getId(), groupDto);
+
+        assertEquals(1, result);
+
+        verify(personRepo, times(1)).addGroupToPerson(personDto.getId(), group);
+    }
 
     @Test
     void getMapSqlParameterSource() {
         Person person = newPersonForTest();
 
-        MapSqlParameterSource parametersFromService = personService.getMapSqlParameterSource(person);
+        MapSqlParameterSource parametersFromService = PersonService.getMapSqlParameterSource(person);
         MapSqlParameterSource parametersFromTest = new MapSqlParameterSource();
 
         parametersFromTest.addValue("id", person.getId());
@@ -159,8 +170,8 @@ class PersonServiceTest {
 
     @Test
     void searchByTokenInName() {
-        PersonDto person =  newPersonDtoForTest();
-        List<PersonDto> list = Collections.singletonList(person);
+        Person person = newPersonForTest();
+        List<Person> list = Collections.singletonList(person);
 
         when(personRepo.searchByTokenInName(any(Map.class))).thenReturn(list);
 

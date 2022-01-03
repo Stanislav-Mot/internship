@@ -8,17 +8,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProgressDtoMapper {
 
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     public ProgressDtoMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
     }
 
-    public ProgressDto convertToDto(Progress progress){
+    public ProgressDto convertToDto(Progress progress) {
         return modelMapper.map(progress, ProgressDto.class);
     }
 
-    public  Progress convertToEntity(ProgressDto progressDto){
+    public Progress convertToEntity(ProgressDto progressDto) {
         return modelMapper.map(progressDto, Progress.class);
     }
 }

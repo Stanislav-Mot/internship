@@ -2,10 +2,6 @@ package com.internship.internship.controller;
 
 import com.internship.internship.dto.PersonDto;
 import com.internship.internship.dto.TaskDto;
-import com.internship.internship.mapper.PersonDtoMapper;
-import com.internship.internship.mapper.TaskDtoMapper;
-import com.internship.internship.model.Person;
-import com.internship.internship.model.Task;
 import com.internship.internship.model.search.SearchPerson;
 import com.internship.internship.model.search.SearchTask;
 import com.internship.internship.service.PersonService;
@@ -39,7 +35,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 class SearchControllerTest {
 
-    public static final Long CORRECT_ID = 999L;
     @MockBean
     private PersonService personService;
     @MockBean
@@ -64,18 +59,16 @@ class SearchControllerTest {
         Mockito.when(personService.search(parameters)).thenReturn(list);
 
         mockMvc.perform(post("/search/person")
-                        .content(asJsonString(parameters))
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
+                .content(asJsonString(parameters))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..firstName", Matchers.contains("Tester")));
 
         mockMvc.perform(post("/search/person")
-                        .content("Wrong JSON")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
+                .content("Wrong JSON")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message", containsStringIgnoringCase("wrong JSON format")));
 
@@ -93,18 +86,16 @@ class SearchControllerTest {
         Mockito.when(taskService.search(parameters)).thenReturn(list);
 
         mockMvc.perform(post("/search/task")
-                        .content(asJsonString(parameters))
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
+                .content(asJsonString(parameters))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..name", Matchers.contains("Tester")));
 
         mockMvc.perform(post("/search/person")
-                        .content("Wrong JSON")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
+                .content("Wrong JSON")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message", containsStringIgnoringCase("wrong JSON format")));
 
@@ -121,8 +112,7 @@ class SearchControllerTest {
         Mockito.when(personService.searchByTokenInName(token)).thenReturn(list);
 
         mockMvc.perform(get("/search/personByToken")
-                        .param("token", token))
-                .andDo(print())
+                .param("token", token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..firstName", Matchers.contains("Tester")));
 

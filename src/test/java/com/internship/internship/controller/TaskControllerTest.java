@@ -2,7 +2,6 @@ package com.internship.internship.controller;
 
 import com.internship.internship.dto.TaskDto;
 import com.internship.internship.exeption.DataNotFoundException;
-import com.internship.internship.mapper.TaskDtoMapper;
 import com.internship.internship.model.Task;
 import com.internship.internship.service.TaskService;
 import org.hamcrest.Matchers;
@@ -54,7 +53,7 @@ class TaskControllerTest {
 
         Mockito.when(taskService.getById(CORRECT_ID)).thenReturn(taskDto);
 
-        mockMvc.perform(get("/task/{id}", CORRECT_ID)).andDo(print())
+        mockMvc.perform(get("/task/{id}", CORRECT_ID))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", Matchers.is(Math.toIntExact(CORRECT_ID))))
                 .andExpect(jsonPath("$.name", containsStringIgnoringCase("Tester")));
@@ -76,7 +75,7 @@ class TaskControllerTest {
 
         Mockito.when(taskService.getAll()).thenReturn(tasks);
 
-        mockMvc.perform(get("/task")).andDo(print())
+        mockMvc.perform(get("/task"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..name", Matchers.contains("Tester")));
     }
@@ -88,10 +87,9 @@ class TaskControllerTest {
         Mockito.when(taskService.add(any(TaskDto.class))).thenReturn(1);
 
         mockMvc.perform(post("/task")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(task))
-                        .characterEncoding("utf-8")
-                ).andDo(print())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(task))
+                .characterEncoding("utf-8"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$", Matchers.is(1)))
                 .andReturn();
@@ -106,20 +104,16 @@ class TaskControllerTest {
         when(taskService.update(any(TaskDto.class))).thenReturn(1);
 
         mockMvc.perform(put("/task")
-                        .content(asJsonString(task))
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andDo(print())
+                .content(asJsonString(task))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
         mockMvc.perform(put("/task")
-                        .content("Wrong JSON")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andDo(print())
+                .content("Wrong JSON")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message", containsStringIgnoringCase("wrong JSON format")));
 
@@ -133,7 +127,6 @@ class TaskControllerTest {
         Mockito.when(taskService.delete(task.getId())).thenReturn(1);
 
         mockMvc.perform(delete("/task/{id}", task.getId()))
-                .andDo(print())
                 .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 

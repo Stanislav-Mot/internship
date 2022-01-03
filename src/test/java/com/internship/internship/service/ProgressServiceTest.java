@@ -9,7 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import java.util.ArrayList;
@@ -23,21 +22,24 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ProgressServiceTest {
 
-    private final Long CORRECT_ID = 999L;
     @InjectMocks
     private ProgressService progressService;
     @Mock
     private ProgressRepo progressRepo;
+    @Mock
+    private ProgressDtoMapper mapper;
 
     @Test
     void getById() {
         Progress progress = newProgressForTest();
+        ProgressDto progressDto = newProgressDtoForTest();
 
         when(progressRepo.getProgressById(progress.getId())).thenReturn(progress);
+        when(mapper.convertToDto(progress)).thenReturn(progressDto);
 
         ProgressDto progressFromService = progressService.getById(progress.getId());
 
-        assertEquals(progressFromService, progress);
+        assertEquals(progressFromService, progressDto);
 
         verify(progressRepo, times(1)).getProgressById(progress.getId());
     }
@@ -60,8 +62,10 @@ class ProgressServiceTest {
     @Test
     void add() {
         ProgressDto progressDto = newProgressDtoForTest();
+        Progress progress = newProgressForTest();
 
         when(progressRepo.addProgress(any(MapSqlParameterSource.class))).thenReturn(1);
+        when(mapper.convertToEntity(progressDto)).thenReturn(progress);
 
         Integer result = progressService.add(progressDto);
 
@@ -73,8 +77,10 @@ class ProgressServiceTest {
     @Test
     void update() {
         ProgressDto progressDto = newProgressDtoForTest();
+        Progress progress = newProgressForTest();
 
         when(progressRepo.updateProgresses(any(MapSqlParameterSource.class))).thenReturn(1);
+        when(mapper.convertToEntity(progressDto)).thenReturn(progress);
 
         Integer result = progressService.update(progressDto);
 

@@ -3,9 +3,7 @@ package com.internship.internship.service;
 import com.internship.internship.dto.GroupDto;
 import com.internship.internship.dto.PersonDto;
 import com.internship.internship.mapper.GroupDtoMapper;
-import com.internship.internship.mapper.GroupMapper;
 import com.internship.internship.mapper.PersonDtoMapper;
-import com.internship.internship.mapper.PersonMapper;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
 import com.internship.internship.model.search.SearchPerson;
@@ -61,7 +59,7 @@ public class PersonService {
 
     public PersonDto getById(Long id) {
         Person person = personRepo.getPersonById(id);
-        if(person != null)
+        if (person != null)
             return mapper.convertToDto(person);
         else
             return null;
@@ -111,7 +109,7 @@ public class PersonService {
         if (list != null) {
             List<PersonDto> dtoList = new ArrayList<>();
 
-            for (Person person: list){
+            for (Person person : list) {
                 dtoList.add(mapper.convertToDto(person));
             }
             return dtoList;
@@ -120,7 +118,6 @@ public class PersonService {
     }
 
     public List<PersonDto> searchByTokenInName(String token) {
-
         List<Person> list = personRepo.searchByTokenInName(getMapParamFromToken(token));
         return getPersonDtos(list);
     }

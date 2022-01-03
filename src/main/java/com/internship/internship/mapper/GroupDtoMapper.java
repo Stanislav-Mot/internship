@@ -8,17 +8,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class GroupDtoMapper {
 
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     public GroupDtoMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
     }
 
-    public  GroupDto convertToDto(Group group){
+    public GroupDto convertToDto(Group group) {
         return modelMapper.map(group, GroupDto.class);
     }
 
-    public  Group convertToEntity(GroupDto groupDto){
+    public Group convertToEntity(GroupDto groupDto) {
         return modelMapper.map(groupDto, Group.class);
     }
 }

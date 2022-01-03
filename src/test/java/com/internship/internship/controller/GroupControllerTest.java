@@ -3,9 +3,6 @@ package com.internship.internship.controller;
 import com.internship.internship.dto.GroupDto;
 import com.internship.internship.dto.TaskDto;
 import com.internship.internship.exeption.DataNotFoundException;
-import com.internship.internship.mapper.GroupDtoMapper;
-import com.internship.internship.model.Group;
-import com.internship.internship.model.Task;
 import com.internship.internship.service.GroupService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
@@ -56,7 +53,7 @@ class GroupControllerTest {
 
         Mockito.when(groupService.getById(CORRECT_ID)).thenReturn(groupDto);
 
-        mockMvc.perform(get("/group/{id}", CORRECT_ID)).andDo(print())
+        mockMvc.perform(get("/group/{id}", CORRECT_ID))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", Matchers.is(Math.toIntExact(CORRECT_ID))))
                 .andExpect(jsonPath("$.name", containsStringIgnoringCase("Tester")));
@@ -78,7 +75,7 @@ class GroupControllerTest {
 
         Mockito.when(groupService.getAll()).thenReturn(groups);
 
-        mockMvc.perform(get("/group")).andDo(print())
+        mockMvc.perform(get("/group"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..name", Matchers.contains("Tester")));
     }
@@ -90,13 +87,11 @@ class GroupControllerTest {
         Mockito.when(groupService.add(any(GroupDto.class))).thenReturn(1);
 
         mockMvc.perform(post("/group")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(group))
-                        .characterEncoding("utf-8")
-                ).andDo(print())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(group))
+                .characterEncoding("utf-8"))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$", Matchers.is(1)))
-                .andReturn();
+                .andExpect(jsonPath("$", Matchers.is(1)));
 
         verify(groupService, times(1)).add(Mockito.any(GroupDto.class));
     }
@@ -104,18 +99,17 @@ class GroupControllerTest {
     @Test
     void addToTaskGroup() throws Exception {
         GroupDto group = newGroupDtoForTest();
-        Mockito.when(groupService.addTask(any(Long.class), any(Task.class))).thenReturn(1);
+        Mockito.when(groupService.addTask(any(Long.class), any(TaskDto.class))).thenReturn(1);
 
         mockMvc.perform(post("/group/{id}/task", group.getId())
-                        .content(asJsonString(group))
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                ).andDo(print())
+                .content(asJsonString(group))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
         verify(groupService, times(1))
-                .addTask(Mockito.any(Long.class), Mockito.any(Task.class));
+                .addTask(Mockito.any(Long.class), Mockito.any(TaskDto.class));
     }
 
     @Test
@@ -126,7 +120,6 @@ class GroupControllerTest {
         Mockito.when(groupService.deleteTask(group.getId(), task.getId())).thenReturn(1);
 
         mockMvc.perform(put("/group/{id}/task/{idTask}", group.getId(), task.getId()))
-                .andDo(print())
                 .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
@@ -140,20 +133,16 @@ class GroupControllerTest {
         when(groupService.update(any(GroupDto.class))).thenReturn(1);
 
         mockMvc.perform(put("/group")
-                        .content(asJsonString(group))
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andDo(print())
+                .content(asJsonString(group))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
         mockMvc.perform(put("/group")
-                        .content("Wrong JSON")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andDo(print())
+                .content("Wrong JSON")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message", containsStringIgnoringCase("wrong JSON format")));
 
@@ -167,7 +156,6 @@ class GroupControllerTest {
         Mockito.when(groupService.delete(group.getId())).thenReturn(1);
 
         mockMvc.perform(delete("/group/{id}", group.getId()))
-                .andDo(print())
                 .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 

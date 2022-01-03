@@ -1,8 +1,7 @@
 package com.internship.internship.controller;
 
 import com.internship.internship.dto.GroupDto;
-import com.internship.internship.model.Group;
-import com.internship.internship.model.Task;
+import com.internship.internship.dto.TaskDto;
 import com.internship.internship.service.GroupService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,8 +40,8 @@ public class GroupController {
 
     @PostMapping("/group/{id}/task")
     @ResponseStatus(HttpStatus.CREATED)
-    public Integer addTaskToGroup(@PathVariable Long id, @RequestBody Task task) {
-        return groupService.addTask(id, task);
+    public Integer addTaskToGroup(@PathVariable Long id, @RequestBody TaskDto taskDto) {
+        return groupService.addTask(id, taskDto);
     }
 
     @PutMapping("/group/{id}/task/{idTask}")

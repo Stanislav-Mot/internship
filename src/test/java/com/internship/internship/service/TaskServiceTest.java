@@ -10,7 +10,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import java.util.ArrayList;
@@ -25,21 +24,23 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class TaskServiceTest {
 
-    private final Long CORRECT_ID = 999L;
     @InjectMocks
     private TaskService taskService;
     @Mock
     private TaskRepo taskRepo;
+    @Mock
+    private TaskDtoMapper mapper;
 
     @Test
     void getById() {
         Task task = newTaskForTest();
+        TaskDto taskDto = newTaskDtoForTest();
 
         when(taskRepo.getTaskById(task.getId())).thenReturn(task);
-
+        when(mapper.convertToDto(task)).thenReturn(taskDto);
         TaskDto taskFromService = taskService.getById(task.getId());
 
-        assertEquals(taskFromService, task);
+        assertEquals(taskFromService, taskDto);
 
         verify(taskRepo, times(1)).getTaskById(task.getId());
     }
@@ -62,8 +63,10 @@ class TaskServiceTest {
     @Test
     void add() {
         TaskDto taskDto = newTaskDtoForTest();
+        Task task = newTaskForTest();
 
         when(taskRepo.addTask(any(MapSqlParameterSource.class))).thenReturn(1);
+        when(mapper.convertToEntity(taskDto)).thenReturn(task);
 
         Integer result = taskService.add(taskDto);
 
@@ -75,8 +78,10 @@ class TaskServiceTest {
     @Test
     void update() {
         TaskDto taskDto = newTaskDtoForTest();
+        Task task = newTaskForTest();
 
         when(taskRepo.updateTask(any(MapSqlParameterSource.class))).thenReturn(1);
+        when(mapper.convertToEntity(taskDto)).thenReturn(task);
 
         Integer result = taskService.update(taskDto);
 

@@ -1,11 +1,12 @@
 package com.internship.internship.service;
 
 import com.internship.internship.dto.GroupDto;
+import com.internship.internship.dto.TaskDto;
 import com.internship.internship.mapper.GroupDtoMapper;
+import com.internship.internship.mapper.TaskDtoMapper;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Task;
 import com.internship.internship.repository.GroupRepo;
-import org.modelmapper.ModelMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Service;
 
@@ -17,10 +18,12 @@ public class GroupService {
 
     private final GroupRepo groupRepo;
     private final GroupDtoMapper mapper;
+    private final TaskDtoMapper taskDtoMapper;
 
-    public GroupService(GroupRepo groupRepo, GroupDtoMapper mapper) {
+    public GroupService(GroupRepo groupRepo, GroupDtoMapper mapper, TaskDtoMapper taskDtoMapper) {
         this.groupRepo = groupRepo;
         this.mapper = mapper;
+        this.taskDtoMapper = taskDtoMapper;
     }
 
     public GroupDto getById(Long id) {
@@ -55,7 +58,8 @@ public class GroupService {
         return groupRepo.deleteGroup(id);
     }
 
-    public Integer addTask(Long id, Task task) {
+    public Integer addTask(Long id, TaskDto taskDto) {
+        Task task = taskDtoMapper.convertToEntity(taskDto);
         return groupRepo.addTaskToGroup(id, task);
     }
 
