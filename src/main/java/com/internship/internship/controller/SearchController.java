@@ -2,8 +2,6 @@ package com.internship.internship.controller;
 
 import com.internship.internship.dto.PersonDto;
 import com.internship.internship.dto.TaskDto;
-import com.internship.internship.model.Person;
-import com.internship.internship.model.Task;
 import com.internship.internship.model.search.SearchPerson;
 import com.internship.internship.model.search.SearchTask;
 import com.internship.internship.service.PersonService;
@@ -12,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -26,7 +25,7 @@ public class SearchController {
     }
 
     @PostMapping("/search/person")
-    public ResponseEntity<List<PersonDto>> getPersonsByParameters(@RequestBody SearchPerson parameters) {
+    public ResponseEntity<List<PersonDto>> getPersonsByParameters(@Valid @RequestBody SearchPerson parameters) {
         List<PersonDto> persons = personService.search(parameters);
 
         return (persons != null) ?
@@ -40,7 +39,7 @@ public class SearchController {
     }
 
     @PostMapping("/search/task")
-    public ResponseEntity<List<TaskDto>> getTasksByParameters(@RequestBody SearchTask parameters) {
+    public ResponseEntity<List<TaskDto>> getTasksByParameters(@Valid @RequestBody SearchTask parameters) {
         List<TaskDto> tasks = taskService.search(parameters);
 
         return (tasks != null) ?

@@ -2,15 +2,17 @@ package com.internship.internship.controller;
 
 import com.internship.internship.dto.GroupDto;
 import com.internship.internship.dto.PersonDto;
-import com.internship.internship.model.Group;
-import com.internship.internship.model.Person;
 import com.internship.internship.service.PersonService;
+import com.internship.internship.transfer.Transfer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
+@Validated
 @RestController
 public class PersonController {
 
@@ -30,15 +32,17 @@ public class PersonController {
         return personService.getAll();
     }
 
+    @Validated(Transfer.New.class)
     @PostMapping("/person")
     @ResponseStatus(HttpStatus.CREATED)
-    public Integer add(@RequestBody PersonDto personDto) { // просто save/add
+    public Integer add(@Valid @RequestBody PersonDto personDto) {
         return personService.add(personDto);
     }
 
+    @Validated(Transfer.Update.class)
     @PostMapping("/person/{id}/group")
     @ResponseStatus(HttpStatus.CREATED)
-    public Integer addGroupToPerson(@PathVariable Long id, @RequestBody GroupDto groupDto) {
+    public Integer addGroupToPerson(@PathVariable Long id, @Valid @RequestBody GroupDto groupDto) {
         return personService.addGroup(id, groupDto);
     }
 
@@ -52,8 +56,9 @@ public class PersonController {
         }
     }
 
+    @Validated(Transfer.Update.class)
     @PutMapping("/person")
-    public ResponseEntity<Integer> update(@RequestBody PersonDto personDto) {
+    public ResponseEntity<Integer> update(@Valid @RequestBody PersonDto personDto) {
         Integer countUpdatedRow = personService.update(personDto);
         if (countUpdatedRow > 0) {
             return new ResponseEntity<>(countUpdatedRow, HttpStatus.ACCEPTED);

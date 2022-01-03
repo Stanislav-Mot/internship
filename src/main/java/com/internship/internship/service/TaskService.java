@@ -1,9 +1,7 @@
 package com.internship.internship.service;
 
-import com.internship.internship.dto.PersonDto;
 import com.internship.internship.dto.TaskDto;
 import com.internship.internship.mapper.TaskDtoMapper;
-import com.internship.internship.model.Person;
 import com.internship.internship.model.Task;
 import com.internship.internship.model.search.SearchTask;
 import com.internship.internship.repository.TaskRepo;
@@ -58,7 +56,7 @@ public class TaskService {
 
     public List<TaskDto> getAll() {
         List<Task> tasks = taskRepo.getAllTasks();
-        if(tasks != null){
+        if (tasks != null) {
             List<TaskDto> taskDtos = new ArrayList<>();
             for (Task task : tasks)
                 taskDtos.add(mapper.convertToDto(task));
@@ -94,7 +92,7 @@ public class TaskService {
         if (tasks != null) {
             List<TaskDto> dtoList = new ArrayList<>();
 
-            for (Task task: tasks){
+            for (Task task : tasks) {
                 dtoList.add(mapper.convertToDto(task));
             }
             return dtoList;

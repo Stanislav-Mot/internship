@@ -43,6 +43,7 @@ public class GroupService {
     }
 
     public Integer add(GroupDto groupDto) {
+
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("id", groupDto.getId());
         parameters.addValue("name", groupDto.getName());

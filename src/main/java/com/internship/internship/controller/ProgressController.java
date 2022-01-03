@@ -1,14 +1,17 @@
 package com.internship.internship.controller;
 
 import com.internship.internship.dto.ProgressDto;
-import com.internship.internship.model.Progress;
 import com.internship.internship.service.ProgressService;
+import com.internship.internship.transfer.Transfer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
+@Validated
 @RestController
 public class ProgressController {
 
@@ -28,8 +31,9 @@ public class ProgressController {
         return progressService.getAll();
     }
 
+    @Validated(Transfer.New.class)
     @PostMapping("/progress")
-    public ResponseEntity<Integer> add(@RequestBody ProgressDto progressDto) {
+    public ResponseEntity<Integer> add(@Valid @RequestBody ProgressDto progressDto) {
         Integer countUpdatedRow = progressService.add(progressDto);
         if (countUpdatedRow > 0) {
             return new ResponseEntity<>(countUpdatedRow, HttpStatus.CREATED);
@@ -38,8 +42,9 @@ public class ProgressController {
         }
     }
 
+    @Validated(Transfer.Update.class)
     @PutMapping("/progress")
-    public ResponseEntity<Integer> update(@RequestBody ProgressDto progressDto) {
+    public ResponseEntity<Integer> update(@Valid @RequestBody ProgressDto progressDto) {
         Integer countUpdatedRow = progressService.update(progressDto);
         if (countUpdatedRow > 0) {
             return new ResponseEntity<>(countUpdatedRow, HttpStatus.ACCEPTED);

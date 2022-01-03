@@ -1,10 +1,8 @@
 package com.internship.internship.service;
 
 import com.internship.internship.dto.ProgressDto;
-import com.internship.internship.dto.TaskDto;
 import com.internship.internship.mapper.ProgressDtoMapper;
 import com.internship.internship.model.Progress;
-import com.internship.internship.model.Task;
 import com.internship.internship.repository.ProgressRepo;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Service;
@@ -41,7 +39,7 @@ public class ProgressService {
 
     public List<ProgressDto> getAll() {
         List<Progress> progresses = progressRepo.getAllProgresses();
-        if(progresses != null){
+        if (progresses != null) {
             List<ProgressDto> progressDtos = new ArrayList<>();
             for (Progress progress : progresses)
                 progressDtos.add(mapper.convertToDto(progress));

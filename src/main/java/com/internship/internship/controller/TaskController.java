@@ -1,14 +1,17 @@
 package com.internship.internship.controller;
 
 import com.internship.internship.dto.TaskDto;
-import com.internship.internship.model.Task;
 import com.internship.internship.service.TaskService;
+import com.internship.internship.transfer.Transfer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
+@Validated
 @RestController
 public class TaskController {
 
@@ -28,8 +31,9 @@ public class TaskController {
         return taskService.getAll();
     }
 
+    @Validated(Transfer.New.class)
     @PostMapping("/task")
-    public ResponseEntity<Integer> add(@RequestBody TaskDto taskDto) {
+    public ResponseEntity<Integer> add(@Valid @RequestBody TaskDto taskDto) {
         Integer countUpdatedRow = taskService.add(taskDto);
         if (countUpdatedRow > 0) {
             return new ResponseEntity<>(countUpdatedRow, HttpStatus.CREATED);
@@ -38,8 +42,9 @@ public class TaskController {
         }
     }
 
+    @Validated(Transfer.Update.class)
     @PutMapping("/task")
-    public ResponseEntity<Integer> update(@RequestBody TaskDto taskDto) {
+    public ResponseEntity<Integer> update(@Valid @RequestBody TaskDto taskDto) {
         Integer countUpdatedRow = taskService.update(taskDto);
         if (countUpdatedRow > 0) {
             return new ResponseEntity<>(countUpdatedRow, HttpStatus.ACCEPTED);
