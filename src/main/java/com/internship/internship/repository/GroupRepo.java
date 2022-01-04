@@ -27,6 +27,7 @@ public class GroupRepo {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
+    //
     public List<Group> getAll() {
         String sql = "select * from groupOfTasks g left join person p on p.id = g.id_person";
         List<Group> groups = jdbcTemplate.query(sql, new GroupMapper());
@@ -48,6 +49,7 @@ public class GroupRepo {
         return jdbcTemplate.update(sql, group.getName(), group.getId());
     }
 
+    //
     public Integer deleteGroup(Long id) {
         String deleteConstrains = "delete from task_group where id_group = ?;";
         String deleteGroupSql = "delete from groupOfTasks where id = ?;";
@@ -68,6 +70,7 @@ public class GroupRepo {
         return jdbcTemplate.update(sql, idTask, idGroup);
     }
 
+    //
     public Group getGroupById(Long id) {
         String sql = "select * from groupOfTasks g left join person p on p.id = g.id_person where g.id = ?";
         try {

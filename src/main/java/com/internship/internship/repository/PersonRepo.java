@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,7 @@ public class PersonRepo {
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
 
+    @Transactional
     public Integer deletePerson(Long id) {
         String deletePerson = "delete from person where id = ?;";
         String deleteConstrains = "update groupOfTasks set id_person = null where id_person = ?;";

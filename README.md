@@ -40,6 +40,6 @@ The app will start running at <http://localhost:8080>.
 
 You can see the app defines following CRUD APIs with a Swagger.
 
-http://localhost:8080/swagger-ui/index.html
+http://localhost:8080/swagger-ui.html
 
 

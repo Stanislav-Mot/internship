@@ -1,6 +1,7 @@
 package com.internship.internship.dto;
 
 import com.internship.internship.transfer.Transfer;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,7 @@ import java.util.List;
 @Data
 public class GroupDto {
 
+    @Schema()
     @NotNull(message = "id should be not null", groups = {Transfer.Update.class})
     private Long id;
     @NotBlank(groups = {Transfer.New.class}, message = "name should be not null")
