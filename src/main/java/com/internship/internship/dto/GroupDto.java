@@ -16,13 +16,17 @@ import java.util.List;
 @Data
 public class GroupDto {
 
-    @Schema()
+    @Schema(example = "2")
     @NotNull(message = "id should be not null", groups = {Transfer.Update.class})
     private Long id;
+
+    @Schema(example = "Home")
     @NotBlank(groups = {Transfer.New.class}, message = "name should be not null")
     private String name;
+
     @Null(groups = {Transfer.New.class, Transfer.Update.class})
     private List<TaskDto> tasks;
+
     private PersonDto person;
 
     public GroupDto(Long id) {

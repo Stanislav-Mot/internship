@@ -31,13 +31,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Sql("/data-for-person-test.sql")
 class PersonRepoTest {
 
-    private final Long CORRECT_ID = 999L;
     private final Long ID_FOR_GET = 1L;
     private final Long ID_FOR_UPDATE = 2L;
     private final Long ID_FOR_DELETE = 4L;
     private final Long ID_PERSON_FOR_DELETE_GROUP = 3L;
     private final Long ID_GROUP_FOR_DELETE = 3L;
-    private final Long ID_FOR_SEARCH_BY_TOKEN = 17L;
     @Autowired
     private PersonRepo personRepo;
     private Integer COUNT_PERSONS = 4;
