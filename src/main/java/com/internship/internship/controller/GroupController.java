@@ -28,7 +28,7 @@ public class GroupController {
 
     @Operation(summary = "Get group by id")
     @GetMapping("/group/{id}")
-    public GroupDto get(@PathVariable Long id) {
+    public GroupDto getById(@PathVariable Long id) {
         return groupService.getById(id);
     }
 

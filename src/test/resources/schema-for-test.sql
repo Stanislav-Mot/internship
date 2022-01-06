@@ -13,7 +13,7 @@ CREATE TABLE person (
 
 CREATE TABLE groupOfTasks (
     id INT8 NOT NULL  PRIMARY KEY,
-    id_person BIGINT,
+    id_person INT8,
     name VARCHAR(256),
     FOREIGN KEY (id_person) REFERENCES person(id) ON DELETE CASCADE
 );
@@ -41,6 +41,7 @@ CREATE TABLE task_group(
 
 ALTER TABLE task_group
     ADD CONSTRAINT fk_task_group_1 FOREIGN KEY (id_task) REFERENCES task(id);
+
 ALTER TABLE task_group
     ADD CONSTRAINT fk_task_group_2 FOREIGN KEY (id_group) REFERENCES groupOfTasks(id);
 

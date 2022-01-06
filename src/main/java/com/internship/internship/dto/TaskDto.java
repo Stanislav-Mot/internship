@@ -26,7 +26,9 @@ public class TaskDto {
     private String startTime;
 
     private PersonDto person;
+
     private ProgressDto progress;
+
     private List<GroupDto> groupsList;
 
     public TaskDto(Long id) {

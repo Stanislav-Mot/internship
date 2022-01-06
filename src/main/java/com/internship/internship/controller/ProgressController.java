@@ -38,7 +38,7 @@ public class ProgressController {
 
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = {@ExampleObject(
-                    value = "{\"id\": 1, \"id_task\": 4, \"percents\": 12}")})
+                    value = "{\"id\": 1, \"task\": {\"id\": 4}, \"percents\": 12}")})
     )
     @Operation(summary = "Add progress")
     @Validated(Transfer.New.class)

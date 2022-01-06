@@ -14,13 +14,14 @@ CREATE TABLE person (
 CREATE TABLE groupOfTasks (
     id INT8 NOT NULL  PRIMARY KEY,
     name VARCHAR(256),
-    id_person INT8 REFERENCES person(id)
-);
+    id_person INT8,
+    FOREIGN KEY (id_person) REFERENCES person(id) ON DELETE CASCADE
 
+);
 
 CREATE TABLE progress (
     id INT8 NOT NULL PRIMARY KEY,
-    id_task INT8,
+    id_task INT8 ON DELETE CASCADE,
     percents INT8
 );
 
@@ -40,6 +41,7 @@ CREATE TABLE task_group(
 
 ALTER TABLE task_group
     ADD CONSTRAINT fk_task_group_1 FOREIGN KEY (id_task) REFERENCES task(id);
+
 ALTER TABLE task_group
     ADD CONSTRAINT fk_task_group_2 FOREIGN KEY (id_group) REFERENCES groupOfTasks(id);
 
