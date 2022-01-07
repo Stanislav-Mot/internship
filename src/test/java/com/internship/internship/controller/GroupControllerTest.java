@@ -119,7 +119,7 @@ class GroupControllerTest {
         Mockito.when(groupService.deleteTask(group.getId(), task.getId())).thenReturn(1);
 
         mockMvc.perform(put("/group/{id}/task/{idTask}", group.getId(), task.getId()))
-                .andExpect(status().isAccepted())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
         verify(groupService, times(1)).deleteTask(group.getId(), task.getId());
@@ -135,7 +135,7 @@ class GroupControllerTest {
                 .content(asJsonString(group))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isAccepted())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
         mockMvc.perform(put("/group")
@@ -155,7 +155,7 @@ class GroupControllerTest {
         Mockito.when(groupService.delete(group.getId())).thenReturn(1);
 
         mockMvc.perform(delete("/group/{id}", group.getId()))
-                .andExpect(status().isAccepted())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
         verify(groupService, times(1)).delete(Mockito.any(Long.class));

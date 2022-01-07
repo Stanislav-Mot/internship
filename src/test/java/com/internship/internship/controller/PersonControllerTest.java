@@ -105,7 +105,7 @@ class PersonControllerTest {
                 .content(asJsonString(person))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isAccepted())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
         mockMvc.perform(put("/person")
@@ -125,7 +125,7 @@ class PersonControllerTest {
         Mockito.when(personService.delete(person.getId())).thenReturn(1);
 
         mockMvc.perform(delete("/person/{id}", person.getId()))
-                .andExpect(status().isAccepted())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
         verify(personService, times(1)).delete(Mockito.any(Long.class));
@@ -155,7 +155,7 @@ class PersonControllerTest {
         Mockito.when(personService.deleteGroup(person.getId(), group.getId())).thenReturn(1);
 
         mockMvc.perform(put("/person/{id}/group/{idGroup}", person.getId(), group.getId()))
-                .andExpect(status().isAccepted())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
         verify(personService, times(1)).deleteGroup(person.getId(), group.getId());

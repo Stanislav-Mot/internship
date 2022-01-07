@@ -89,7 +89,7 @@ class TaskControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(task))
                 .characterEncoding("utf-8"))
-                .andExpect(status().isCreated())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.is(1)))
                 .andReturn();
 
@@ -106,7 +106,7 @@ class TaskControllerTest {
                 .content(asJsonString(task))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isAccepted())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
         mockMvc.perform(put("/task")
@@ -126,7 +126,7 @@ class TaskControllerTest {
         Mockito.when(taskService.delete(task.getId())).thenReturn(1);
 
         mockMvc.perform(delete("/task/{id}", task.getId()))
-                .andExpect(status().isAccepted())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
         verify(taskService, times(1)).delete(Mockito.any(Long.class));

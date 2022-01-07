@@ -89,7 +89,7 @@ class ProgressControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(progress))
                 .characterEncoding("utf-8"))
-                .andExpect(status().isCreated())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.is(1)))
                 .andReturn();
 
@@ -106,7 +106,7 @@ class ProgressControllerTest {
                 .content(asJsonString(progress))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isAccepted())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
         mockMvc.perform(put("/progress")
@@ -126,7 +126,7 @@ class ProgressControllerTest {
         Mockito.when(progressService.delete(progress.getId())).thenReturn(1);
 
         mockMvc.perform(delete("/progress/{id}", progress.getId()))
-                .andExpect(status().isAccepted())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
         verify(progressService, times(1)).delete(Mockito.any(Long.class));

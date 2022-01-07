@@ -26,6 +26,13 @@ public class GroupService {
         this.taskDtoMapper = taskDtoMapper;
     }
 
+    private static MapSqlParameterSource getMapSqlParameterSource(GroupDto groupDto) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("id", groupDto.getId());
+        parameters.addValue("name", groupDto.getName());
+        return parameters;
+    }
+
     public GroupDto getById(Long id) {
         Group group = groupRepo.getGroupById(id);
         GroupDto groupDto = mapper.convertToDto(group);
@@ -44,9 +51,7 @@ public class GroupService {
 
     public Integer add(GroupDto groupDto) {
 
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
-        parameters.addValue("id", groupDto.getId());
-        parameters.addValue("name", groupDto.getName());
+        MapSqlParameterSource parameters = getMapSqlParameterSource(groupDto);
         return groupRepo.addGroup(parameters);
     }
 
