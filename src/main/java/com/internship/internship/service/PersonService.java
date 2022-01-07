@@ -59,10 +59,11 @@ public class PersonService {
 
     public PersonDto getById(Long id) {
         Person person = personRepo.getPersonById(id);
-        if (person != null)
+        if (person != null) {
             return mapper.convertToDto(person);
-        else
+        } else {
             return null;
+        }
     }
 
     public List<PersonDto> getAll() {
@@ -113,8 +114,9 @@ public class PersonService {
                 dtoList.add(mapper.convertToDto(person));
             }
             return dtoList;
+        } else {
+            return null;
         }
-        return null;
     }
 
     public List<PersonDto> searchByTokenInName(String token) {

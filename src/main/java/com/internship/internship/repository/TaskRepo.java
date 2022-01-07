@@ -13,9 +13,11 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Transactional
 @Repository
 public class TaskRepo {
 
@@ -57,21 +59,20 @@ public class TaskRepo {
 
     public Integer addTask(SqlParameterSource parameters) {
         String sql = "insert into task (id, name, start_time, id_person, id_progress) " +
-                "values (:id, :name, :date, :personId, :progressId);";
+                "values (:id, :name, :start_time, :personId, :progressId);";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
 
     public Integer updateTask(SqlParameterSource parameters) {
         String sql = "update task set name = :name," +
-                "start_time = :date, id_person = :personId, " +
-                "id_progress = :progressId where id = :id";
+                "start_time = :date, id_person = :personId";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
 
     public Integer deleteTask(Long id) {
-        String sql = "update progress set id_task = null where id_task = ?; " +
+        String sql = "delete from progress where id_task = ?; " +
                 "delete from task_group where id_task = ?; " +
                 "delete from task where id = ?;";
 

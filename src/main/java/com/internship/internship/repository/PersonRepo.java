@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 
+@Transactional
 @Repository
 public class PersonRepo {
 
@@ -79,7 +80,7 @@ public class PersonRepo {
     }
 
     public Integer deleteGroupFromPerson(Long personId, Long groupId) {
-        String sql = "delete from groupOfTasks where id_person = ? and id = ?;";
+        String sql = "update groupOfTasks set id_person = null  where id_person = ? and id = ?;";
         return jdbcTemplate.update(sql, personId, groupId);
 
     }

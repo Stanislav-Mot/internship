@@ -40,7 +40,7 @@ public class TaskController {
 
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = {@ExampleObject(
-                    value = "{\"id\": 0, \"name\": \"Cooking\", \"start_time\": \"2012-06-09\", \"id_person\": 0, \"id_progress\": 0}")})
+                    value = "{\"id\": 0, \"name\": \"Cooking\", \"start_time\": \"2012-06-09\", \"id_person\": 0}")})
     )
     @Operation(summary = "Add new Task")
     @Validated(Transfer.New.class)
