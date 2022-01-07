@@ -1,6 +1,6 @@
 package com.internship.internship.controller;
 
-import com.internship.internship.model.Progress;
+import com.internship.internship.dto.ProgressDto;
 import com.internship.internship.service.ProgressService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,18 +18,18 @@ public class ProgressController {
     }
 
     @GetMapping("/progress/{id}")
-    public Progress getId(@PathVariable Long id) {
+    public ProgressDto getId(@PathVariable Long id) {
         return progressService.getById(id);
     }
 
     @GetMapping("/progress")
-    public List<Progress> getAll() {
+    public List<ProgressDto> getAll() {
         return progressService.getAll();
     }
 
     @PostMapping("/progress")
-    public ResponseEntity<Integer> add(@RequestBody Progress progress) {
-        Integer countUpdatedRow = progressService.add(progress);
+    public ResponseEntity<Integer> add(@RequestBody ProgressDto progressDto) {
+        Integer countUpdatedRow = progressService.add(progressDto);
         if (countUpdatedRow > 0) {
             return new ResponseEntity<>(countUpdatedRow, HttpStatus.CREATED);
         } else {
@@ -38,8 +38,8 @@ public class ProgressController {
     }
 
     @PutMapping("/progress")
-    public ResponseEntity<Integer> update(@RequestBody Progress progress) {
-        Integer countUpdatedRow = progressService.update(progress);
+    public ResponseEntity<Integer> update(@RequestBody ProgressDto progressDto) {
+        Integer countUpdatedRow = progressService.update(progressDto);
         if (countUpdatedRow > 0) {
             return new ResponseEntity<>(countUpdatedRow, HttpStatus.ACCEPTED);
         } else {

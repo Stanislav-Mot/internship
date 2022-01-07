@@ -1,7 +1,7 @@
 package com.internship.internship.controller;
 
-import com.internship.internship.model.Person;
-import com.internship.internship.model.Task;
+import com.internship.internship.dto.PersonDto;
+import com.internship.internship.dto.TaskDto;
 import com.internship.internship.model.search.SearchPerson;
 import com.internship.internship.model.search.SearchTask;
 import com.internship.internship.service.PersonService;
@@ -24,8 +24,8 @@ public class SearchController {
     }
 
     @PostMapping("/search/person")
-    public ResponseEntity<List<Person>> getPersonsByParameters(@RequestBody SearchPerson parameters) {
-        List<Person> persons = personService.search(parameters);
+    public ResponseEntity<List<PersonDto>> getPersonsByParameters(@RequestBody SearchPerson parameters) {
+        List<PersonDto> persons = personService.search(parameters);
 
         return (persons != null) ?
                 new ResponseEntity<>(persons, HttpStatus.OK) :
@@ -33,13 +33,13 @@ public class SearchController {
     }
 
     @GetMapping("/search/personByToken")
-    public List<Person> searchPersonByTokenInName(@RequestParam String token) {
+    public List<PersonDto> searchPersonByTokenInName(@RequestParam String token) {
         return personService.searchByTokenInName(token);
     }
 
     @PostMapping("/search/task")
-    public ResponseEntity<List<Task>> getTasksByParameters(@RequestBody SearchTask parameters) {
-        List<Task> tasks = taskService.search(parameters);
+    public ResponseEntity<List<TaskDto>> getTasksByParameters(@RequestBody SearchTask parameters) {
+        List<TaskDto> tasks = taskService.search(parameters);
 
         return (tasks != null) ?
                 new ResponseEntity<>(tasks, HttpStatus.OK) :
