@@ -2,8 +2,6 @@ package com.internship.internship.controller;
 
 import com.internship.internship.dto.PersonDto;
 import com.internship.internship.dto.TaskDto;
-import com.internship.internship.model.Person;
-import com.internship.internship.model.Task;
 import com.internship.internship.model.search.SearchPerson;
 import com.internship.internship.model.search.SearchTask;
 import com.internship.internship.service.PersonService;

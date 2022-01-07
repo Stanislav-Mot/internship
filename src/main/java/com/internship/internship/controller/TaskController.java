@@ -1,7 +1,6 @@
 package com.internship.internship.controller;
 
 import com.internship.internship.dto.TaskDto;
-import com.internship.internship.model.Task;
 import com.internship.internship.service.TaskService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

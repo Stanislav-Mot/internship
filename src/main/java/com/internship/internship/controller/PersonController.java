@@ -2,8 +2,6 @@ package com.internship.internship.controller;
 
 import com.internship.internship.dto.GroupDto;
 import com.internship.internship.dto.PersonDto;
-import com.internship.internship.model.Group;
-import com.internship.internship.model.Person;
 import com.internship.internship.service.PersonService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
