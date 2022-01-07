@@ -2,12 +2,14 @@ package com.internship.internship.controller;
 
 import com.internship.internship.dto.TaskDto;
 import com.internship.internship.service.TaskService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.internship.internship.transfer.Transfer;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
+@Validated
 @RestController
 public class TaskController {
 
@@ -27,33 +29,20 @@ public class TaskController {
         return taskService.getAll();
     }
 
+    @Validated(Transfer.New.class)
     @PostMapping("/task")
-    public ResponseEntity<Integer> add(@RequestBody TaskDto taskDto) {
-        Integer countUpdatedRow = taskService.add(taskDto);
-        if (countUpdatedRow > 0) {
-            return new ResponseEntity<>(countUpdatedRow, HttpStatus.CREATED);
-        } else {
-            return new ResponseEntity<>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
-        }
+    public Integer add(@Valid @RequestBody TaskDto taskDto) {
+        return taskService.add(taskDto);
     }
 
+    @Validated(Transfer.Update.class)
     @PutMapping("/task")
-    public ResponseEntity<Integer> update(@RequestBody TaskDto taskDto) {
-        Integer countUpdatedRow = taskService.update(taskDto);
-        if (countUpdatedRow > 0) {
-            return new ResponseEntity<>(countUpdatedRow, HttpStatus.ACCEPTED);
-        } else {
-            return new ResponseEntity<>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
-        }
+    public Integer update(@Valid @RequestBody TaskDto taskDto) {
+        return taskService.update(taskDto);
     }
 
     @DeleteMapping("/task/{id}")
-    public ResponseEntity<Integer> delete(@PathVariable Long id) {
-        Integer countUpdatedRow = taskService.delete(id);
-        if (countUpdatedRow > 0) {
-            return new ResponseEntity<>(countUpdatedRow, HttpStatus.ACCEPTED);
-        } else {
-            return new ResponseEntity<>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
-        }
+    public Integer delete(@PathVariable Long id) {
+        return taskService.delete(id);
     }
 }

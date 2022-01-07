@@ -61,7 +61,6 @@ public class PersonService {
         Person person = personRepo.getPersonById(id);
         if (person != null) {
             return mapper.convertToDto(person);
-
         } else {
             return null;
         }

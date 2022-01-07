@@ -37,7 +37,7 @@ public class GroupRepo {
     }
 
     public Integer addGroup(MapSqlParameterSource parameters) {
-        String sql = "insert into groupOfTasks ( id, name, id_person) values (:id, :name, :id_person)";
+        String sql = "insert into groupOfTasks ( id, name) values (:id, :name)";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
