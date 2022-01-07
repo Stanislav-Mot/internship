@@ -44,8 +44,9 @@ public class ProgressService {
             for (Progress progress : progresses)
                 progressDtos.add(mapper.convertToDto(progress));
             return progressDtos;
+        } else {
+            return null;
         }
-        return null;
     }
 
     public Integer add(ProgressDto progressDto) {
