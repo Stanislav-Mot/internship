@@ -21,10 +21,15 @@ public class PriorityService {
         this.mapper = priorityDtoMapper;
     }
 
-    private static MapSqlParameterSource getPriorityMapSqlPS(Priority priority) {
+    public static MapSqlParameterSource getPriorityMapSqlPS(Priority priority) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
-        parameters.addValue("id_group", priority.getId());
-        parameters.addValue("id_task", priority.getTaskId());
+
+        Long taskId = (priority.getTask() != null) ? priority.getTask().getId() : null;
+        Long groupId = (priority.getGroup() != null) ? priority.getGroup().getId() : null;
+
+        parameters.addValue("id", priority.getId());
+        parameters.addValue("id_task", taskId);
+        parameters.addValue("id_group", groupId);
         parameters.addValue("priority", priority.getPriority());
         return parameters;
     }

@@ -9,6 +9,11 @@ import lombok.NoArgsConstructor;
 @Data
 public class Priority {
     private Long id;
-    private Long taskId;
+    private Group group;
+    private Task task;
     private Integer priority;
+
+    public Priority(Long id) {
+        this.id = id;
+    }
 }

@@ -43,7 +43,7 @@ public class PriorityController {
 
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = {@ExampleObject(
-                    value = "{\"id\": 1, \"taskId\": 4, \"priority\": 99}")})
+                    value = "{\"id\": 1, \"task\": {\"id\": 4}, \"group\": {\"id\": 4}, \"priority\": 99}")})
     )
     @Operation(summary = "Add priority")
     @Validated(Transfer.New.class)

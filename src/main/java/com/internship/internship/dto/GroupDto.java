@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -29,7 +30,21 @@ public class GroupDto {
 
     private PersonDto person;
 
+    private boolean priority;
+
+    /**
+     * List of ids regulating task priority
+     */
+    private ArrayList<PriorityDto> priorityDtos;
+
     public GroupDto(Long id) {
         this.id = id;
+    }
+
+    public GroupDto(Long id, String name, List<TaskDto> tasks, PersonDto person) {
+        this.id = id;
+        this.name = name;
+        this.tasks = tasks;
+        this.person = person;
     }
 }

@@ -14,14 +14,20 @@ import javax.validation.constraints.NotNull;
 public class PriorityDto {
 
     @Schema(example = "3")
-    @NotNull(message = "priority id should be not null", groups = {Transfer.Update.class})
+    @NotNull(message = "priority id should be not null", groups = {Transfer.Update.class, Transfer.New.class})
     private Long id;
 
-    @Schema(example = "4")
-    @NotNull(message = "taskId should be not null", groups = {Transfer.New.class})
-    private Long taskId;
+    @NotNull(message = "groupDto should be not null", groups = {Transfer.New.class})
+    private GroupDto groupDto;
+
+    @NotNull(message = "taskDto should be not null", groups = {Transfer.New.class})
+    private TaskDto taskDto;
 
     @Schema(example = "84")
     @NotNull(message = "priority should be not null", groups = {Transfer.New.class, Transfer.Update.class})
     private Integer priority;
+
+    public PriorityDto(Long id) {
+        this.id = id;
+    }
 }

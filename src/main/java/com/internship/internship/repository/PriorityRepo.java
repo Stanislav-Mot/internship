@@ -34,21 +34,21 @@ public class PriorityRepo {
     }
 
     public Integer updatePriority(MapSqlParameterSource parameters) {
-        String sql = "update priority_of_task set priority = :priority where id = :id_group";
+        String sql = "update priority_of_task set priority = :priority where id = :id";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
 
     public Integer addPriority(MapSqlParameterSource parameters) {
         String sql =
-                "insert into priority_of_task (id_group, id_task, priority) " +
-                        "values (:id_group, :id_task, :priority);";
+                "insert into priority_of_task (id, id_group, id_task, priority) " +
+                        "values (:id, :id_group, :id_task, :priority);";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
 
     public Priority getPriorityById(Long id) {
-        String sql = "select * from priority_of_task p where p.id_group = ?";
+        String sql = "select * from priority_of_task p where p.id = ?";
         try {
             return jdbcTemplate.queryForObject(sql, new PriorityMapper(), id);
         } catch (EmptyResultDataAccessException exception) {
@@ -61,7 +61,7 @@ public class PriorityRepo {
     public List<Priority> getAllPriorityByGroupId(Long id) {
         String sql = "select * from priority_of_task p where p.id_group = ?";
 
-        return jdbcTemplate.query(sql, new PriorityMapper());
+        return jdbcTemplate.query(sql, new PriorityMapper(), id);
     }
 
     public List<Priority> getAllPriority() {

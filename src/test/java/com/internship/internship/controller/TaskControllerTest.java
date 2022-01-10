@@ -86,9 +86,9 @@ class TaskControllerTest {
         Mockito.when(taskService.add(any(TaskDto.class))).thenReturn(1);
 
         mockMvc.perform(post("/task")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(task))
-                        .characterEncoding("utf-8"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(task))
+                .characterEncoding("utf-8"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.is(1)))
                 .andReturn();
@@ -103,16 +103,16 @@ class TaskControllerTest {
         when(taskService.update(any(TaskDto.class))).thenReturn(1);
 
         mockMvc.perform(put("/task")
-                        .content(asJsonString(task))
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
+                .content(asJsonString(task))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
         mockMvc.perform(put("/task")
-                        .content("Wrong JSON")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
+                .content("Wrong JSON")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message", containsStringIgnoringCase("wrong JSON format")));
 

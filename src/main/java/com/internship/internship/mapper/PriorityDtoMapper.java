@@ -17,7 +17,7 @@ public class PriorityDtoMapper {
         return modelMapper.map(priority, PriorityDto.class);
     }
 
-    public Priority convertToEntity(PriorityDto progressDto) {
-        return modelMapper.map(progressDto, Priority.class);
+    public Priority convertToEntity(PriorityDto priorityDto) {
+        return modelMapper.map(priorityDto, Priority.class);
     }
 }

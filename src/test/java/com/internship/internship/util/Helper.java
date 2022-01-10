@@ -1,14 +1,8 @@
 package com.internship.internship.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.internship.internship.dto.GroupDto;
-import com.internship.internship.dto.PersonDto;
-import com.internship.internship.dto.ProgressDto;
-import com.internship.internship.dto.TaskDto;
-import com.internship.internship.model.Group;
-import com.internship.internship.model.Person;
-import com.internship.internship.model.Progress;
-import com.internship.internship.model.Task;
+import com.internship.internship.dto.*;
+import com.internship.internship.model.*;
 import lombok.SneakyThrows;
 
 public class Helper {
@@ -40,6 +34,9 @@ public class Helper {
         return new Task(CORRECT_ID, "Tester", "2021-06-09", null, null, null);
     }
 
+    public static Priority newPriorityForTest() {
+        return new Priority(CORRECT_ID, new Group(CORRECT_ID), new Task(CORRECT_ID), 34);
+    }
 
     public static GroupDto newGroupDtoForTest() {
         return new GroupDto(CORRECT_ID, "Tester", null, new PersonDto(1L));
@@ -59,5 +56,9 @@ public class Helper {
 
     public static TaskDto newTaskDtoForTest() {
         return new TaskDto(CORRECT_ID, "Tester", "2021-06-09", null, null, null);
+    }
+
+    public static PriorityDto newPriorityDtoForTest() {
+        return new PriorityDto(CORRECT_ID, new GroupDto(CORRECT_ID), new TaskDto(CORRECT_ID), 34);
     }
 }

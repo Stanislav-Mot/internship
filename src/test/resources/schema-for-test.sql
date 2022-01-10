@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS person CASCADE;
 DROP TABLE IF EXISTS progress CASCADE;
 DROP TABLE IF EXISTS task CASCADE;
 DROP TABLE IF EXISTS task_group CASCADE;
+DROP TABLE IF EXISTS priority_of_task CASCADE;
 
 CREATE TABLE person
 (
@@ -14,7 +15,7 @@ CREATE TABLE person
 
 CREATE TABLE groupOfTasks
 (
-    id        INT8   NOT NULL PRIMARY KEY,
+    id        INT8 NOT NULL PRIMARY KEY,
     id_person BIGINT,
     name      VARCHAR(256),
     FOREIGN KEY (id_person) REFERENCES person (id) ON DELETE CASCADE
@@ -57,14 +58,18 @@ ALTER TABLE task
     ADD CONSTRAINT fk_person_task FOREIGN KEY (id_person) REFERENCES person (id);
 
 ALTER TABLE task
-    ADD COLUMN description VARCHAR(256),
-    ADD COLUMN estimate time,
+    ADD COLUMN description VARCHAR(256);
+ALTER TABLE task
+    ADD COLUMN estimate time;
+ALTER TABLE task
     ADD COLUMN spent_time time;
 
 create table priority_of_task
 (
-    id_group INT8 NOT NULL PRIMARY KEY,
-    id_task INT8,
+    id       INT8 NOT NULL PRIMARY KEY,
+    id_group INT8 NOT NULL,
+    id_task  INT8 NOT NULL,
     priority SMALLINT,
-    FOREIGN KEY (id_group) REFERENCES groupOfTasks (id) ON DELETE CASCADE
+    FOREIGN KEY (id_group) REFERENCES groupOfTasks (id) ON DELETE CASCADE,
+    FOREIGN KEY (id_task) REFERENCES task (id) ON DELETE CASCADE
 );

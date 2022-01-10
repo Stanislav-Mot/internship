@@ -1,6 +1,8 @@
 package com.internship.internship.mapper;
 
+import com.internship.internship.model.Group;
 import com.internship.internship.model.Priority;
+import com.internship.internship.model.Task;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
@@ -14,9 +16,17 @@ public class PriorityMapper implements RowMapper<Priority> {
         Priority priority = new Priority();
 
         priority.setId(rs.getLong("id"));
-        priority.setTaskId(rs.getLong("taskId"));
         priority.setPriority(rs.getInt("priority"));
 
+        long taskID = rs.getLong("id_task");
+        if (taskID > 0) {
+            priority.setTask(new Task(taskID));
+        }
+
+        long groupId = rs.getLong("id_group");
+        if (groupId > 0) {
+            priority.setGroup(new Group(groupId));
+        }
         return priority;
     }
 }

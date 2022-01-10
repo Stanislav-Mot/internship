@@ -87,7 +87,8 @@ public class GroupRepo {
     }
 
     public List<Task> getTasksById(Long id) {
-        String sqlForGroup = "select t.id, t.name, t.start_time, t.id_person,t.id_progress from groupOfTasks g " +
+        String sqlForGroup = "select t.id, t.name, t.start_time, t.id_person,t.id_progress, " +
+                "t.description, t.estimate, t.spent_time from groupOfTasks g " +
                 "join task_group tg on g.id = tg.id_group " +
                 "join task t on tg.id_task = t.id where g.id = ?";
 
