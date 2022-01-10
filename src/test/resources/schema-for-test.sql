@@ -55,3 +55,16 @@ ALTER TABLE progress
 
 ALTER TABLE task
     ADD CONSTRAINT fk_person_task FOREIGN KEY (id_person) REFERENCES person (id);
+
+ALTER TABLE task
+    ADD COLUMN description VARCHAR(256),
+    ADD COLUMN estimate time,
+    ADD COLUMN spent_time time;
+
+create table priority_of_task
+(
+    id_group INT8 NOT NULL PRIMARY KEY,
+    id_task INT8,
+    priority SMALLINT,
+    FOREIGN KEY (id_group) REFERENCES groupOfTasks (id) ON DELETE CASCADE
+);
