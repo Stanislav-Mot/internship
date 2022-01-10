@@ -3,7 +3,6 @@ package com.internship.internship.service;
 import com.internship.internship.dto.ProgressDto;
 import com.internship.internship.mapper.ProgressDtoMapper;
 import com.internship.internship.model.Progress;
-import com.internship.internship.model.Task;
 import com.internship.internship.repository.ProgressRepo;
 import com.internship.internship.repository.TaskRepo;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -54,15 +53,10 @@ public class ProgressService {
     }
 
     public Integer add(ProgressDto progressDto) {
-        Task task = taskRepo.getTaskById(progressDto.getTask().getId());
-        if (task != null) {
-            Progress progress = mapper.convertToEntity(progressDto);
-            MapSqlParameterSource parameters = getMapSqlParameterSource(progress);
+        Progress progress = mapper.convertToEntity(progressDto);
+        MapSqlParameterSource parameters = getMapSqlParameterSource(progress);
 
-            return progressRepo.addProgress(parameters);
-        } else {
-            return 0;
-        }
+        return progressRepo.addProgress(parameters);
     }
 
     public Integer update(ProgressDto progressDto) {

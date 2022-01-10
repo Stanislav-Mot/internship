@@ -3,7 +3,6 @@ package com.internship.internship.service;
 import com.internship.internship.dto.ProgressDto;
 import com.internship.internship.mapper.ProgressDtoMapper;
 import com.internship.internship.model.Progress;
-import com.internship.internship.model.Task;
 import com.internship.internship.repository.ProgressRepo;
 import com.internship.internship.repository.TaskRepo;
 import org.junit.jupiter.api.Test;
@@ -67,9 +66,7 @@ class ProgressServiceTest {
     void add() {
         ProgressDto progressDto = newProgressDtoForTest();
         Progress progress = newProgressForTest();
-        Task task = new Task(9L);
 
-        when(taskRepo.getTaskById(progressDto.getTask().getId())).thenReturn(task);
         when(progressRepo.addProgress(any(MapSqlParameterSource.class))).thenReturn(1);
         when(mapper.convertToEntity(progressDto)).thenReturn(progress);
 

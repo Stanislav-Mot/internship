@@ -16,16 +16,12 @@ VALUES (2, 1),
        (4, 3);
 
 UPDATE groupOfTasks
-SET id_person = 5
+SET id_person = 1
 where id = 1;
 
 UPDATE groupOfTasks
-SET id_person = 6
+SET id_person = 2
 where id = 3;
-
-insert into task_group (id_group, id_task)
-values (1, 2),
-       (3, 4);
 
 insert into progress (id, id_task, percents)
 values (1, 2, 0),

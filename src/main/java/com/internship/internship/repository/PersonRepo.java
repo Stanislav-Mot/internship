@@ -44,7 +44,6 @@ public class PersonRepo {
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
 
-    @Transactional
     public Integer deletePerson(Long id) {
         String deletePerson = "delete from person where id = ?;";
         String deleteConstrains = "update groupOfTasks set id_person = null where id_person = ?;";

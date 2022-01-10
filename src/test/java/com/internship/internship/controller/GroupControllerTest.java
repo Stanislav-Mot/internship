@@ -86,9 +86,9 @@ class GroupControllerTest {
         Mockito.when(groupService.add(any(GroupDto.class))).thenReturn(1);
 
         mockMvc.perform(post("/group")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(group))
-                .characterEncoding("utf-8"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(group))
+                        .characterEncoding("utf-8"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
@@ -101,9 +101,9 @@ class GroupControllerTest {
         Mockito.when(groupService.addTask(any(Long.class), any(TaskDto.class))).thenReturn(1);
 
         mockMvc.perform(post("/group/{id}/task", group.getId())
-                .content(asJsonString(group))
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(asJsonString(group))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
@@ -132,16 +132,16 @@ class GroupControllerTest {
         when(groupService.update(any(GroupDto.class))).thenReturn(1);
 
         mockMvc.perform(put("/group")
-                .content(asJsonString(group))
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(asJsonString(group))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
         mockMvc.perform(put("/group")
-                .content("Wrong JSON")
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content("Wrong JSON")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message", containsStringIgnoringCase("wrong JSON format")));
 

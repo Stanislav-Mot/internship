@@ -16,10 +16,10 @@ public class SearchTask {
     @Schema(example = "Cleaning")
     private String name;
 
-    @Schema(example = "2012-06-09")
+    @Schema(example = "2012-06-09 17:09:42")
     private LocalDateTime minStartTime;
 
-    @Schema(example = "2021-12-12")
+    @Schema(example = "2021-12-12 17:09:42")
     private LocalDateTime maxStartTime;
 
     @Schema(example = "0")

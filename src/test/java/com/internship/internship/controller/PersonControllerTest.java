@@ -86,9 +86,9 @@ class PersonControllerTest {
         Mockito.when(personService.add(any(PersonDto.class))).thenReturn(1);
 
         mockMvc.perform(post("/person")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(person))
-                .characterEncoding("utf-8"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(person))
+                        .characterEncoding("utf-8"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
@@ -102,16 +102,16 @@ class PersonControllerTest {
         when(personService.update(any(PersonDto.class))).thenReturn(1);
 
         mockMvc.perform(put("/person")
-                .content(asJsonString(person))
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(asJsonString(person))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
         mockMvc.perform(put("/person")
-                .content("Wrong JSON")
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content("Wrong JSON")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message", containsStringIgnoringCase("wrong JSON format")));
 
@@ -138,9 +138,9 @@ class PersonControllerTest {
         Mockito.when(personService.addGroup(any(Long.class), any(GroupDto.class))).thenReturn(1);
 
         mockMvc.perform(post("/person/{id}/group", person.getId())
-                .content(asJsonString(group))
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(asJsonString(group))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
