@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class PriorityTask {
+public class Priority {
     private Long id;
     private Long taskId;
     private Integer priority;

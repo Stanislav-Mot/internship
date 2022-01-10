@@ -20,9 +20,9 @@ public class Group {
     private boolean priority;
 
     /**
-     *List of ids regulating task priority
+     * List of ids regulating task priority
      */
-    private ArrayList<PriorityTask> priorityTasks;
+    private ArrayList<Priority> priorityTasks;
 
     public Group(Long id) {
         this.id = id;

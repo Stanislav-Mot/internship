@@ -48,6 +48,17 @@ public class TaskService {
         return mapSqlParameterSource;
     }
 
+    public static MapSqlParameterSource getParameterForUpgradedUpdate(Task task) {
+        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+
+        mapSqlParameterSource.addValue("id", task.getId());
+        mapSqlParameterSource.addValue("description", task.getDescription());
+        mapSqlParameterSource.addValue("estimate", task.getEstimate());
+        mapSqlParameterSource.addValue("spent_time", task.getSpentTime());
+
+        return mapSqlParameterSource;
+    }
+
     public TaskDto getById(Long id) {
         Task task = taskRepo.getTaskById(id);
         TaskDto taskDto = mapper.convertToDto(task);
@@ -105,16 +116,5 @@ public class TaskService {
         MapSqlParameterSource parameters = getParameterForUpgradedUpdate(task);
 
         return taskRepo.upgradedUpdate(parameters);
-    }
-
-    public static MapSqlParameterSource getParameterForUpgradedUpdate(Task task) {
-        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-
-        mapSqlParameterSource.addValue("id", task.getId());
-        mapSqlParameterSource.addValue("description", task.getDescription());
-        mapSqlParameterSource.addValue("estimate", task.getEstimate());
-        mapSqlParameterSource.addValue("spent_time", task.getSpentTime());
-
-        return mapSqlParameterSource;
     }
 }
