@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalTime;
 import java.util.List;
 
 @NoArgsConstructor
@@ -31,8 +32,22 @@ public class TaskDto {
 
     private List<GroupDto> groupsList;
 
+    private String description;
+
+    private LocalTime estimate;
+
+    private LocalTime spentTime;
+
     public TaskDto(Long id) {
         this.id = id;
     }
 
+    public TaskDto(Long id, String name, String startTime, PersonDto person, ProgressDto progress, List<GroupDto> groupsList) {
+        this.id = id;
+        this.name = name;
+        this.startTime = startTime;
+        this.person = person;
+        this.progress = progress;
+        this.groupsList = groupsList;
+    }
 }

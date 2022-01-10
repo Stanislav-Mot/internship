@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
 
 
 public class TaskMapper implements RowMapper<Task> {
@@ -18,6 +19,17 @@ public class TaskMapper implements RowMapper<Task> {
         task.setId(rs.getLong("id"));
         task.setName(rs.getString("name"));
         task.setStartTime(rs.getString("start_time"));
+        task.setDescription(rs.getString("description"));
+
+        Time estimate = rs.getTime("estimate");
+        if (estimate != null) {
+            task.setEstimate(estimate.toLocalTime());
+        }
+
+        Time spent_time = rs.getTime("spent_time");
+        if (spent_time != null) {
+            task.setSpentTime(spent_time.toLocalTime());
+        }
 
         long personID = rs.getLong("id_person");
         if (personID > 0) {

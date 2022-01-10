@@ -97,4 +97,11 @@ public class TaskRepo {
 
         return namedParameterJdbcTemplate.query(sql, mapSqlParameterSource, new TaskMapper());
     }
+
+    public Integer upgradedUpdate(MapSqlParameterSource parameters) {
+        String sql = "update task set description = :description," +
+                "estimate = :estimate, spent_time = :spent_time where id = :id";
+
+        return namedParameterJdbcTemplate.update(sql, parameters);
+    }
 }

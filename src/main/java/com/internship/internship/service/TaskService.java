@@ -98,4 +98,23 @@ public class TaskService {
             return null;
         }
     }
+
+    public Integer upgradedUpdate(TaskDto taskDto) {
+        Task task = mapper.convertToEntity(taskDto);
+
+        MapSqlParameterSource parameters = getParameterForUpgradedUpdate(task);
+
+        return taskRepo.upgradedUpdate(parameters);
+    }
+
+    public static MapSqlParameterSource getParameterForUpgradedUpdate(Task task) {
+        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+
+        mapSqlParameterSource.addValue("id", task.getId());
+        mapSqlParameterSource.addValue("description", task.getDescription());
+        mapSqlParameterSource.addValue("estimate", task.getEstimate());
+        mapSqlParameterSource.addValue("spent_time", task.getSpentTime());
+
+        return mapSqlParameterSource;
+    }
 }

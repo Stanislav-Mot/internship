@@ -65,4 +65,15 @@ public class TaskController {
     public Integer delete(@PathVariable Long id) {
         return taskService.delete(id);
     }
+
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            content = @Content(examples = {@ExampleObject(
+                    value = "{\"id\": 0, \"description\": \"should something\", \"estimate\": \"07:37:16.00\", \"spentTime\": \"07:37:16.00\"}")})
+    )
+    @Operation(summary = "update description, estimate, time spent")
+    @Validated(Transfer.Update.class)
+    @PutMapping("/task/upgradedUpdate")
+    public Integer upgradedUpdate(@Valid @RequestBody TaskDto taskDto) {
+        return taskService.upgradedUpdate(taskDto);
+    }
 }
