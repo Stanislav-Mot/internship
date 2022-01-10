@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Collections;
 import java.util.List;
 
+import static com.internship.internship.util.Helper.*;
 import static org.hamcrest.Matchers.containsStringIgnoringCase;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -105,12 +106,12 @@ class GroupControllerTest {
         Mockito.when(groupService.addTask(any(Long.class), any(Task.class))).thenReturn(1);
 
         mockMvc.perform(post("/group/{id}/task", group.getId())
-                        .content(asJsonString(group))
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                ).andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Matchers.is(1)));
+                .content(asJsonString(group))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+            ).andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", Matchers.is(1)));
 
         verify(groupService, times(1))
                 .addTask(Mockito.any(Long.class), Mockito.any(Task.class));
@@ -123,9 +124,9 @@ class GroupControllerTest {
 
         Mockito.when(groupService.deleteTask(group.getId(), task.getId())).thenReturn(1);
 
-        mockMvc.perform(delete("/group/{id}/task/{idTask}", group.getId(), task.getId()))
+        mockMvc.perform(put("/group/{id}/task/{idTask}", group.getId(), task.getId()))
                 .andDo(print())
-                .andExpect(status().isOk())
+                .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
         verify(groupService, times(1)).deleteTask(group.getId(), task.getId());
@@ -166,23 +167,9 @@ class GroupControllerTest {
 
         mockMvc.perform(delete("/group/{id}", group.getId()))
                 .andDo(print())
-                .andExpect(status().isOk())
+                .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
         verify(groupService, times(1)).delete(Mockito.any(Long.class));
     }
-
-    @SneakyThrows
-    private String asJsonString(final Object obj) {
-        return new ObjectMapper().writeValueAsString(obj);
-    }
-
-    private Group newGroupForTest() {
-        return new Group(CORRECT_ID, "Tester", null, new Person(1L));
-    }
-
-    private Task newTaskForTest() {
-        return new Task(CORRECT_ID, "TesterGroup", "2021-06-09", null, null, null);
-    }
-
 }

@@ -18,21 +18,11 @@ public class GroupService {
     }
 
     public Group getById(Long id) {
-        Group group = groupRepo.getGroupById(id);
-
-        group.setTasks(groupRepo.getTasksById(id)); //  все сборки объекта перенеси в репозиторий
-
-        return group;
+        return groupRepo.getGroupById(id);
     }
 
     public List<Group> getAll() {
-        List<Group> groupsList = groupRepo.getAll();
-
-        for (Group group : groupsList) {
-            group.setTasks(groupRepo.getTasksById(group.getId()));
-        }
-
-        return groupsList;
+        return groupRepo.getAll();
     }
 
     public Integer add(Group group) {

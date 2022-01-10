@@ -17,7 +17,9 @@ public class Task {
     private Person person;
     private Progress progress;
     private List<Group> groupsList;
+
     public Task(Long id) {
         this.id = id;
     }
+
 }

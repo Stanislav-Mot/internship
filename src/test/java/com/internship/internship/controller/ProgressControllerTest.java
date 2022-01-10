@@ -1,11 +1,8 @@
 package com.internship.internship.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.model.Progress;
-import com.internship.internship.model.Task;
 import com.internship.internship.service.ProgressService;
-import lombok.SneakyThrows;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -21,6 +18,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Collections;
 import java.util.List;
 
+import static com.internship.internship.util.Helper.asJsonString;
+import static com.internship.internship.util.Helper.newProgressForTest;
 import static org.hamcrest.Matchers.containsStringIgnoringCase;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -135,18 +134,9 @@ class ProgressControllerTest {
 
         mockMvc.perform(delete("/progress/{id}", progress.getId()))
                 .andDo(print())
-                .andExpect(status().isOk())
+                .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
         verify(progressService, times(1)).delete(Mockito.any(Long.class));
-    }
-
-    @SneakyThrows
-    private String asJsonString(final Object obj) {
-        return new ObjectMapper().writeValueAsString(obj);
-    }
-
-    private Progress newProgressForTest() {
-        return new Progress(CORRECT_ID, new Task(9L), (short) 99);
     }
 }

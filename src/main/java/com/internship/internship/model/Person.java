@@ -20,4 +20,7 @@ public class Person {
         this.id = id;
     }
 
+    public Person(Long id) {
+        this.id = id;
+    }
 }

@@ -18,17 +18,17 @@ public class ProgressController {
     }
 
     @GetMapping("/progress/{id}")
-    public Progress getProgress(@PathVariable Long id) {
+    public Progress getId(@PathVariable Long id) {
         return progressService.getById(id);
     }
 
     @GetMapping("/progress")
-    public List<Progress> getAllProgress() {
+    public List<Progress> getAll() {
         return progressService.getAll();
     }
 
     @PostMapping("/progress")
-    public ResponseEntity<Integer> addProgress(@RequestBody Progress progress) {
+    public ResponseEntity<Integer> add(@RequestBody Progress progress) {
         Integer countUpdatedRow = progressService.add(progress);
         if (countUpdatedRow > 0) {
             return new ResponseEntity<>(countUpdatedRow, HttpStatus.CREATED);
@@ -38,7 +38,7 @@ public class ProgressController {
     }
 
     @PutMapping("/progress")
-    public ResponseEntity<Integer> updateTask(@RequestBody Progress progress) {
+    public ResponseEntity<Integer> update(@RequestBody Progress progress) {
         Integer countUpdatedRow = progressService.update(progress);
         if (countUpdatedRow > 0) {
             return new ResponseEntity<>(countUpdatedRow, HttpStatus.ACCEPTED);
@@ -48,7 +48,12 @@ public class ProgressController {
     }
 
     @DeleteMapping("/progress/{id}")
-    public Integer delete(@PathVariable Long id) {
-        return progressService.delete(id);
+    public ResponseEntity<Integer> delete(@PathVariable Long id) {
+        Integer countUpdatedRow = progressService.delete(id);
+        if (countUpdatedRow > 0) {
+            return new ResponseEntity<>(countUpdatedRow, HttpStatus.ACCEPTED);
+        } else {
+            return new ResponseEntity<>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
+        }
     }
 }

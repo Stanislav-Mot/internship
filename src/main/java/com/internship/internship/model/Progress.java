@@ -16,4 +16,7 @@ public class Progress {
         this.id = id;
     }
 
+    public Progress(Long id) {
+        this.id = id;
+    }
 }

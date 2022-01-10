@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class PersonRepo {
@@ -28,22 +29,22 @@ public class PersonRepo {
     }
 
     public Integer addPerson(SqlParameterSource parameters) {
-        String sql = "insert into persons (id, firstname, lastname, age) " +
+        String sql = "insert into person (id, firstname, lastname, age) " +
                 "values (:id, :firstname, :lastname, :age);";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
 
     public Integer updatePerson(SqlParameterSource parameters) {
-        String sql = "update persons set firstname = :firstname," +
+        String sql = "update person set firstname = :firstname," +
                 " lastname = :lastname, age = :age where id = :id;";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
 
     public Integer deletePerson(Long id) {
-        String deletePerson = "delete from persons where id = ?;";
-        String deleteConstrains = "update groups set id_person = null where id_person = ?;";
+        String deletePerson = "delete from person where id = ?;";
+        String deleteConstrains = "update groupOfTasks set id_person = null where id_person = ?;";
 
         jdbcTemplate.update(deleteConstrains, id);
 
@@ -51,38 +52,58 @@ public class PersonRepo {
     }
 
     public Person getPersonById(Long id) {
-        String sql = "select * from persons p where p.id = ?";
+        String sql = "select * from person p where p.id = ?";
         try {
             return jdbcTemplate.queryForObject(sql, new PersonMapper(), id);
         } catch (EmptyResultDataAccessException exception) {
-            LOGGER.debug("handling 404 error on getPersonById method");
+            LOGGER.warn("handling 404 error on getPersonById method");
 
             throw new DataNotFoundException(String.format("Person Id %d is not found", id));
         }
     }
 
     public List<Person> getAllPersons() {
-        String sql = "select * from persons";
-
-        return jdbcTemplate.query(sql, new PersonMapper());
+        String sql = "select * from person";
+        List<Person> persons = jdbcTemplate.query(sql, new PersonMapper());
+        for (Person person : persons) {
+            person.setGroups(getGroupsById(person.getId()));
+        }
+        return persons;
     }
 
     public Integer addGroupToPerson(Long id, Group group) {
-        String sql = "insert into groups (id_person, id) values (?,?) ";
+        String sql = "insert into groupOfTasks (id_person, id) values (?,?) ";
         return jdbcTemplate.update(sql, id, group.getId());
 
     }
 
     public Integer deleteGroupFromPerson(Long personId, Long groupId) {
-        String sql = "delete from groups where id_person = ? and id = ?;";
+        String sql = "delete from groupOfTasks where id_person = ? and id = ?;";
         return jdbcTemplate.update(sql, personId, groupId);
 
     }
 
     public List<Group> getGroupsById(Long id) {
         String sqlForGroup =
-                "select * from persons p join groups g on p.id = g.id_person where p.id = ?";
+                "select * from person p join groupOfTasks g on p.id = g.id_person where p.id = ?";
 
         return jdbcTemplate.query(sqlForGroup, new GroupMapper(), id);
+    }
+
+    public List<Person> search(SqlParameterSource sqlParameterSource) {
+        String sql =
+                "select * from person where (cast(:firstName as VARCHAR) is null or person.firstname = :firstName) " +
+                        "and (cast(:lastName as VARCHAR) is null or person.lastname = :lastName) " +
+                        "and (cast(:exactAge as SMALLINT) is null or person.age >= cast(:exactAge as SMALLINT)) " +
+                        "and (cast(:rangeAge as SMALLINT) is null or person.age <= cast(:rangeAge as SMALLINT)) " +
+                        "and (cast(:rangeAge as SMALLINT) is not null or person.age <= cast(:exactAge as SMALLINT)) ";
+
+        return namedParameterJdbcTemplate.query(sql, sqlParameterSource, new PersonMapper());
+    }
+
+
+    public List<Person> searchByTokenInName(Map<String, Object> params) {
+        String sql = "select * from person where CONCAT(firstname, ' ' , lastname) like :token";
+        return namedParameterJdbcTemplate.query(sql, params, new PersonMapper());
     }
 }

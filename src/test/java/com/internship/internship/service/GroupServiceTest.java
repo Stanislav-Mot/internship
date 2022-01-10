@@ -1,7 +1,6 @@
 package com.internship.internship.service;
 
 import com.internship.internship.model.Group;
-import com.internship.internship.model.Person;
 import com.internship.internship.model.Task;
 import com.internship.internship.repository.GroupRepo;
 import org.junit.jupiter.api.Test;
@@ -14,6 +13,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.internship.internship.util.Helper.newGroupForTest;
+import static com.internship.internship.util.Helper.newTaskForTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -119,13 +120,5 @@ class GroupServiceTest {
         assertEquals(1, result);
 
         verify(groupRepo, times(1)).deleteTaskFromGroup(group.getId(), task.getId());
-    }
-
-    private Group newGroupForTest() {
-        return new Group(CORRECT_ID, "Tester", null, new Person(1L));
-    }
-
-    private Task newTaskForTest() {
-        return new Task(CORRECT_ID, "TesterGroup", "2021-06-09", null, null, null);
     }
 }

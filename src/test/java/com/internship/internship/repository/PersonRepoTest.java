@@ -3,6 +3,8 @@ package com.internship.internship.repository;
 import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
+import com.internship.internship.model.search.SearchPerson;
+import com.internship.internship.service.PersonService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +18,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
+import static com.internship.internship.service.PersonService.getMapSqlParameterSource;
+import static com.internship.internship.util.Helper.newPersonForTest;
 import static org.assertj.core.api.Assertions.from;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -33,6 +37,7 @@ class PersonRepoTest {
     private final Long ID_FOR_DELETE = 4L;
     private final Long ID_PERSON_FOR_DELETE_GROUP = 3L;
     private final Long ID_GROUP_FOR_DELETE = 3L;
+    private final Long ID_FOR_SEARCH_BY_TOKEN = 17L;
     @Autowired
     private PersonRepo personRepo;
     private Integer COUNT_PERSONS = 4;
@@ -58,7 +63,7 @@ class PersonRepoTest {
         personRepo.addPerson(parameters);
         Iterable<Person> persons = personRepo.getAllPersons();
 
-        Assertions.assertThat(persons).extracting(Person::getFirstName).contains("AddTester");
+        Assertions.assertThat(persons).extracting(Person::getFirstName).contains("Tester");
 
         COUNT_PERSONS += 1;
     }
@@ -122,17 +127,33 @@ class PersonRepoTest {
         Assertions.assertThat(groups).extracting(Group::getName).contains("testGroup");
     }
 
-    private Person newPersonForTest() {
-        return new Person(CORRECT_ID, "AddTester", "Tester", 99, null);
+    @Test
+    void search() {
+        Person person_one = new Person(23L, "SearchTest", null, 19, null);
+        Person person_two = new Person(24L, "TestSearch", null, 29, null);
+        Person person_three = new Person(25L, "SearchTest", null, 39, null);
+
+        personRepo.addPerson(getMapSqlParameterSource(person_one));
+        personRepo.addPerson(getMapSqlParameterSource(person_two));
+        personRepo.addPerson(getMapSqlParameterSource(person_three));
+
+        List<Person> personList = personRepo.search(getMapSqlParameterSource(new SearchPerson("SearchTest", null, 39, null)));
+
+        assertEquals(1, personList.size());
+
+        personList = personRepo.search(getMapSqlParameterSource(new SearchPerson(null, null, 29, 39)));
+
+        assertEquals(2, personList.size());
     }
 
-    private MapSqlParameterSource getMapSqlParameterSource(Person person) {
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
+    @Test
+    void searchByTokenInName() {
+        Person personForSearchByToken = newPersonForTest();
+        personForSearchByToken.setFirstName("VladIsLove");
+        personRepo.addPerson(getMapSqlParameterSource(personForSearchByToken));
 
-        parameters.addValue("id", person.getId());
-        parameters.addValue("firstname", person.getFirstName());
-        parameters.addValue("lastname", person.getLastName());
-        parameters.addValue("age", person.getAge());
-        return parameters;
+        List<Person> personList = personRepo.searchByTokenInName(PersonService.getMapParamFromToken("IsLo"));
+
+        assertEquals(1, personList.size());
     }
 }
