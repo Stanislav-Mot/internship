@@ -86,10 +86,10 @@ class TaskControllerTest {
         Mockito.when(taskService.add(any(TaskDto.class))).thenReturn(1);
 
         mockMvc.perform(post("/task")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(task))
-                .characterEncoding("utf-8"))
-                .andExpect(status().isCreated())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(task))
+                        .characterEncoding("utf-8"))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.is(1)))
                 .andReturn();
 
@@ -103,16 +103,16 @@ class TaskControllerTest {
         when(taskService.update(any(TaskDto.class))).thenReturn(1);
 
         mockMvc.perform(put("/task")
-                .content(asJsonString(task))
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isAccepted())
+                        .content(asJsonString(task))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
         mockMvc.perform(put("/task")
-                .content("Wrong JSON")
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content("Wrong JSON")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message", containsStringIgnoringCase("wrong JSON format")));
 
@@ -126,7 +126,7 @@ class TaskControllerTest {
         Mockito.when(taskService.delete(task.getId())).thenReturn(1);
 
         mockMvc.perform(delete("/task/{id}", task.getId()))
-                .andExpect(status().isAccepted())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
         verify(taskService, times(1)).delete(Mockito.any(Long.class));

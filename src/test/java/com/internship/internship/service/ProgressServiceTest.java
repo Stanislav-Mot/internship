@@ -4,6 +4,7 @@ import com.internship.internship.dto.ProgressDto;
 import com.internship.internship.mapper.ProgressDtoMapper;
 import com.internship.internship.model.Progress;
 import com.internship.internship.repository.ProgressRepo;
+import com.internship.internship.repository.TaskRepo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,6 +27,8 @@ class ProgressServiceTest {
     private ProgressService progressService;
     @Mock
     private ProgressRepo progressRepo;
+    @Mock
+    private TaskRepo taskRepo;
     @Mock
     private ProgressDtoMapper mapper;
 

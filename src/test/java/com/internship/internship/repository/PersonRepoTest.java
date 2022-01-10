@@ -31,15 +31,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Sql("/data-for-person-test.sql")
 class PersonRepoTest {
 
-    private final Long CORRECT_ID = 999L;
     private final Long ID_FOR_GET = 1L;
     private final Long ID_FOR_UPDATE = 2L;
     private final Long ID_FOR_DELETE = 4L;
     private final Long ID_PERSON_FOR_DELETE_GROUP = 3L;
     private final Long ID_GROUP_FOR_DELETE = 3L;
-    private final Long ID_FOR_SEARCH_BY_TOKEN = 17L;
     @Autowired
     private PersonRepo personRepo;
+    @Autowired
+    private GroupRepo groupRepo;
+
     private Integer COUNT_PERSONS = 4;
 
     @Test
@@ -99,6 +100,11 @@ class PersonRepoTest {
     void addGroupToPerson() {
         Person person = personRepo.getPersonById(ID_FOR_GET);
         Group group = new Group(9999L, "testGroup", null, person);
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("id", group.getId());
+        parameters.addValue("name", group.getName());
+
+        groupRepo.addGroup(parameters);
 
         Integer answer = personRepo.addGroupToPerson(person.getId(), group);
         assertEquals(1, answer);

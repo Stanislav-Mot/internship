@@ -4,6 +4,7 @@ import com.internship.internship.dto.ProgressDto;
 import com.internship.internship.mapper.ProgressDtoMapper;
 import com.internship.internship.model.Progress;
 import com.internship.internship.repository.ProgressRepo;
+import com.internship.internship.repository.TaskRepo;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +16,12 @@ public class ProgressService {
 
     private final ProgressRepo progressRepo;
     private final ProgressDtoMapper mapper;
+    private final TaskRepo taskRepo;
 
-    public ProgressService(ProgressRepo progressRepo, ProgressDtoMapper mapper) {
+    public ProgressService(ProgressRepo progressRepo, ProgressDtoMapper mapper, TaskRepo taskRepo) {
         this.progressRepo = progressRepo;
         this.mapper = mapper;
+        this.taskRepo = taskRepo;
     }
 
     public static MapSqlParameterSource getMapSqlParameterSource(Progress progress) {
@@ -51,7 +54,6 @@ public class ProgressService {
 
     public Integer add(ProgressDto progressDto) {
         Progress progress = mapper.convertToEntity(progressDto);
-
         MapSqlParameterSource parameters = getMapSqlParameterSource(progress);
 
         return progressRepo.addProgress(parameters);
