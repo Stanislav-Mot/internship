@@ -41,6 +41,10 @@ public class TrustSet<T> implements java.util.Set<T>, Serializable {
         }
     }
 
+    static <E> E elementAt(Object[] es, int index) {
+        return (E) es[index];
+    }
+
     @Override
     public int size() {
         return size;
@@ -165,7 +169,6 @@ public class TrustSet<T> implements java.util.Set<T>, Serializable {
         return true;
     }
 
-
     @Override
     public void clear() {
         for (int to = size, i = size = 0; i < to; i++)
@@ -225,9 +228,5 @@ public class TrustSet<T> implements java.util.Set<T>, Serializable {
                 lastRet = i - 1;
             }
         }
-    }
-
-    static <E> E elementAt(Object[] es, int index) {
-        return (E) es[index];
     }
 }

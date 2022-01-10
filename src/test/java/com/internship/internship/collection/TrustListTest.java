@@ -22,7 +22,6 @@ class TrustListTest {
     @Test
     void isEmpty() {
         list.clear();
-        ;
         assertEquals(true, list.isEmpty());
         list.add(1);
         assertEquals(false, list.isEmpty());
@@ -32,7 +31,7 @@ class TrustListTest {
     @Test
     void contains() {
         list.add(93);
-        assertEquals(true, list.contains((Object) 93));
+        assertEquals(true, list.contains(93));
     }
 
     @Test

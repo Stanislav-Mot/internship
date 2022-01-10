@@ -54,15 +54,15 @@ class TaskControllerTest {
         Mockito.when(taskService.getById(CORRECT_ID)).thenReturn(task);
 
         mockMvc.perform(get("/task/{id}", CORRECT_ID)).andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id", Matchers.is(Math.toIntExact(CORRECT_ID))))
-            .andExpect(jsonPath("$.name", containsStringIgnoringCase("Tester")));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", Matchers.is(Math.toIntExact(CORRECT_ID))))
+                .andExpect(jsonPath("$.name", containsStringIgnoringCase("Tester")));
 
         Mockito.when(taskService.getById(WRONG_ID)).thenThrow(DataNotFoundException.class).thenReturn(null);
 
         mockMvc.perform(get("/task/{id}", WRONG_ID))
-            .andExpect(status().isNotFound())
-            .andExpect(result -> assertTrue(result.getResolvedException() instanceof DataNotFoundException));
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof DataNotFoundException));
 
         verify(taskService, times(2)).getById(Mockito.any());
     }
@@ -75,8 +75,8 @@ class TaskControllerTest {
         Mockito.when(taskService.getAll()).thenReturn(tasks);
 
         mockMvc.perform(get("/task")).andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$..name", Matchers.contains("Tester")));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$..name", Matchers.contains("Tester")));
     }
 
     @Test
@@ -86,13 +86,13 @@ class TaskControllerTest {
         Mockito.when(taskService.add(any(Task.class))).thenReturn(1);
 
         mockMvc.perform(post("/task")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(task))
-                .characterEncoding("utf-8")
-            ).andDo(print())
-            .andExpect(status().isCreated())
-            .andExpect(jsonPath("$", Matchers.is(1)))
-            .andReturn();
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(task))
+                        .characterEncoding("utf-8")
+                ).andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$", Matchers.is(1)))
+                .andReturn();
 
         verify(taskService, times(1)).add(Mockito.any(Task.class));
     }
@@ -104,22 +104,22 @@ class TaskControllerTest {
         when(taskService.update(any(Task.class))).thenReturn(1);
 
         mockMvc.perform(put("/task")
-                .content(asJsonString(task))
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andDo(print())
-            .andExpect(status().isAccepted())
-            .andExpect(jsonPath("$", Matchers.is(1)));
+                        .content(asJsonString(task))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isAccepted())
+                .andExpect(jsonPath("$", Matchers.is(1)));
 
         mockMvc.perform(put("/task")
-                .content("Wrong JSON")
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andDo(print())
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.message", containsStringIgnoringCase("wrong JSON format")));
+                        .content("Wrong JSON")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message", containsStringIgnoringCase("wrong JSON format")));
 
         verify(taskService, times(1)).update(Mockito.any(Task.class));
     }
@@ -131,9 +131,9 @@ class TaskControllerTest {
         Mockito.when(taskService.delete(task.getId())).thenReturn(1);
 
         mockMvc.perform(delete("/task/{id}", task.getId()))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$", Matchers.is(1)));
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Matchers.is(1)));
 
         verify(taskService, times(1)).delete(Mockito.any(Long.class));
     }

@@ -87,7 +87,7 @@ class PersonRepoTest {
         assertEquals(1, answer);
 
         Assertions.assertThatThrownBy(() -> personRepo.getPersonById(ID_FOR_DELETE))
-            .isInstanceOf(DataNotFoundException.class);
+                .isInstanceOf(DataNotFoundException.class);
     }
 
     @Test

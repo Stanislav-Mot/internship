@@ -29,9 +29,9 @@ public class TaskRepo {
 
     public Task getTaskById(Long id) {
         String sql = "select * from tasks t " +
-            "left join persons p on p.id = t.id_person " +
-            "left join progresses pr on pr.id = t.id_progress " +
-            "where t.id = ?";
+                "left join persons p on p.id = t.id_person " +
+                "left join progresses pr on pr.id = t.id_progress " +
+                "where t.id = ?";
         try {
             return jdbcTemplate.queryForObject(sql, new TaskMapper(), id);
         } catch (EmptyResultDataAccessException exception) {
@@ -43,38 +43,38 @@ public class TaskRepo {
 
     public List<Task> getAllTasks() {
         String sql = "select * from tasks t " +
-            "left join persons p on p.id = t.id_person " +
-            "left join progresses pr on pr.id = t.id_progress";
+                "left join persons p on p.id = t.id_person " +
+                "left join progresses pr on pr.id = t.id_progress";
 
         return jdbcTemplate.query(sql, new TaskMapper());
     }
 
     public Integer addTask(SqlParameterSource parameters) {
         String sql = "insert into tasks (id, name, start_time, id_person, id_progress) " +
-            "values (:id, :name, :date, :personId, :progressId);";
+                "values (:id, :name, :date, :personId, :progressId);";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
 
     public Integer updateTask(SqlParameterSource parameters) {
         String sql = "update tasks set name = :name," +
-            "start_time = :date, id_person = :personId, " +
-            "id_progress = :progressId where id = :id";
+                "start_time = :date, id_person = :personId, " +
+                "id_progress = :progressId where id = :id";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
 
     public Integer deleteTask(Long id) {
         String sql = "update progresses set id_task = null where id_task = ?; " +
-            "delete from tasks_groups where id_task = ?; " +
-            "delete from tasks where id = ?;";
+                "delete from tasks_groups where id_task = ?; " +
+                "delete from tasks where id = ?;";
 
         return jdbcTemplate.update(sql, id, id, id);
     }
 
     public List<Group> getGroupsById(Long id) {
         String sqlForGroup = "select * from tasks t join tasks_groups tg on t.id = tg.id_task " +
-            "join groups g on tg.id_group = g.id where t.id = ?";
+                "join groups g on tg.id_group = g.id where t.id = ?";
 
         return jdbcTemplate.query(sqlForGroup, new GroupMapper(), id);
     }

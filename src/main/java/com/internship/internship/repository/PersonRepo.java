@@ -29,14 +29,14 @@ public class PersonRepo {
 
     public Integer addPerson(SqlParameterSource parameters) {
         String sql = "insert into persons (id, firstname, lastname, age) " +
-            "values (:id, :firstname, :lastname, :age);";
+                "values (:id, :firstname, :lastname, :age);";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
 
     public Integer updatePerson(SqlParameterSource parameters) {
         String sql = "update persons set firstname = :firstname," +
-            " lastname = :lastname, age = :age where id = :id;";
+                " lastname = :lastname, age = :age where id = :id;";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
@@ -81,7 +81,7 @@ public class PersonRepo {
 
     public List<Group> getGroupsById(Long id) {
         String sqlForGroup =
-            "select * from persons p join groups g on p.id = g.id_person where p.id = ?";
+                "select * from persons p join groups g on p.id = g.id_person where p.id = ?";
 
         return jdbcTemplate.query(sqlForGroup, new GroupMapper(), id);
     }
