@@ -6,13 +6,15 @@ import java.util.function.Consumer;
 public class TrustList<T> implements java.util.List<T> {
 
     private static final Object[] DEFAULT_CAPACITY_EMPTY_ELEMENT_DATA = {};
-
-    private int size;
-
     Object[] elementData;
+    private int size;
 
     public TrustList() {
         this.elementData = DEFAULT_CAPACITY_EMPTY_ELEMENT_DATA;
+    }
+
+    static <E> E elementAt(Object[] es, int index) {
+        return (E) es[index];
     }
 
     @Override
@@ -96,7 +98,6 @@ public class TrustList<T> implements java.util.List<T> {
                 return false;
         return true;
     }
-
 
     @Override
     public boolean addAll(Collection<? extends T> c) {
@@ -336,9 +337,5 @@ public class TrustList<T> implements java.util.List<T> {
                 lastRet = i - 1;
             }
         }
-    }
-
-    static <E> E elementAt(Object[] es, int index) {
-        return (E) es[index];
     }
 }

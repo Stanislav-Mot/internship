@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CompareWithRealList {
-    private List<Integer> trustList = new TrustList<>();
-    private List<Integer> realList = new ArrayList<>();
+    private final List<Integer> trustList = new TrustList<>();
+    private final List<Integer> realList = new ArrayList<>();
 
     @Test
     void realAddTest() {
