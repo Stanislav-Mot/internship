@@ -1,17 +1,19 @@
 package com.internship.internship.controller;
 
-import com.internship.internship.model.Person;
-import com.internship.internship.model.Task;
+import com.internship.internship.dto.PersonDto;
+import com.internship.internship.dto.TaskDto;
 import com.internship.internship.model.search.SearchPerson;
 import com.internship.internship.model.search.SearchTask;
 import com.internship.internship.service.PersonService;
 import com.internship.internship.service.TaskService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
+@Tag(name = "Search", description = "Api for searching")
 @RestController
 public class SearchController {
 
@@ -23,26 +25,30 @@ public class SearchController {
         this.taskService = taskService;
     }
 
+    @Operation(
+            summary = "Search persons by parameters",
+            description = "search for occurrence of parameters in firstName (exact) + lastName (exact) + age (range/exact)"
+    )
     @PostMapping("/search/person")
-    public ResponseEntity<List<Person>> getPersonsByParameters(@RequestBody SearchPerson parameters) {
-        List<Person> persons = personService.search(parameters);
-
-        return (persons != null) ?
-                new ResponseEntity<>(persons, HttpStatus.OK) :
-                new ResponseEntity<>(persons, HttpStatus.NOT_FOUND);
+    public List<PersonDto> getPersonsByParameters(@Valid @RequestBody SearchPerson parameters) {
+        return personService.search(parameters);
     }
 
+    @Operation(
+            summary = "Search persons by token",
+            description = "search for occurrence of a token in firstName + lastName"
+    )
     @GetMapping("/search/personByToken")
-    public List<Person> searchPersonByTokenInName(@RequestParam String token) {
+    public List<PersonDto> searchPersonByTokenInName(@RequestParam String token) {
         return personService.searchByTokenInName(token);
     }
 
+    @Operation(
+            summary = "Search task by parameters",
+            description = "search for occurrence of a parameters in name (exact) + progress (range) + startTime (range"
+    )
     @PostMapping("/search/task")
-    public ResponseEntity<List<Task>> getTasksByParameters(@RequestBody SearchTask parameters) {
-        List<Task> tasks = taskService.search(parameters);
-
-        return (tasks != null) ?
-                new ResponseEntity<>(tasks, HttpStatus.OK) :
-                new ResponseEntity<>(tasks, HttpStatus.NOT_FOUND);
+    public List<TaskDto> getTasksByParameters(@Valid @RequestBody SearchTask parameters) {
+        return taskService.search(parameters);
     }
 }

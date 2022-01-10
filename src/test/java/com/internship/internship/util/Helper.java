@@ -1,6 +1,10 @@
 package com.internship.internship.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.internship.internship.dto.GroupDto;
+import com.internship.internship.dto.PersonDto;
+import com.internship.internship.dto.ProgressDto;
+import com.internship.internship.dto.TaskDto;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
 import com.internship.internship.model.Progress;
@@ -34,5 +38,26 @@ public class Helper {
 
     public static Task newTaskForTest() {
         return new Task(CORRECT_ID, "Tester", "2021-06-09", null, null, null);
+    }
+
+
+    public static GroupDto newGroupDtoForTest() {
+        return new GroupDto(CORRECT_ID, "Tester", null, new PersonDto(1L));
+    }
+
+    public static GroupDto newGroupDtoForTest(PersonDto person) {
+        return new GroupDto(CORRECT_ID, "TesterGroup", null, person);
+    }
+
+    public static ProgressDto newProgressDtoForTest() {
+        return new ProgressDto(CORRECT_ID, new TaskDto(9L), (short) 99);
+    }
+
+    public static PersonDto newPersonDtoForTest() {
+        return new PersonDto(CORRECT_ID, "Tester", "Rochester", 99, null);
+    }
+
+    public static TaskDto newTaskDtoForTest() {
+        return new TaskDto(CORRECT_ID, "Tester", "2021-06-09", null, null, null);
     }
 }

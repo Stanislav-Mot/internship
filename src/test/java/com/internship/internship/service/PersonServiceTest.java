@@ -1,5 +1,9 @@
 package com.internship.internship.service;
 
+import com.internship.internship.dto.GroupDto;
+import com.internship.internship.dto.PersonDto;
+import com.internship.internship.mapper.GroupDtoMapper;
+import com.internship.internship.mapper.PersonDtoMapper;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
 import com.internship.internship.model.search.SearchPerson;
@@ -16,29 +20,33 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.internship.internship.util.Helper.newGroupForTest;
-import static com.internship.internship.util.Helper.newPersonForTest;
+import static com.internship.internship.util.Helper.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PersonServiceTest {
 
-    private final Long CORRECT_ID = 999L;
     @InjectMocks
     private PersonService personService;
     @Mock
     private PersonRepo personRepo;
+    @Mock
+    private PersonDtoMapper mapper;
+    @Mock
+    private GroupDtoMapper groupDtoMapper;
 
     @Test
     void getById() {
         Person person = newPersonForTest();
+        PersonDto personDto = newPersonDtoForTest();
 
         when(personRepo.getPersonById(person.getId())).thenReturn(person);
+        when(mapper.convertToDto(person)).thenReturn(personDto);
 
-        Person personFromService = personService.getById(person.getId());
+        PersonDto personFromService = personService.getById(person.getId());
 
-        assertEquals(personFromService, person);
+        assertEquals(personFromService, personDto);
 
         verify(personRepo, times(1)).getPersonById(person.getId());
     }
@@ -52,7 +60,7 @@ class PersonServiceTest {
 
         when(personRepo.getAllPersons()).thenReturn(list);
 
-        List<Person> personList = personService.getAll();
+        List<PersonDto> personList = personService.getAll();
 
         assertEquals(3, personList.size());
         verify(personRepo, times(1)).getAllPersons();
@@ -60,11 +68,13 @@ class PersonServiceTest {
 
     @Test
     void add() {
+        PersonDto personDto = newPersonDtoForTest();
         Person person = newPersonForTest();
 
         when(personRepo.addPerson(any(MapSqlParameterSource.class))).thenReturn(1);
+        when(mapper.convertToEntity(personDto)).thenReturn(person);
 
-        Integer result = personService.add(person);
+        Integer result = personService.add(personDto);
 
         assertEquals(1, result);
 
@@ -73,11 +83,13 @@ class PersonServiceTest {
 
     @Test
     void update() {
+        PersonDto personDto = newPersonDtoForTest();
         Person person = newPersonForTest();
 
         when(personRepo.updatePerson(any(MapSqlParameterSource.class))).thenReturn(1);
+        when(mapper.convertToEntity(personDto)).thenReturn(person);
 
-        Integer result = personService.update(person);
+        Integer result = personService.update(personDto);
 
         assertEquals(1, result);
 
@@ -113,23 +125,25 @@ class PersonServiceTest {
 
     @Test
     void addGroup() {
-        Person person = newPersonForTest();
-        Group group = newGroupForTest(person);
+        PersonDto personDto = newPersonDtoForTest();
+        Group group = newGroupForTest();
+        GroupDto groupDto = newGroupDtoForTest();
 
-        when(personRepo.addGroupToPerson(person.getId(), group)).thenReturn(1);
+        when(personRepo.addGroupToPerson(personDto.getId(), group)).thenReturn(1);
+        when(groupDtoMapper.convertToEntity(groupDto)).thenReturn(group);
 
-        Integer result = personService.addGroup(person.getId(), group);
+        Integer result = personService.addGroup(personDto.getId(), groupDto);
 
         assertEquals(1, result);
 
-        verify(personRepo, times(1)).addGroupToPerson(person.getId(), group);
+        verify(personRepo, times(1)).addGroupToPerson(personDto.getId(), group);
     }
 
     @Test
     void getMapSqlParameterSource() {
         Person person = newPersonForTest();
 
-        MapSqlParameterSource parametersFromService = personService.getMapSqlParameterSource(person);
+        MapSqlParameterSource parametersFromService = PersonService.getMapSqlParameterSource(person);
         MapSqlParameterSource parametersFromTest = new MapSqlParameterSource();
 
         parametersFromTest.addValue("id", person.getId());
@@ -148,7 +162,7 @@ class PersonServiceTest {
 
         when(personRepo.search(any(MapSqlParameterSource.class))).thenReturn(list);
 
-        List<Person> personList = personService.search(parameters);
+        List<PersonDto> personList = personService.search(parameters);
 
         assertEquals(1, personList.size());
         verify(personRepo, times(1)).search(any(MapSqlParameterSource.class));
@@ -161,7 +175,7 @@ class PersonServiceTest {
 
         when(personRepo.searchByTokenInName(any(Map.class))).thenReturn(list);
 
-        List<Person> personList = personService.searchByTokenInName(person.getFirstName());
+        List<PersonDto> personList = personService.searchByTokenInName(person.getFirstName());
 
         assertEquals(1, personList.size());
         verify(personRepo, times(1)).searchByTokenInName(any(Map.class));

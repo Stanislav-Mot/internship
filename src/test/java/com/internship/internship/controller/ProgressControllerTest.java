@@ -1,5 +1,6 @@
 package com.internship.internship.controller;
 
+import com.internship.internship.dto.ProgressDto;
 import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.model.Progress;
 import com.internship.internship.service.ProgressService;
@@ -18,14 +19,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Collections;
 import java.util.List;
 
-import static com.internship.internship.util.Helper.asJsonString;
-import static com.internship.internship.util.Helper.newProgressForTest;
+import static com.internship.internship.util.Helper.*;
 import static org.hamcrest.Matchers.containsStringIgnoringCase;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -49,11 +48,11 @@ class ProgressControllerTest {
 
     @Test
     void getProgress() throws Exception {
-        Progress progress = newProgressForTest();
+        ProgressDto progressDto = newProgressDtoForTest();
 
-        Mockito.when(progressService.getById(CORRECT_ID)).thenReturn(progress);
+        Mockito.when(progressService.getById(CORRECT_ID)).thenReturn(progressDto);
 
-        mockMvc.perform(get("/progress/{id}", CORRECT_ID)).andDo(print())
+        mockMvc.perform(get("/progress/{id}", CORRECT_ID))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", Matchers.is(Math.toIntExact(CORRECT_ID))))
                 .andExpect(jsonPath("$.percents", Matchers.is(99)));
@@ -65,17 +64,17 @@ class ProgressControllerTest {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof DataNotFoundException));
 
         verify(progressService, times(2)).getById(Mockito.any());
-
     }
 
     @Test
     void getAllProgress() throws Exception {
-        Progress progress = newProgressForTest();
-        List<Progress> progresses = Collections.singletonList(progress);
+        ProgressDto progressDto = newProgressDtoForTest();
+
+        List<ProgressDto> progresses = Collections.singletonList(progressDto);
 
         Mockito.when(progressService.getAll()).thenReturn(progresses);
 
-        mockMvc.perform(get("/progress")).andDo(print())
+        mockMvc.perform(get("/progress"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..percents", Matchers.contains(99)));
     }
@@ -84,46 +83,40 @@ class ProgressControllerTest {
     void addProgress() throws Exception {
         Progress progress = newProgressForTest();
 
-        Mockito.when(progressService.add(any(Progress.class))).thenReturn(1);
+        Mockito.when(progressService.add(any(ProgressDto.class))).thenReturn(1);
 
         mockMvc.perform(post("/progress")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(progress))
-                        .characterEncoding("utf-8")
-                ).andDo(print())
-                .andExpect(status().isCreated())
+                        .characterEncoding("utf-8"))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.is(1)))
                 .andReturn();
 
-        verify(progressService, times(1)).add(Mockito.any(Progress.class));
-
+        verify(progressService, times(1)).add(Mockito.any(ProgressDto.class));
     }
 
     @Test
     void updateProgress() throws Exception {
         Progress progress = newProgressForTest();
 
-        when(progressService.update(any(Progress.class))).thenReturn(1);
+        when(progressService.update(any(ProgressDto.class))).thenReturn(1);
 
         mockMvc.perform(put("/progress")
                         .content(asJsonString(progress))
                         .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andDo(print())
-                .andExpect(status().isAccepted())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
         mockMvc.perform(put("/progress")
                         .content("Wrong JSON")
                         .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andDo(print())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message", containsStringIgnoringCase("wrong JSON format")));
 
-        verify(progressService, times(1)).update(Mockito.any(Progress.class));
+        verify(progressService, times(1)).update(Mockito.any(ProgressDto.class));
     }
 
     @Test
@@ -133,8 +126,7 @@ class ProgressControllerTest {
         Mockito.when(progressService.delete(progress.getId())).thenReturn(1);
 
         mockMvc.perform(delete("/progress/{id}", progress.getId()))
-                .andDo(print())
-                .andExpect(status().isAccepted())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
         verify(progressService, times(1)).delete(Mockito.any(Long.class));

@@ -12,10 +12,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
 
+@Transactional
 @Repository
 public class PersonRepo {
 
@@ -72,13 +74,12 @@ public class PersonRepo {
     }
 
     public Integer addGroupToPerson(Long id, Group group) {
-        String sql = "insert into groupOfTasks (id_person, id) values (?,?) ";
+        String sql = "update groupOfTasks set id_person = ? where id = ?;";
         return jdbcTemplate.update(sql, id, group.getId());
-
     }
 
     public Integer deleteGroupFromPerson(Long personId, Long groupId) {
-        String sql = "delete from groupOfTasks where id_person = ? and id = ?;";
+        String sql = "update groupOfTasks set id_person = null  where id_person = ? and id = ?;";
         return jdbcTemplate.update(sql, personId, groupId);
 
     }

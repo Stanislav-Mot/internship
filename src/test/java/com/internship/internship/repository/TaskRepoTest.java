@@ -102,8 +102,9 @@ class TaskRepoTest {
         taskRepo.addTask(getMapSqlParameterSource(taskFroSearch));
 
         List<Task> tasks = taskRepo.search(getMapSqlParameterSource(
-                new SearchTask("searching", LocalDateTime.now(),
-                        LocalDateTime.of(2015, Month.JULY, 29, 19, 30, 40))));
+                new SearchTask("searching",
+                        LocalDateTime.of(2015, Month.JULY, 29, 19, 30, 40),
+                        LocalDateTime.now())));
 
         assertEquals(1, tasks.size());
     }

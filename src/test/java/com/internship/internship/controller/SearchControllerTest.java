@@ -1,7 +1,7 @@
 package com.internship.internship.controller;
 
-import com.internship.internship.model.Person;
-import com.internship.internship.model.Task;
+import com.internship.internship.dto.PersonDto;
+import com.internship.internship.dto.TaskDto;
 import com.internship.internship.model.search.SearchPerson;
 import com.internship.internship.model.search.SearchTask;
 import com.internship.internship.service.PersonService;
@@ -27,7 +27,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -35,7 +34,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 class SearchControllerTest {
 
-    public static final Long CORRECT_ID = 999L;
     @MockBean
     private PersonService personService;
     @MockBean
@@ -52,9 +50,10 @@ class SearchControllerTest {
 
     @Test
     void getPersonsByParameters() throws Exception {
-        Person person = newPersonForTest();
+        PersonDto personDto = newPersonDtoForTest();
+
         SearchPerson parameters = new SearchPerson("Tester", null, null, null);
-        List<Person> list = Collections.singletonList(person);
+        List<PersonDto> list = Collections.singletonList(personDto);
 
         Mockito.when(personService.search(parameters)).thenReturn(list);
 
@@ -62,7 +61,6 @@ class SearchControllerTest {
                         .content(asJsonString(parameters))
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..firstName", Matchers.contains("Tester")));
 
@@ -70,7 +68,6 @@ class SearchControllerTest {
                         .content("Wrong JSON")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message", containsStringIgnoringCase("wrong JSON format")));
 
@@ -80,9 +77,10 @@ class SearchControllerTest {
 
     @Test
     void getTasksByParameters() throws Exception {
-        Task task = newTaskForTest();
+        TaskDto taskDto = newTaskDtoForTest();
+
         SearchTask parameters = new SearchTask("Tester", null, null, null, null);
-        List<Task> list = Collections.singletonList(task);
+        List<TaskDto> list = Collections.singletonList(taskDto);
 
         Mockito.when(taskService.search(parameters)).thenReturn(list);
 
@@ -90,7 +88,6 @@ class SearchControllerTest {
                         .content(asJsonString(parameters))
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..name", Matchers.contains("Tester")));
 
@@ -98,7 +95,6 @@ class SearchControllerTest {
                         .content("Wrong JSON")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message", containsStringIgnoringCase("wrong JSON format")));
 
@@ -108,14 +104,14 @@ class SearchControllerTest {
     @Test
     void searchPersonByTokenInName() throws Exception {
         String token = "ster";
-        Person person = newPersonForTest();
-        List<Person> list = Collections.singletonList(person);
+        PersonDto personDto = newPersonDtoForTest();
+
+        List<PersonDto> list = Collections.singletonList(personDto);
 
         Mockito.when(personService.searchByTokenInName(token)).thenReturn(list);
 
         mockMvc.perform(get("/search/personByToken")
                         .param("token", token))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..firstName", Matchers.contains("Tester")));
 
