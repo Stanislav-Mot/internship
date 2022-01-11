@@ -64,7 +64,7 @@ public class GroupController {
 
     @Operation(summary = "Delete task from group")
     @PutMapping("/group/{id}/task/{idTask}")
-    public Integer updateConstraints(@PathVariable Long id, @PathVariable Long idTask) {
+    public Integer deleteTaskFromGroup(@PathVariable Long id, @PathVariable Long idTask) {
         return groupService.deleteTask(id, idTask);
     }
 
@@ -90,4 +90,17 @@ public class GroupController {
     public Integer setPriorityFlag(@PathVariable Long id, @RequestBody boolean flag) {
         return groupService.setPriorityFlag(id, flag);
     }
+
+    @Operation(summary = "Add group to group")
+    @PutMapping("/group/{id}/addGroup/{idGroup}")
+    public Integer addGroupToGroup(@PathVariable Long id, @PathVariable Long idGroup) {
+        return groupService.addGroup(id, idGroup);
+    }
+
+    @Operation(summary = "Delete group from group")
+    @PutMapping("/group/{id}/deleteGroup/{idGroup}")
+    public Integer deleteGroupFromGroup(@PathVariable Long id, @PathVariable Long idGroup) {
+        return groupService.deleteGroup(id, idGroup);
+    }
+
 }

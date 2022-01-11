@@ -1,5 +1,7 @@
 package com.internship.internship.model;
 
+import com.internship.internship.model.Composite.CompositeTask;
+import com.internship.internship.model.Composite.ParentTask;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,11 +11,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Group {
+public class Group implements ParentTask {
 
     private Long id;
     private String name;
-    private List<Task> tasks;
+    private CompositeTask tasks;
     private Person person;
     private boolean priority;
 
@@ -26,7 +28,7 @@ public class Group {
         this.id = id;
     }
 
-    public Group(Long id, String name, List<Task> tasks, Person person) {
+    public Group(Long id, String name, CompositeTask tasks, Person person) {
         this.id = id;
         this.name = name;
         this.tasks = tasks;

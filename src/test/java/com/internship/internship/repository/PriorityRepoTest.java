@@ -46,7 +46,7 @@ class PriorityRepoTest {
         assertEquals(1, answer);
 
         Assertions.assertThatThrownBy(() ->
-                priorityRepo.getPriorityById(ID_FOR_DELETE))
+                        priorityRepo.getPriorityById(ID_FOR_DELETE))
                 .isInstanceOf(DataNotFoundException.class);
     }
 

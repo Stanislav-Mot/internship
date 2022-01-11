@@ -4,6 +4,7 @@ import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.mapper.GroupMapper;
 import com.internship.internship.mapper.PriorityMapper;
 import com.internship.internship.mapper.TaskMapper;
+import com.internship.internship.model.Composite.CompositeTask;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Priority;
 import com.internship.internship.model.Task;
@@ -31,12 +32,27 @@ public class GroupRepo {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    //
+    public Group getGroupById(Long id) {
+        String sql = "select * from groupOfTasks g left join person p on p.id = g.id_person where g.id = ?";
+        try {
+            Group group = jdbcTemplate.queryForObject(sql, new GroupMapper(), id);
+            group.setTasks(getCompositeTasks(id));
+            if (group.isPriority()) {
+                group.setPriorityList(getAllPriorityByGroupId(group.getId()));
+            }
+            return group;
+        } catch (EmptyResultDataAccessException exception) {
+            LOGGER.warn("handling 404 error on getGroupById method");
+
+            throw new DataNotFoundException(String.format("Group Id %d is not found", id));
+        }
+    }
+
     public List<Group> getAll() {
         String sql = "select * from groupOfTasks g left join person p on p.id = g.id_person";
         List<Group> groups = jdbcTemplate.query(sql, new GroupMapper());
         for (Group group : groups) {
-            group.setTasks(getTasksById(group.getId()));
+            group.setTasks(getCompositeTasks(group.getId()));
         }
         return groups;
     }
@@ -74,23 +90,6 @@ public class GroupRepo {
         return jdbcTemplate.update(sql, idTask, idGroup);
     }
 
-    //
-    public Group getGroupById(Long id) {
-        String sql = "select * from groupOfTasks g left join person p on p.id = g.id_person where g.id = ?";
-        try {
-            Group group = jdbcTemplate.queryForObject(sql, new GroupMapper(), id);
-            group.setTasks(getTasksById(id));
-            if(group.isPriority()){
-                group.setPriorityList(getAllPriorityByGroupId(group.getId()));
-            }
-            return group;
-        } catch (EmptyResultDataAccessException exception) {
-            LOGGER.warn("handling 404 error on getGroupById method");
-
-            throw new DataNotFoundException(String.format("Group Id %d is not found", id));
-        }
-    }
-
     public List<Task> getTasksById(Long id) {
         String sqlForGroup = "select t.id, t.name, t.start_time, t.id_person,t.id_progress, " +
                 "t.description, t.estimate, t.spent_time from groupOfTasks g " +
@@ -109,5 +108,35 @@ public class GroupRepo {
         String sql = "select * from priority_of_task p where p.id_group = ?";
 
         return jdbcTemplate.query(sql, new PriorityMapper(), id);
+    }
+
+    private CompositeTask getCompositeTasks(Long id) {
+        CompositeTask compositeTasks = new CompositeTask();
+
+        List<Task> taskList = getTasksById(id);
+        compositeTasks.addAll(taskList);
+
+        List<Group> groupList = getAllGroupInGroup(id);
+        compositeTasks.addAll(groupList);
+
+        return compositeTasks;
+    }
+
+    private List<Group> getAllGroupInGroup(Long id) {
+        String sql = "select * from groupOfTasks g join group_in_group gig on g.id = gig.id_child where gig.id_parent = ?;";
+        List<Group> groups = jdbcTemplate.query(sql, new GroupMapper(), id);
+        return groups;
+    }
+
+    public Integer addGroupToGroup(Long id, Long idGroup) {
+        String sql = "insert into group_in_group (id_parent, id_child) values (?,?) ";
+
+        return jdbcTemplate.update(sql, id, idGroup);
+    }
+
+    public Integer deleteGroupFromGroup(Long id, Long idGroup) {
+        String sql = "delete from group_in_group where id_parent = ? and id_child = ?";
+
+        return jdbcTemplate.update(sql, id, idGroup);
     }
 }

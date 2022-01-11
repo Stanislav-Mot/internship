@@ -77,4 +77,12 @@ public class GroupService {
     public Integer setPriorityFlag(Long id, boolean flag) {
         return groupRepo.setPriority(id, flag);
     }
+
+    public Integer addGroup(Long id, Long idGroup) {
+        return groupRepo.addGroupToGroup(id, idGroup);
+    }
+
+    public Integer deleteGroup(Long id, Long idGroup) {
+        return groupRepo.deleteGroupFromGroup(id, idGroup);
+    }
 }

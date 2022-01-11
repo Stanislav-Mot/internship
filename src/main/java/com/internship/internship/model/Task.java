@@ -1,5 +1,6 @@
 package com.internship.internship.model;
 
+import com.internship.internship.model.Composite.ParentTask;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Task {
+public class Task implements ParentTask {
 
     private Long id;
     private String name;

@@ -4,7 +4,6 @@ import com.internship.internship.dto.ProgressDto;
 import com.internship.internship.mapper.ProgressDtoMapper;
 import com.internship.internship.model.Progress;
 import com.internship.internship.repository.ProgressRepo;
-import com.internship.internship.repository.TaskRepo;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Service;
 

@@ -126,4 +126,29 @@ class GroupRepoTest {
         parameters.addValue("id_person", group.getPerson().getId());
         return parameters;
     }
+
+
+    @Test
+    void addGroupToGroup() {
+        Group groupIn = new Group(4L);
+
+        Integer answer = groupRepo.addGroupToGroup(1L, 4L);
+
+        assertEquals(1, answer);
+
+        Group group = groupRepo.getGroupById(1L);
+
+        assertEquals(4, group.getTasks().size());
+    }
+
+    @Test
+    void deleteGroupFromGroup() {
+        Integer answer = groupRepo.deleteGroupFromGroup(1L, 3L);
+
+        assertEquals(1, answer);
+
+        Group group = groupRepo.getGroupById(1L);
+
+        assertEquals(2, group.getTasks().size());
+    }
 }

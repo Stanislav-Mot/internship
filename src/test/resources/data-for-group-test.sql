@@ -20,3 +20,6 @@ VALUES (2, 1),
        (2, 3),
        (4, 3),
        (8888, 1);
+
+INSERT INTO group_in_group (id_parent, id_child)
+VALUES (1,3);

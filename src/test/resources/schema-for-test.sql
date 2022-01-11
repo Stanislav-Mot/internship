@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS progress CASCADE;
 DROP TABLE IF EXISTS task CASCADE;
 DROP TABLE IF EXISTS task_group CASCADE;
 DROP TABLE IF EXISTS priority_of_task CASCADE;
+DROP TABLE IF EXISTS group_in_group CASCADE;
 
 CREATE TABLE person
 (
@@ -18,7 +19,9 @@ CREATE TABLE groupOfTasks
     id        INT8 NOT NULL PRIMARY KEY,
     id_person BIGINT,
     name      VARCHAR(256),
-    FOREIGN KEY (id_person) REFERENCES person (id) ON DELETE CASCADE
+    id_group  INT8,
+    FOREIGN KEY (id_person) REFERENCES person (id) ON DELETE CASCADE,
+    FOREIGN KEY (id_group) REFERENCES groupOfTasks(id)
 );
 
 
@@ -76,3 +79,12 @@ create table priority_of_task
 
 ALTER TABLE groupOfTasks
     ADD COLUMN priority boolean;
+
+create table group_in_group
+(
+    id_parent INT8 NOT NULL,
+    id_child  INT8 NOT NULL,
+    PRIMARY KEY (id_parent, id_child),
+    FOREIGN KEY (id_parent) REFERENCES groupOfTasks (id) ON DELETE CASCADE,
+    FOREIGN KEY (id_child) REFERENCES groupOfTasks (id) ON DELETE CASCADE
+);

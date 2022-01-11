@@ -1,5 +1,6 @@
 package com.internship.internship.dto;
 
+import com.internship.internship.model.Composite.ParentTask;
 import com.internship.internship.transfer.Transfer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -13,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class TaskDto {
+public class TaskDto implements ParentTask {
 
     @Schema(example = "4")
     @NotNull(message = "id should be not null", groups = {Transfer.Update.class})

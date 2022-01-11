@@ -133,4 +133,32 @@ class GroupServiceTest {
 
         verify(groupRepo, times(1)).deleteTaskFromGroup(group.getId(), task.getId());
     }
+
+    @Test
+    void addGroup() {
+        Group group = new Group(2L);
+        Group groupIn = new Group(1L);
+
+        when(groupRepo.addGroupToGroup(group.getId(), groupIn.getId())).thenReturn(1);
+
+        Integer result = groupService.addGroup(group.getId(), groupIn.getId());
+
+        assertEquals(1, result);
+
+        verify(groupRepo, times(1)).addGroupToGroup(group.getId(), groupIn.getId());
+    }
+
+    @Test
+    void deleteGroup() {
+        Group group = new Group(2L);
+        Group groupIn = new Group(1L);
+
+        when(groupRepo.deleteGroupFromGroup(group.getId(), groupIn.getId())).thenReturn(1);
+
+        Integer result = groupService.deleteGroup(group.getId(), groupIn.getId());
+
+        assertEquals(1, result);
+
+        verify(groupRepo, times(1)).deleteGroupFromGroup(group.getId(), groupIn.getId());
+    }
 }

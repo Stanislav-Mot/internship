@@ -86,9 +86,9 @@ class ProgressControllerTest {
         Mockito.when(progressService.add(any(ProgressDto.class))).thenReturn(1);
 
         mockMvc.perform(post("/progress")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(progress))
-                .characterEncoding("utf-8"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(progress))
+                        .characterEncoding("utf-8"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.is(1)))
                 .andReturn();
@@ -103,16 +103,16 @@ class ProgressControllerTest {
         when(progressService.update(any(ProgressDto.class))).thenReturn(1);
 
         mockMvc.perform(put("/progress")
-                .content(asJsonString(progress))
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(asJsonString(progress))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
         mockMvc.perform(put("/progress")
-                .content("Wrong JSON")
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content("Wrong JSON")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message", containsStringIgnoringCase("wrong JSON format")));
 
