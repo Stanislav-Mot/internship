@@ -43,10 +43,10 @@ public class PriorityController {
 
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = {@ExampleObject(
-                    value = "{\"id\": 1, \"task\": {\"id\": 4}, \"group\": {\"id\": 4}, \"priority\": 99}")})
+                    value = "{\"id\": 1, \"group\": {\"id\": 4}, \"task\": {\"id\": 4}, \"priority\": 99}")})
     )
     @Operation(summary = "Add priority")
-    @Validated(Transfer.New.class)
+    @Validated(Transfer.PriorityAdd.class)
     @PostMapping("/priority")
     public Integer add(@Valid @RequestBody PriorityDto priorityDto) {
         return priorityService.add(priorityDto);
@@ -57,7 +57,7 @@ public class PriorityController {
                     value = "{\"id\": 1, \"priority\": 75}")})
     )
     @Operation(summary = "Update priority")
-    @Validated(Transfer.Update.class)
+    @Validated(Transfer.PriorityUpdate.class)
     @PutMapping("/priority")
     public Integer update(@Valid @RequestBody PriorityDto priorityDto) {
         return priorityService.update(priorityDto);

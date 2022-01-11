@@ -16,12 +16,10 @@ public class ProgressService {
 
     private final ProgressRepo progressRepo;
     private final ProgressDtoMapper mapper;
-    private final TaskRepo taskRepo;
 
-    public ProgressService(ProgressRepo progressRepo, ProgressDtoMapper mapper, TaskRepo taskRepo) {
+    public ProgressService(ProgressRepo progressRepo, ProgressDtoMapper mapper) {
         this.progressRepo = progressRepo;
         this.mapper = mapper;
-        this.taskRepo = taskRepo;
     }
 
     public static MapSqlParameterSource getMapSqlParameterSource(Progress progress) {

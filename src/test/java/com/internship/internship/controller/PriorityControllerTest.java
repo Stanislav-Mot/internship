@@ -64,7 +64,6 @@ class PriorityControllerTest {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof DataNotFoundException));
 
         verify(priorityService, times(2)).getById(Mockito.any());
-
     }
 
     @Test
@@ -77,8 +76,7 @@ class PriorityControllerTest {
 
         mockMvc.perform(get("/priority"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$..priority", Matchers.contains(34)));
-
+                .andExpect(jsonPath("$.[0].priority", Matchers.is(34)));
     }
 
     @Test
@@ -87,40 +85,28 @@ class PriorityControllerTest {
 
         List<PriorityDto> priorityDtoList = Collections.singletonList(priorityDto);
 
-        Mockito.when(priorityService.getByGroupId(priorityDto.getGroupDto().getId())).thenReturn(priorityDtoList);
+        Mockito.when(priorityService.getByGroupId(priorityDto.getGroup().getId())).thenReturn(priorityDtoList);
 
-        mockMvc.perform(get("/priority/group/{id}", priorityDto.getGroupDto().getId()))
+        mockMvc.perform(get("/priority/group/{id}", priorityDto.getGroup().getId()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$..priority", Matchers.contains(34)));
-
+                .andExpect(jsonPath("$.[0].priority", Matchers.is(34)));
     }
 
     @Test
     void add() throws Exception {
+        PriorityDto priorityDto = newPriorityDtoForTest();
 
         Mockito.when(priorityService.add(any(PriorityDto.class))).thenReturn(1);
 
-        String validJson = "{\n" +
-                "  \"id\": 1,\n" +
-                "  \"taskDto\": {\n" +
-                "    \"id\": 4\n" +
-                "  },\n" +
-                "  \"groupDto\": {\n" +
-                "    \"id\": 4\n" +
-                "  },\n" +
-                "  \"priority\": 99\n" +
-                "}";
-
         mockMvc.perform(post("/priority")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(validJson)
-                .characterEncoding("utf-8"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(priorityDto))
+                        .characterEncoding("utf-8"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.is(1)))
                 .andReturn();
 
         verify(priorityService, times(1)).add(Mockito.any(PriorityDto.class));
-
     }
 
     @Test
@@ -130,21 +116,20 @@ class PriorityControllerTest {
         when(priorityService.update(any(PriorityDto.class))).thenReturn(1);
 
         mockMvc.perform(put("/priority")
-                .content(asJsonString(priority))
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(asJsonString(priority))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
         mockMvc.perform(put("/priority")
-                .content("Wrong JSON")
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content("Wrong JSON")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message", containsStringIgnoringCase("wrong JSON format")));
 
         verify(priorityService, times(1)).update(Mockito.any(PriorityDto.class));
-
     }
 
     @Test
@@ -158,6 +143,5 @@ class PriorityControllerTest {
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
         verify(priorityService, times(1)).delete(Mockito.any(Long.class));
-
     }
 }

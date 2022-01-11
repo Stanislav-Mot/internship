@@ -84,4 +84,10 @@ public class GroupController {
     public Integer delete(@PathVariable Long id) {
         return groupService.delete(id);
     }
+
+    @Operation(summary = "Set priority true or false")
+    @PostMapping("group/{id}")
+    public Integer setPriorityFlag(@PathVariable Long id, @RequestBody boolean flag) {
+        return groupService.setPriorityFlag(id, flag);
+    }
 }

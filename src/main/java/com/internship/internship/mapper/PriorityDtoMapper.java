@@ -1,6 +1,8 @@
 package com.internship.internship.mapper;
 
+import com.internship.internship.dto.GroupDto;
 import com.internship.internship.dto.PriorityDto;
+import com.internship.internship.dto.TaskDto;
 import com.internship.internship.model.Priority;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;

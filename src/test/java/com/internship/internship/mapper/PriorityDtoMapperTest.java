@@ -17,27 +17,27 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class PriorityDtoMapperTest {
 
     @Autowired
-    private PriorityDtoMapper mapper;
+    private PriorityDtoMapper priorityDtoMapper;
 
     @Test
     void convertToDto() {
         Priority priority = newPriorityForTest();
-        PriorityDto priorityDto = mapper.convertToDto(priority);
+        PriorityDto priorityDto = priorityDtoMapper.convertToDto(priority);
 
         assertEquals(priority.getId(), priorityDto.getId());
-        assertEquals(priority.getGroup().getId(), priorityDto.getGroupDto().getId());
-        assertEquals(priority.getTask().getId(), priorityDto.getTaskDto().getId());
+        assertEquals(priority.getGroup().getId(), priorityDto.getGroup().getId());
+        assertEquals(priority.getTask().getId(), priorityDto.getTask().getId());
         assertEquals(priority.getPriority(), priorityDto.getPriority());
     }
 
     @Test
     void convertToEntity() {
         PriorityDto priorityDto = newPriorityDtoForTest();
-        Priority priority = mapper.convertToEntity(priorityDto);
+        Priority priority = priorityDtoMapper.convertToEntity(priorityDto);
 
         assertEquals(priority.getId(), priorityDto.getId());
-        assertEquals(priority.getGroup().getId(), priorityDto.getGroupDto().getId());
-        assertEquals(priority.getTask().getId(), priorityDto.getTaskDto().getId());
+        assertEquals(priority.getGroup().getId(), priorityDto.getGroup().getId());
+        assertEquals(priority.getTask().getId(), priorityDto.getTask().getId());
         assertEquals(priority.getPriority(), priorityDto.getPriority());
     }
 }

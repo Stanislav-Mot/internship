@@ -35,6 +35,7 @@ public class GroupService {
 
     public GroupDto getById(Long id) {
         Group group = groupRepo.getGroupById(id);
+
         GroupDto groupDto = mapper.convertToDto(group);
         return groupDto;
     }
@@ -71,5 +72,9 @@ public class GroupService {
 
     public Integer deleteTask(Long id, Long taskId) {
         return groupRepo.deleteTaskFromGroup(id, taskId);
+    }
+
+    public Integer setPriorityFlag(Long id, boolean flag) {
+        return groupRepo.setPriority(id, flag);
     }
 }

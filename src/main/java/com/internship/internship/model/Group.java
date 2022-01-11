@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -16,13 +15,12 @@ public class Group {
     private String name;
     private List<Task> tasks;
     private Person person;
-
     private boolean priority;
 
     /**
      * List of ids regulating task priority
      */
-    private ArrayList<Priority> priorityTasks;
+    private List<Priority> priorityList;
 
     public Group(Long id) {
         this.id = id;

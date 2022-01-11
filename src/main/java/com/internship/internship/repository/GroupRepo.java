@@ -2,8 +2,10 @@ package com.internship.internship.repository;
 
 import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.mapper.GroupMapper;
+import com.internship.internship.mapper.PriorityMapper;
 import com.internship.internship.mapper.TaskMapper;
 import com.internship.internship.model.Group;
+import com.internship.internship.model.Priority;
 import com.internship.internship.model.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,6 +80,9 @@ public class GroupRepo {
         try {
             Group group = jdbcTemplate.queryForObject(sql, new GroupMapper(), id);
             group.setTasks(getTasksById(id));
+            if(group.isPriority()){
+                group.setPriorityList(getAllPriorityByGroupId(group.getId()));
+            }
             return group;
         } catch (EmptyResultDataAccessException exception) {
             LOGGER.warn("handling 404 error on getGroupById method");
@@ -93,5 +98,16 @@ public class GroupRepo {
                 "join task t on tg.id_task = t.id where g.id = ?";
 
         return jdbcTemplate.query(sqlForGroup, new TaskMapper(), id);
+    }
+
+    public Integer setPriority(Long id, boolean flag) {
+        String sql = "update groupOfTasks set priority = ? where id = ?";
+        return jdbcTemplate.update(sql, flag, id);
+    }
+
+    public List<Priority> getAllPriorityByGroupId(Long id) {
+        String sql = "select * from priority_of_task p where p.id_group = ?";
+
+        return jdbcTemplate.query(sql, new PriorityMapper(), id);
     }
 }

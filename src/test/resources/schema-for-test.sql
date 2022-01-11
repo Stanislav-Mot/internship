@@ -73,3 +73,6 @@ create table priority_of_task
     FOREIGN KEY (id_group) REFERENCES groupOfTasks (id) ON DELETE CASCADE,
     FOREIGN KEY (id_task) REFERENCES task (id) ON DELETE CASCADE
 );
+
+ALTER TABLE groupOfTasks
+    ADD COLUMN priority boolean;

@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
-import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -35,7 +34,7 @@ public class GroupDto {
     /**
      * List of ids regulating task priority
      */
-    private ArrayList<PriorityDto> priorityDtos;
+    private List<PriorityDto> priorityList;
 
     public GroupDto(Long id) {
         this.id = id;
