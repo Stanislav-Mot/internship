@@ -1,7 +1,10 @@
 package com.internship.internship.service;
 
+import com.internship.internship.dto.GroupDto;
+import com.internship.internship.dto.TaskDto;
+import com.internship.internship.mapper.GroupDtoMapper;
+import com.internship.internship.mapper.TaskDtoMapper;
 import com.internship.internship.model.Group;
-import com.internship.internship.model.Person;
 import com.internship.internship.model.Task;
 import com.internship.internship.repository.GroupRepo;
 import org.junit.jupiter.api.Test;
@@ -14,27 +17,33 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.internship.internship.util.Helper.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GroupServiceTest {
 
-    private final Long CORRECT_ID = 999L;
     @InjectMocks
     private GroupService groupService;
     @Mock
     private GroupRepo groupRepo;
+    @Mock
+    private GroupDtoMapper mapper;
+    @Mock
+    private TaskDtoMapper taskDtoMapper;
 
     @Test
     void getById() {
         Group group = newGroupForTest();
+        GroupDto groupDto = newGroupDtoForTest();
 
-        when(groupRepo.getGroupById(group.getId())).thenReturn(group);
+        when(groupRepo.getGroupById(groupDto.getId())).thenReturn(group);
+        when(mapper.convertToDto(group)).thenReturn(groupDto);
 
-        Group groupFromService = groupService.getById(group.getId());
+        GroupDto groupFromService = groupService.getById(groupDto.getId());
 
-        assertEquals(groupFromService, group);
+        assertEquals(groupFromService, groupDto);
 
         verify(groupRepo, times(1)).getGroupById(group.getId());
     }
@@ -48,7 +57,7 @@ class GroupServiceTest {
 
         when(groupRepo.getAll()).thenReturn(list);
 
-        List<Group> groupList = groupService.getAll();
+        List<GroupDto> groupList = groupService.getAll();
 
         assertEquals(3, groupList.size());
         verify(groupRepo, times(1)).getAll();
@@ -56,11 +65,11 @@ class GroupServiceTest {
 
     @Test
     void add() {
-        Group group = newGroupForTest();
+        GroupDto groupDto = newGroupDtoForTest();
 
         when(groupRepo.addGroup(any(MapSqlParameterSource.class))).thenReturn(1);
 
-        Integer result = groupService.add(group);
+        Integer result = groupService.add(groupDto);
 
         assertEquals(1, result);
 
@@ -69,11 +78,13 @@ class GroupServiceTest {
 
     @Test
     void update() {
+        GroupDto groupDto = newGroupDtoForTest();
         Group group = newGroupForTest();
 
         when(groupRepo.updateGroup(any(Group.class))).thenReturn(1);
+        when(mapper.convertToEntity(groupDto)).thenReturn(group);
 
-        Integer result = groupService.update(group);
+        Integer result = groupService.update(groupDto);
 
         assertEquals(1, result);
 
@@ -97,10 +108,12 @@ class GroupServiceTest {
     void addTask() {
         Group group = newGroupForTest();
         Task task = newTaskForTest();
+        TaskDto taskDto = newTaskDtoForTest();
 
         when(groupRepo.addTaskToGroup(group.getId(), task)).thenReturn(1);
+        when(taskDtoMapper.convertToEntity(taskDto)).thenReturn(task);
 
-        Integer result = groupService.addTask(group.getId(), task);
+        Integer result = groupService.addTask(group.getId(), taskDto);
 
         assertEquals(1, result);
 
@@ -119,13 +132,5 @@ class GroupServiceTest {
         assertEquals(1, result);
 
         verify(groupRepo, times(1)).deleteTaskFromGroup(group.getId(), task.getId());
-    }
-
-    private Group newGroupForTest() {
-        return new Group(CORRECT_ID, "Tester", null, new Person(1L));
-    }
-
-    private Task newTaskForTest() {
-        return new Task(CORRECT_ID, "TesterGroup", "2021-06-09", null, null, null);
     }
 }

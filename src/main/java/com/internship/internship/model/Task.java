@@ -10,10 +10,6 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 public class Task {
-    
-    public Task(Long id) {
-        this.id = id;
-    }
 
     private Long id;
     private String name;
@@ -21,5 +17,9 @@ public class Task {
     private Person person;
     private Progress progress;
     private List<Group> groupsList;
+
+    public Task(Long id) {
+        this.id = id;
+    }
 
 }

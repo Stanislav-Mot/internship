@@ -1,13 +1,21 @@
 package com.internship.internship.controller;
 
-import com.internship.internship.model.Task;
+import com.internship.internship.dto.TaskDto;
 import com.internship.internship.service.TaskService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.internship.internship.transfer.Transfer;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
+@Tag(name = "Task", description = "Crud for tasks")
+@Validated
 @RestController
 public class TaskController {
 
@@ -17,36 +25,42 @@ public class TaskController {
         this.taskService = taskService;
     }
 
+    @Operation(summary = "Get task by id")
     @GetMapping("/task/{id}")
-    public Task getTask(@PathVariable Long id) {
+    public TaskDto getId(@PathVariable @Parameter(description = "Task id") Long id) {
         return taskService.getById(id);
     }
 
+    @Operation(summary = "Get all tasks")
     @GetMapping("/task")
-    public List<Task> getAllTasks() {
+    public List<TaskDto> getAll() {
         return taskService.getAll();
     }
 
+
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            content = @Content(examples = {@ExampleObject(
+                    value = "{\"id\": 0, \"name\": \"Cooking\", \"start_time\": \"2012-06-09\", \"id_person\": 0}")})
+    )
+    @Operation(summary = "Add new Task")
+    @Validated(Transfer.New.class)
     @PostMapping("/task")
-    public ResponseEntity<Integer> addTask(@RequestBody Task task) {
-        Integer countUpdatedRow = taskService.add(task);
-        if (countUpdatedRow > 0) {
-            return new ResponseEntity<>(countUpdatedRow, HttpStatus.CREATED);
-        } else {
-            return new ResponseEntity<>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
-        }
+    public Integer add(@Valid @RequestBody TaskDto taskDto) {
+        return taskService.add(taskDto);
     }
 
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            content = @Content(examples = {@ExampleObject(
+                    value = "{\"id\": 0, \"name\": \"Cooking\", \"start_time\": \"2012-06-09\", \"id_person\": 0, \"id_progress\": 0}")})
+    )
+    @Operation(summary = "update task")
+    @Validated(Transfer.Update.class)
     @PutMapping("/task")
-    public ResponseEntity<Integer> updateTask(@RequestBody Task task) {
-        Integer countUpdatedRow = taskService.update(task);
-        if (countUpdatedRow > 0) {
-            return new ResponseEntity<>(countUpdatedRow, HttpStatus.ACCEPTED);
-        } else {
-            return new ResponseEntity<>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
-        }
+    public Integer update(@Valid @RequestBody TaskDto taskDto) {
+        return taskService.update(taskDto);
     }
 
+    @Operation(summary = "Delete task by id")
     @DeleteMapping("/task/{id}")
     public Integer delete(@PathVariable Long id) {
         return taskService.delete(id);

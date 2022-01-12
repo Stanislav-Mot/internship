@@ -1,11 +1,9 @@
 package com.internship.internship.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.internship.internship.dto.GroupDto;
+import com.internship.internship.dto.PersonDto;
 import com.internship.internship.exeption.DataNotFoundException;
-import com.internship.internship.model.Group;
-import com.internship.internship.model.Person;
 import com.internship.internship.service.PersonService;
-import lombok.SneakyThrows;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -21,11 +19,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Collections;
 import java.util.List;
 
+import static com.internship.internship.util.Helper.*;
 import static org.hamcrest.Matchers.containsStringIgnoringCase;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -49,99 +47,117 @@ class PersonControllerTest {
 
     @Test
     void getAllPersons() throws Exception {
-        Person person = newPersonForTest();
-        List<Person> persons = Collections.singletonList(person);
+        PersonDto personDto = newPersonDtoForTest();
+
+        List<PersonDto> persons = Collections.singletonList(personDto);
 
         Mockito.when(personService.getAll()).thenReturn(persons);
 
-        mockMvc.perform(get("/person")).andDo(print()).andExpect(status().isOk()).andExpect(jsonPath("$..firstName", Matchers.contains("Tester")));
-
+        mockMvc.perform(get("/person"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$..firstName", Matchers.contains("Tester")));
     }
 
     @Test
     void getPersonById() throws Exception {
-        Person person = newPersonForTest();
+        PersonDto person = newPersonDtoForTest();
 
         Mockito.when(personService.getById(CORRECT_ID)).thenReturn(person);
 
-        mockMvc.perform(get("/person/{id}", CORRECT_ID)).andDo(print()).andExpect(status().isOk()).andExpect(jsonPath("$..id", Matchers.contains(Math.toIntExact(CORRECT_ID)))).andExpect(jsonPath("$..firstName", Matchers.contains("Tester")));
+        mockMvc.perform(get("/person/{id}", CORRECT_ID))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$..id", Matchers.contains(Math.toIntExact(CORRECT_ID))))
+                .andExpect(jsonPath("$..firstName", Matchers.contains("Tester")));
 
-        Mockito.when(personService.getById(WRONG_ID)).thenThrow(DataNotFoundException.class).thenReturn(null);
+        Mockito.when(personService.getById(WRONG_ID))
+                .thenThrow(DataNotFoundException.class).thenReturn(null);
 
-        mockMvc.perform(get("/person/{id}", WRONG_ID)).andExpect(status().isNotFound()).andExpect(result -> assertTrue(result.getResolvedException() instanceof DataNotFoundException));
+        mockMvc.perform(get("/person/{id}", WRONG_ID))
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof DataNotFoundException));
 
         verify(personService, times(2)).getById(Mockito.any());
-
     }
 
     @Test
     void addPerson() throws Exception {
-        Person person = newPersonForTest();
+        PersonDto person = newPersonDtoForTest();
 
-        Mockito.when(personService.add(any(Person.class))).thenReturn(1);
+        Mockito.when(personService.add(any(PersonDto.class))).thenReturn(1);
 
-        mockMvc.perform(post("/person").contentType(MediaType.APPLICATION_JSON).content(asJsonString(person)).characterEncoding("utf-8")).andDo(print()).andExpect(status().isCreated()).andExpect(jsonPath("$", Matchers.is(1))).andReturn();
+        mockMvc.perform(post("/person")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(person))
+                        .characterEncoding("utf-8"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$", Matchers.is(1)));
 
-        verify(personService, times(1)).add(Mockito.any(Person.class));
+        verify(personService, times(1)).add(Mockito.any(PersonDto.class));
     }
 
     @Test
     void updatePerson() throws Exception {
-        Person person = newPersonForTest();
+        PersonDto person = newPersonDtoForTest();
 
-        when(personService.update(any(Person.class))).thenReturn(1);
+        when(personService.update(any(PersonDto.class))).thenReturn(1);
 
-        mockMvc.perform(put("/person").content(asJsonString(person)).accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isAccepted()).andExpect(jsonPath("$", Matchers.is(1)));
+        mockMvc.perform(put("/person")
+                        .content(asJsonString(person))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Matchers.is(1)));
 
-        mockMvc.perform(put("/person").content("Wrong JSON").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isBadRequest()).andExpect(jsonPath("$.message", containsStringIgnoringCase("wrong JSON format")));
+        mockMvc.perform(put("/person")
+                        .content("Wrong JSON")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message", containsStringIgnoringCase("wrong JSON format")));
 
-        verify(personService, times(1)).update(Mockito.any(Person.class));
+        verify(personService, times(1)).update(Mockito.any(PersonDto.class));
     }
 
     @Test
     void deletePerson() throws Exception {
-        Person person = newPersonForTest();
+        PersonDto person = newPersonDtoForTest();
 
         Mockito.when(personService.delete(person.getId())).thenReturn(1);
 
-        mockMvc.perform(delete("/person/{id}", person.getId())).andDo(print()).andExpect(status().isOk()).andExpect(jsonPath("$", Matchers.is(1)));
+        mockMvc.perform(delete("/person/{id}", person.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Matchers.is(1)));
 
         verify(personService, times(1)).delete(Mockito.any(Long.class));
     }
 
     @Test
     void addGroupToPerson() throws Exception {
-        Person person = newPersonForTest();
-        Group group = newGroupForTest(person);
-        Mockito.when(personService.addGroup(any(Long.class), any(Group.class))).thenReturn(1);
+        PersonDto person = newPersonDtoForTest();
+        GroupDto group = newGroupDtoForTest(person);
+        Mockito.when(personService.addGroup(any(Long.class), any(GroupDto.class))).thenReturn(1);
 
-        mockMvc.perform(post("/person/{id}/group", person.getId()).content(asJsonString(group)).accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk()).andExpect(jsonPath("$", Matchers.is(1)));
+        mockMvc.perform(post("/person/{id}/group", person.getId())
+                        .content(asJsonString(group))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$", Matchers.is(1)));
 
-        verify(personService, times(1)).addGroup(Mockito.any(Long.class), Mockito.any(Group.class));
+        verify(personService, times(1)).addGroup(Mockito.any(Long.class), Mockito.any(GroupDto.class));
     }
 
     @Test
     void deleteGroupFromPerson() throws Exception {
-        Person person = newPersonForTest();
-        Group group = newGroupForTest(person);
+        PersonDto person = newPersonDtoForTest();
+        GroupDto group = newGroupDtoForTest(person);
 
         Mockito.when(personService.deleteGroup(person.getId(), group.getId())).thenReturn(1);
 
-        mockMvc.perform(delete("/person/{id}/group/{idGroup}", person.getId(), group.getId())).andDo(print()).andExpect(status().isOk()).andExpect(jsonPath("$", Matchers.is(1)));
+        mockMvc.perform(put("/person/{id}/group/{idGroup}", person.getId(), group.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Matchers.is(1)));
 
         verify(personService, times(1)).deleteGroup(person.getId(), group.getId());
-    }
-
-    private Group newGroupForTest(Person person) {
-        return new Group(CORRECT_ID, "TesterGroup", null, person);
-    }
-
-    @SneakyThrows
-    private String asJsonString(final Object obj) {
-        return new ObjectMapper().writeValueAsString(obj);
-    }
-
-    private Person newPersonForTest() {
-        return new Person(CORRECT_ID, "Tester", "Rochester", 99, null);
     }
 }

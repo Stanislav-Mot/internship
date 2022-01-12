@@ -3,6 +3,7 @@ package com.internship.internship.repository;
 import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Task;
+import com.internship.internship.model.search.SearchTask;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,9 +15,12 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.List;
 
+import static com.internship.internship.service.TaskService.getMapSqlParameterSource;
+import static com.internship.internship.util.Helper.newTaskForTest;
 import static org.assertj.core.api.Assertions.from;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -32,6 +36,7 @@ class TaskRepoTest {
     private final Long ID_FOR_GET = 2L;
     private final Long ID_FOR_UPDATE = 9999L;
     private final Long ID_FOR_DELETE = 8888L;
+    private final Long ID_FOR_SEARCH = 2348L;
     @Autowired
     private TaskRepo taskRepo;
     private Integer countTasks = 5;
@@ -91,21 +96,16 @@ class TaskRepoTest {
         Assertions.assertThat(groups).extracting(Group::getName).contains("cleaning");
     }
 
-    private Task newTaskForTest() {
-        return new Task(CORRECT_ID, "Tester", "2021-06-09", null, null, null);
-    }
+    @Test
+    void search() {
+        Task taskFroSearch = new Task(ID_FOR_SEARCH, "searching", "2001-01-01", null, null, null);
+        taskRepo.addTask(getMapSqlParameterSource(taskFroSearch));
 
-    private MapSqlParameterSource getMapSqlParameterSource(Task task) {
-        Long personId = (task.getPerson() != null) ? task.getPerson().getId() : null;
-        Long progressId = (task.getProgress() != null) ? task.getProgress().getId() : null;
-        Date date = (task.getStartTime() != null) ? Date.valueOf(task.getStartTime()) : null;
+        List<Task> tasks = taskRepo.search(getMapSqlParameterSource(
+                new SearchTask("searching",
+                        LocalDateTime.of(2015, Month.JULY, 29, 19, 30, 40),
+                        LocalDateTime.now())));
 
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
-        parameters.addValue("id", task.getId());
-        parameters.addValue("name", task.getName());
-        parameters.addValue("personId", personId);
-        parameters.addValue("progressId", progressId);
-        parameters.addValue("date", date);
-        return parameters;
+        assertEquals(1, tasks.size());
     }
 }

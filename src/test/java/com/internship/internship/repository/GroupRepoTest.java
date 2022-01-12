@@ -2,7 +2,6 @@ package com.internship.internship.repository;
 
 import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.model.Group;
-import com.internship.internship.model.Person;
 import com.internship.internship.model.Task;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -17,6 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
+import static com.internship.internship.util.Helper.newGroupForTest;
 import static org.assertj.core.api.Assertions.from;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -117,9 +117,6 @@ class GroupRepoTest {
         Assertions.assertThat(tasks).extracting(Task::getName).contains("cleaning");
     }
 
-    private Group newGroupForTest() {
-        return new Group(CORRECT_ID, "Tester", null, new Person(1L));
-    }
 
     private MapSqlParameterSource getMapSqlParameterSource(Group group) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();

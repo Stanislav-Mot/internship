@@ -12,9 +12,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Transactional
 @Repository
 public class GroupRepo {
 
@@ -27,27 +29,32 @@ public class GroupRepo {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
+    //
     public List<Group> getAll() {
-        String sql = "select * from groups g left join persons p on p.id = g.id_person";
-
-        return jdbcTemplate.query(sql, new GroupMapper());
+        String sql = "select * from groupOfTasks g left join person p on p.id = g.id_person";
+        List<Group> groups = jdbcTemplate.query(sql, new GroupMapper());
+        for (Group group : groups) {
+            group.setTasks(getTasksById(group.getId()));
+        }
+        return groups;
     }
 
     public Integer addGroup(MapSqlParameterSource parameters) {
-        String sql = "insert into groups ( id, name, id_person) values (:id, :name, :id_person)";
+        String sql = "insert into groupOfTasks ( id, name) values (:id, :name)";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
 
     public Integer updateGroup(Group group) {
-        String sql = "update groups set name = ? where id = ?;";
+        String sql = "update groupOfTasks set name = ? where id = ?;";
 
         return jdbcTemplate.update(sql, group.getName(), group.getId());
     }
 
+    //
     public Integer deleteGroup(Long id) {
-        String deleteConstrains = "delete from tasks_groups where id_group = ?;";
-        String deleteGroupSql = "delete from groups where id = ?;";
+        String deleteConstrains = "delete from task_group where id_group = ?;";
+        String deleteGroupSql = "delete from groupOfTasks where id = ?;";
 
         jdbcTemplate.update(deleteConstrains, id);
 
@@ -55,31 +62,34 @@ public class GroupRepo {
     }
 
     public Integer addTaskToGroup(Long id, Task task) {
-        String sql = "insert into tasks_groups (id_group, id_task) values (?,?) ";
+        String sql = "insert into task_group (id_group, id_task) values (?,?) ";
         return jdbcTemplate.update(sql, id, task.getId());
     }
 
     public Integer deleteTaskFromGroup(Long idGroup, Long idTask) {
-        String sql = "delete from tasks_groups where id_task = ? and id_group = ?";
+        String sql = "delete from task_group where id_task = ? and id_group = ?";
 
         return jdbcTemplate.update(sql, idTask, idGroup);
     }
 
+    //
     public Group getGroupById(Long id) {
-        String sql = "select * from groups g left join persons p on p.id = g.id_person where g.id = ?";
+        String sql = "select * from groupOfTasks g left join person p on p.id = g.id_person where g.id = ?";
         try {
-            return jdbcTemplate.queryForObject(sql, new GroupMapper(), id);
+            Group group = jdbcTemplate.queryForObject(sql, new GroupMapper(), id);
+            group.setTasks(getTasksById(id));
+            return group;
         } catch (EmptyResultDataAccessException exception) {
-            LOGGER.error("handling 404 error on getGroupById method");
+            LOGGER.warn("handling 404 error on getGroupById method");
 
             throw new DataNotFoundException(String.format("Group Id %d is not found", id));
         }
     }
 
     public List<Task> getTasksById(Long id) {
-        String sqlForGroup = "select t.id, t.name, t.start_time, t.id_person,t.id_progress from groups g " +
-            "join tasks_groups tg on g.id = tg.id_group " +
-            "join tasks t on tg.id_task = t.id where g.id = ?";
+        String sqlForGroup = "select t.id, t.name, t.start_time, t.id_person,t.id_progress from groupOfTasks g " +
+                "join task_group tg on g.id = tg.id_group " +
+                "join task t on tg.id_task = t.id where g.id = ?";
 
         return jdbcTemplate.query(sqlForGroup, new TaskMapper(), id);
     }
