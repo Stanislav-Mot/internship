@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@NoArgsConstructor
 @AllArgsConstructor
 @Data
 public class Group implements ParentTask {
@@ -23,6 +22,9 @@ public class Group implements ParentTask {
      * List of ids regulating task priority
      */
     private List<Priority> priorityList;
+
+    public Group() {
+    }
 
     public Group(Long id) {
         this.id = id;

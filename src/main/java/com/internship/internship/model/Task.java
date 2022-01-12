@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import java.time.LocalTime;
 import java.util.List;
 
-@NoArgsConstructor
 @AllArgsConstructor
 @Data
 public class Task implements ParentTask {
@@ -23,6 +22,9 @@ public class Task implements ParentTask {
     private Person person;
     private Progress progress;
     private List<Group> groupsList;
+
+    public Task() {
+    }
 
     public Task(Long id) {
         this.id = id;

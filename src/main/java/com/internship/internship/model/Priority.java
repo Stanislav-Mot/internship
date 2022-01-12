@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
 @AllArgsConstructor
 @Data
 public class Priority {
@@ -12,6 +11,9 @@ public class Priority {
     private Group group;
     private Task task;
     private Integer priority;
+
+    public Priority() {
+    }
 
     public Priority(Long id) {
         this.id = id;
