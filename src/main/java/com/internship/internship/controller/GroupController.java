@@ -1,7 +1,6 @@
 package com.internship.internship.controller;
 
 import com.internship.internship.dto.GroupDto;
-import com.internship.internship.dto.TaskDto;
 import com.internship.internship.service.GroupService;
 import com.internship.internship.transfer.Transfer;
 import io.swagger.v3.oas.annotations.Operation;
@@ -52,24 +51,6 @@ public class GroupController {
 
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = {@ExampleObject(
-                    value = "{\"id\": 1}")})
-    )
-    @Operation(summary = "Add task to group")
-    @Validated(Transfer.Update.class)
-    @PostMapping("/group/{id}/task")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Integer addTaskToGroup(@PathVariable Long id, @Valid @RequestBody TaskDto taskDto) {
-        return groupService.addTask(id, taskDto);
-    }
-
-    @Operation(summary = "Delete task from group")
-    @PutMapping("/group/{id}/task/{idTask}")
-    public Integer deleteTaskFromGroup(@PathVariable Long id, @PathVariable Long idTask) {
-        return groupService.deleteTask(id, idTask);
-    }
-
-    @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            content = @Content(examples = {@ExampleObject(
                     value = "{\"id\": 1, \"name\": \"Home\"}")})
     )
     @Operation(summary = "Update group")
@@ -92,15 +73,26 @@ public class GroupController {
     }
 
     @Operation(summary = "Add group to group")
-    @PutMapping("/group/{id}/addGroup/{idGroup}")
-    public Integer addGroupToGroup(@PathVariable Long id, @PathVariable Long idGroup) {
-        return groupService.addGroup(id, idGroup);
+    @PutMapping("/group/{id}/addGroup/{groupId}")
+    public Integer addGroupToGroup(@PathVariable Long id, @PathVariable Long groupId) {
+        return groupService.addGroup(id, groupId);
     }
 
     @Operation(summary = "Delete group from group")
-    @PutMapping("/group/{id}/deleteGroup/{idGroup}")
-    public Integer deleteGroupFromGroup(@PathVariable Long id, @PathVariable Long idGroup) {
-        return groupService.deleteGroup(id, idGroup);
+    @PutMapping("/group/{id}/deleteGroup/{groupId}")
+    public Integer deleteGroupFromGroup(@PathVariable Long id, @PathVariable Long groupId) {
+        return groupService.deleteGroup(id, groupId);
     }
 
+    @Operation(summary = "Add task to group")
+    @PutMapping("/group/{id}/addTask/{taskId}")
+    public Integer addTaskToGroup(@PathVariable Long id, @PathVariable Long taskId) {
+        return groupService.addTask(id, taskId);
+    }
+
+    @Operation(summary = "Delete task from group")
+    @PutMapping("/group/{id}/deleteTask/{taskId}")
+    public Integer deleteTaskFromGroup(@PathVariable Long id, @PathVariable Long taskId) {
+        return groupService.deleteTask(id, taskId);
+    }
 }

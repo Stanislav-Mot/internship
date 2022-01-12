@@ -1,6 +1,5 @@
 package com.internship.internship.service;
 
-import com.internship.internship.dto.GroupDto;
 import com.internship.internship.dto.PersonDto;
 import com.internship.internship.mapper.GroupDtoMapper;
 import com.internship.internship.mapper.PersonDtoMapper;
@@ -127,16 +126,14 @@ class PersonServiceTest {
     void addGroup() {
         PersonDto personDto = newPersonDtoForTest();
         Group group = newGroupForTest();
-        GroupDto groupDto = newGroupDtoForTest();
 
-        when(personRepo.addGroupToPerson(personDto.getId(), group)).thenReturn(1);
-        when(groupDtoMapper.convertToEntity(groupDto)).thenReturn(group);
+        when(personRepo.addGroupToPerson(personDto.getId(), group.getId())).thenReturn(1);
 
-        Integer result = personService.addGroup(personDto.getId(), groupDto);
+        Integer result = personService.addGroup(personDto.getId(), group.getId());
 
         assertEquals(1, result);
 
-        verify(personRepo, times(1)).addGroupToPerson(personDto.getId(), group);
+        verify(personRepo, times(1)).addGroupToPerson(personDto.getId(), group.getId());
     }
 
     @Test

@@ -1,7 +1,6 @@
 package com.internship.internship.service;
 
 import com.internship.internship.dto.GroupDto;
-import com.internship.internship.dto.TaskDto;
 import com.internship.internship.mapper.GroupDtoMapper;
 import com.internship.internship.mapper.TaskDtoMapper;
 import com.internship.internship.model.Group;
@@ -108,16 +107,14 @@ class GroupServiceTest {
     void addTask() {
         Group group = newGroupForTest();
         Task task = newTaskForTest();
-        TaskDto taskDto = newTaskDtoForTest();
 
-        when(groupRepo.addTaskToGroup(group.getId(), task)).thenReturn(1);
-        when(taskDtoMapper.convertToEntity(taskDto)).thenReturn(task);
+        when(groupRepo.addTaskToGroup(group.getId(), task.getId())).thenReturn(1);
 
-        Integer result = groupService.addTask(group.getId(), taskDto);
+        Integer result = groupService.addTask(group.getId(), task.getId());
 
         assertEquals(1, result);
 
-        verify(groupRepo, times(1)).addTaskToGroup(group.getId(), task);
+        verify(groupRepo, times(1)).addTaskToGroup(group.getId(), task.getId());
     }
 
     @Test

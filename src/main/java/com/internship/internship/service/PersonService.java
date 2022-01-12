@@ -1,10 +1,8 @@
 package com.internship.internship.service;
 
-import com.internship.internship.dto.GroupDto;
 import com.internship.internship.dto.PersonDto;
 import com.internship.internship.mapper.GroupDtoMapper;
 import com.internship.internship.mapper.PersonDtoMapper;
-import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
 import com.internship.internship.model.search.SearchPerson;
 import com.internship.internship.repository.PersonRepo;
@@ -95,9 +93,8 @@ public class PersonService {
         return personRepo.deleteGroupFromPerson(id, groupId);
     }
 
-    public Integer addGroup(Long id, GroupDto groupDto) {
-        Group group = groupDtoMapper.convertToEntity(groupDto);
-        return personRepo.addGroupToPerson(id, group);
+    public Integer addGroup(Long id, Long groupId) {
+        return personRepo.addGroupToPerson(id, groupId);
     }
 
     public List<PersonDto> search(SearchPerson parameters) {

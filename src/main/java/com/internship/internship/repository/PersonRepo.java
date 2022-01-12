@@ -73,9 +73,9 @@ public class PersonRepo {
         return persons;
     }
 
-    public Integer addGroupToPerson(Long id, Group group) {
+    public Integer addGroupToPerson(Long id, Long groupId) {
         String sql = "update groupOfTasks set id_person = ? where id = ?;";
-        return jdbcTemplate.update(sql, id, group.getId());
+        return jdbcTemplate.update(sql, id, groupId);
     }
 
     public Integer deleteGroupFromPerson(Long personId, Long groupId) {

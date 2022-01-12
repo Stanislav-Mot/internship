@@ -1,5 +1,7 @@
 package com.internship.internship.model.Composite;
 
-public interface ParentTask {
+import io.swagger.v3.oas.annotations.Hidden;
 
+@Hidden
+public interface ParentTask {
 }

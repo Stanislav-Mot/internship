@@ -53,6 +53,9 @@ public class GroupRepo {
         List<Group> groups = jdbcTemplate.query(sql, new GroupMapper());
         for (Group group : groups) {
             group.setTasks(getCompositeTasks(group.getId()));
+            if (group.isPriority()) {
+                group.setPriorityList(getAllPriorityByGroupId(group.getId()));
+            }
         }
         return groups;
     }
@@ -69,19 +72,20 @@ public class GroupRepo {
         return jdbcTemplate.update(sql, group.getName(), group.getId());
     }
 
-    //
     public Integer deleteGroup(Long id) {
-        String deleteConstrains = "delete from task_group where id_group = ?;";
+        String deleteTasksSql = "delete from task where id in (select id_task from task_group where id_group = ?);";
+        String deleteGroupsInSql = "delete from groupOfTasks where id in (select id_child from group_in_group where id_parent = ?);";
         String deleteGroupSql = "delete from groupOfTasks where id = ?;";
 
-        jdbcTemplate.update(deleteConstrains, id);
+        jdbcTemplate.update(deleteTasksSql, id);
+        jdbcTemplate.update(deleteGroupsInSql, id);
 
         return jdbcTemplate.update(deleteGroupSql, id);
     }
 
-    public Integer addTaskToGroup(Long id, Task task) {
+    public Integer addTaskToGroup(Long id, Long taskId) {
         String sql = "insert into task_group (id_group, id_task) values (?,?) ";
-        return jdbcTemplate.update(sql, id, task.getId());
+        return jdbcTemplate.update(sql, id, taskId);
     }
 
     public Integer deleteTaskFromGroup(Long idGroup, Long idTask) {

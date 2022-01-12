@@ -89,9 +89,8 @@ class GroupRepoTest {
         Group group = groupRepo.getGroupById(ID_FOR_GET);
         Task task = new Task(9999L);
 
-        Integer answer = groupRepo.addTaskToGroup(group.getId(), task);
+        Integer answer = groupRepo.addTaskToGroup(group.getId(), task.getId());
         assertEquals(1, answer);
-
 
         Iterable<Task> tasks = groupRepo.getTasksById(ID_FOR_GET);
 

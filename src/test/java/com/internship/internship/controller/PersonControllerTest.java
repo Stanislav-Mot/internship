@@ -128,23 +128,20 @@ class PersonControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
-        verify(personService, times(1)).delete(Mockito.any(Long.class));
+        verify(personService, times(1)).delete(person.getId());
     }
 
     @Test
     void addGroupToPerson() throws Exception {
         PersonDto person = newPersonDtoForTest();
         GroupDto group = newGroupDtoForTest(person);
-        Mockito.when(personService.addGroup(any(Long.class), any(GroupDto.class))).thenReturn(1);
+        Mockito.when(personService.addGroup(anyLong(), anyLong())).thenReturn(1);
 
-        mockMvc.perform(post("/person/{id}/group", person.getId())
-                        .content(asJsonString(group))
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
+        mockMvc.perform(put("/person/{id}/addGroup/{groupId}", person.getId(), group.getId()))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 
-        verify(personService, times(1)).addGroup(Mockito.any(Long.class), Mockito.any(GroupDto.class));
+        verify(personService, times(1)).addGroup(anyLong(), anyLong());
     }
 
     @Test
@@ -154,7 +151,7 @@ class PersonControllerTest {
 
         Mockito.when(personService.deleteGroup(person.getId(), group.getId())).thenReturn(1);
 
-        mockMvc.perform(put("/person/{id}/group/{idGroup}", person.getId(), group.getId()))
+        mockMvc.perform(put("/person/{id}/deleteGroup/{groupId}", person.getId(), group.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.is(1)));
 

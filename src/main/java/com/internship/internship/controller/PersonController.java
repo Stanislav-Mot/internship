@@ -1,6 +1,5 @@
 package com.internship.internship.controller;
 
-import com.internship.internship.dto.GroupDto;
 import com.internship.internship.dto.PersonDto;
 import com.internship.internship.service.PersonService;
 import com.internship.internship.transfer.Transfer;
@@ -52,24 +51,6 @@ public class PersonController {
 
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = {@ExampleObject(
-                    value = "{\"id\": 1}")})
-    )
-    @Operation(summary = "Add group to person")
-    @Validated(Transfer.Update.class)
-    @PostMapping("/person/{id}/group")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Integer addGroupToPerson(@PathVariable Long id, @Valid @RequestBody GroupDto groupDto) {
-        return personService.addGroup(id, groupDto);
-    }
-
-    @Operation(summary = "Delete group from person")
-    @PutMapping("/person/{id}/group/{groupId}")
-    public Integer updateConstraints(@PathVariable Long id, @PathVariable Long groupId) {
-        return personService.deleteGroup(id, groupId);
-    }
-
-    @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            content = @Content(examples = {@ExampleObject(
                     value = "{\"id\": 1, \"firstName\": \"Denis\", \"lastName\": \"Denisov\", \"age\": 12}")})
     )
     @Operation(summary = "Update person")
@@ -83,5 +64,17 @@ public class PersonController {
     @DeleteMapping("/person/{id}")
     public Integer delete(@PathVariable Long id) {
         return personService.delete(id);
+    }
+
+    @Operation(summary = "Add group to person")
+    @PutMapping("/person/{id}/addGroup/{groupId}")
+    public Integer addGroupToPerson(@PathVariable Long id, @PathVariable Long groupId) {
+        return personService.addGroup(id, groupId);
+    }
+
+    @Operation(summary = "Delete group from person")
+    @PutMapping("/person/{id}/deleteGroup/{groupId}")
+    public Integer deleteGroupFromPerson(@PathVariable Long id, @PathVariable Long groupId) {
+        return personService.deleteGroup(id, groupId);
     }
 }

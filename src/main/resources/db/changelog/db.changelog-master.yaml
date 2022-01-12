@@ -3,11 +3,3 @@ databaseChangeLog: #параметр в котором находятся миг
       file: db/changeset/schema.sql # путь к файлу миграции
   - include:
       file: db/changeset/data.sql
-  - include:
-      file: db/changeset/schema-add-filed-to-task.sql
-  - include:
-      file: db/changeset/schema-add-priority-task-table.sql
-  - include:
-      file: db/changeset/schema-add-flag-to-group.sql
-  - include:
-      file: db/changeset/schema-add-table-grou-in-group.sql
