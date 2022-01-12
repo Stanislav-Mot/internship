@@ -1,13 +1,9 @@
 package com.internship.internship.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Data
 public class Person {
 
@@ -17,7 +13,18 @@ public class Person {
     private Integer age;
     private List<Group> groups;
 
+    public Person() {
+    }
+
     public Person(Long id) {
         this.id = id;
+    }
+
+    public Person(Long id, String firstName, String lastName, Integer age, List<Group> groups) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+        this.groups = groups;
     }
 }
