@@ -1,20 +1,22 @@
 package com.internship.internship.controller;
 
-import com.internship.internship.model.Group;
-import com.internship.internship.model.Task;
+import com.internship.internship.dto.GroupDto;
+import com.internship.internship.dto.TaskDto;
 import com.internship.internship.service.GroupService;
+import com.internship.internship.transfer.Transfer;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
+@Tag(name = "Group", description = "Crud for group")
+@Validated
 @RestController
 public class GroupController {
 
@@ -24,48 +26,61 @@ public class GroupController {
         this.groupService = groupService;
     }
 
+    @Operation(summary = "Get group by id")
     @GetMapping("/group/{id}")
-    public Group getGroup(@PathVariable Long id) {
+    public GroupDto getById(@PathVariable Long id) {
         return groupService.getById(id);
     }
 
+    @Operation(summary = "Get all groups")
     @GetMapping("/group")
-    public List<Group> getAllGroups() {
+    public List<GroupDto> getAll() {
         return groupService.getAll();
     }
 
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            content = @Content(examples = {@ExampleObject(
+                    value = "{\"id\": 1, \"name\": \"Home\"}")})
+    )
+    @Operation(summary = "Add new group")
+    @Validated(Transfer.New.class)
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/group")
-    public ResponseEntity<Integer> addGroup(@RequestBody Group group) {
-        Integer countUpdatedRow = groupService.add(group);
-        if (countUpdatedRow > 0) {
-            return new ResponseEntity<>(countUpdatedRow, HttpStatus.CREATED);
-        } else {
-            return new ResponseEntity<>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
-        }
+    public Integer add(@Valid @RequestBody GroupDto groupDto) {
+        return groupService.add(groupDto);
     }
 
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            content = @Content(examples = {@ExampleObject(
+                    value = "{\"id\": 1}")})
+    )
+    @Operation(summary = "Add task to group")
+    @Validated(Transfer.Update.class)
     @PostMapping("/group/{id}/task")
-    public Integer addTaskToGroup(@PathVariable Long id, @RequestBody Task task) {
-        return groupService.addTask(id, task);
+    @ResponseStatus(HttpStatus.CREATED)
+    public Integer addTaskToGroup(@PathVariable Long id, @Valid @RequestBody TaskDto taskDto) {
+        return groupService.addTask(id, taskDto);
     }
 
-    @DeleteMapping("/group/{id}/task/{idTask}")
-    public Integer deleteTaskFromGroup(@PathVariable Long id, @PathVariable Long idTask) {
+    @Operation(summary = "Delete task from group")
+    @PutMapping("/group/{id}/task/{idTask}")
+    public Integer updateConstraints(@PathVariable Long id, @PathVariable Long idTask) {
         return groupService.deleteTask(id, idTask);
     }
 
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            content = @Content(examples = {@ExampleObject(
+                    value = "{\"id\": 1, \"name\": \"Home\"}")})
+    )
+    @Operation(summary = "Update group")
+    @Validated(Transfer.Update.class)
     @PutMapping("/group")
-    public ResponseEntity<Integer> updateGroup(@RequestBody Group group) {
-        Integer countUpdatedRow = groupService.update(group);
-        if (countUpdatedRow > 0) {
-            return new ResponseEntity<>(countUpdatedRow, HttpStatus.ACCEPTED);
-        } else {
-            return new ResponseEntity<>(countUpdatedRow, HttpStatus.NOT_MODIFIED);
-        }
+    public Integer update(@Valid @RequestBody GroupDto groupDto) {
+        return groupService.update(groupDto);
     }
 
+    @Operation(summary = "Delete group by id")
     @DeleteMapping("/group/{id}")
-    // почему у тебя с апдейтом логика разделена на accepted/not modified, а для delete - нет?
     public Integer delete(@PathVariable Long id) {
         return groupService.delete(id);
     }

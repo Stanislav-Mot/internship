@@ -1,4 +1,3 @@
-
 # REST CRUD API with Spring and Postgres For 'task tracker'
 
 ## Steps to Setup
@@ -10,6 +9,7 @@ https://github.com/DeniskaButkevich/internship
 ```
 
 **2. Create Postgres database**
+
 ```bash
 create database internship
 ```
@@ -40,6 +40,6 @@ The app will start running at <http://localhost:8080>.
 
 You can see the app defines following CRUD APIs with a Swagger.
 
-http://localhost:8080/swagger-ui/index.html
+http://localhost:8080/swagger-ui.html
 
 

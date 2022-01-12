@@ -11,13 +11,13 @@ import java.util.List;
 @Data
 public class Group {
 
-    public Group(Long id) {
-        this.id = id;
-    }
-
     private Long id;
     private String name;
     private List<Task> tasks;
     private Person person;
+
+    public Group(Long id) {
+        this.id = id;
+    }
 
 }

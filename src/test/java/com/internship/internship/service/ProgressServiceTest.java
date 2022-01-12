@@ -1,8 +1,10 @@
 package com.internship.internship.service;
 
+import com.internship.internship.dto.ProgressDto;
+import com.internship.internship.mapper.ProgressDtoMapper;
 import com.internship.internship.model.Progress;
-import com.internship.internship.model.Task;
 import com.internship.internship.repository.ProgressRepo;
+import com.internship.internship.repository.TaskRepo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,27 +15,34 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.internship.internship.util.Helper.newProgressDtoForTest;
+import static com.internship.internship.util.Helper.newProgressForTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ProgressServiceTest {
 
-    private final Long CORRECT_ID = 999L;
     @InjectMocks
     private ProgressService progressService;
     @Mock
     private ProgressRepo progressRepo;
+    @Mock
+    private TaskRepo taskRepo;
+    @Mock
+    private ProgressDtoMapper mapper;
 
     @Test
     void getById() {
         Progress progress = newProgressForTest();
+        ProgressDto progressDto = newProgressDtoForTest();
 
         when(progressRepo.getProgressById(progress.getId())).thenReturn(progress);
+        when(mapper.convertToDto(progress)).thenReturn(progressDto);
 
-        Progress progressFromService = progressService.getById(progress.getId());
+        ProgressDto progressFromService = progressService.getById(progress.getId());
 
-        assertEquals(progressFromService, progress);
+        assertEquals(progressFromService, progressDto);
 
         verify(progressRepo, times(1)).getProgressById(progress.getId());
     }
@@ -47,7 +56,7 @@ class ProgressServiceTest {
 
         when(progressRepo.getAllProgresses()).thenReturn(list);
 
-        List<Progress> progressList = progressService.getAll();
+        List<ProgressDto> progressList = progressService.getAll();
 
         assertEquals(3, progressList.size());
         verify(progressRepo, times(1)).getAllProgresses();
@@ -55,11 +64,13 @@ class ProgressServiceTest {
 
     @Test
     void add() {
+        ProgressDto progressDto = newProgressDtoForTest();
         Progress progress = newProgressForTest();
 
         when(progressRepo.addProgress(any(MapSqlParameterSource.class))).thenReturn(1);
+        when(mapper.convertToEntity(progressDto)).thenReturn(progress);
 
-        Integer result = progressService.add(progress);
+        Integer result = progressService.add(progressDto);
 
         assertEquals(1, result);
 
@@ -68,11 +79,13 @@ class ProgressServiceTest {
 
     @Test
     void update() {
+        ProgressDto progressDto = newProgressDtoForTest();
         Progress progress = newProgressForTest();
 
         when(progressRepo.updateProgresses(any(MapSqlParameterSource.class))).thenReturn(1);
+        when(mapper.convertToEntity(progressDto)).thenReturn(progress);
 
-        Integer result = progressService.update(progress);
+        Integer result = progressService.update(progressDto);
 
         assertEquals(1, result);
 
@@ -90,9 +103,5 @@ class ProgressServiceTest {
         assertEquals(1, result);
 
         verify(progressRepo, times(1)).deleteProgress(progress.getId());
-    }
-
-    private Progress newProgressForTest() {
-        return new Progress(CORRECT_ID, new Task(9L), (short) 99);
     }
 }

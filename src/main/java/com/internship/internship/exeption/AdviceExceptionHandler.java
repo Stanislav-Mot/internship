@@ -1,5 +1,6 @@
 package com.internship.internship.exeption;
 
+import org.postgresql.util.PSQLException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,13 +17,14 @@ import java.util.Date;
 @ControllerAdvice(annotations = RestController.class)
 public class AdviceExceptionHandler extends ResponseEntityExceptionHandler {
 
+
     @ExceptionHandler(DataNotFoundException.class)
     public ResponseEntity<ErrorDetails> dataNotFoundExceptionHandling(Exception exception, WebRequest request) {
         return new ResponseEntity<>(new ErrorDetails(new Date(), exception.getMessage(), request.getDescription(false)), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorDetails> globalExceptionHandling(Exception exception, WebRequest request) {
+    @ExceptionHandler(PSQLException.class)
+    public ResponseEntity<ErrorDetails> pSQLExceptionHandling(Exception exception, WebRequest request) {
         return new ResponseEntity<>(new ErrorDetails(new Date(), exception.getMessage(), request.getDescription(false)), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -38,3 +40,4 @@ public class AdviceExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(response, status);
     }
 }
+
