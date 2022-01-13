@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Progress {
+public class Progress { // зачем отдельное энтити, если у тебя тут одно бизнес-поле?
 
     private Long id;
     private Task task;

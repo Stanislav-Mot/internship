@@ -61,7 +61,7 @@ public class TaskService {
 
     public TaskDto getById(Long id) {
         Task task = taskRepo.getTaskById(id);
-        TaskDto taskDto = mapper.convertToDto(task);
+        TaskDto taskDto = mapper.convertToDto(task); // инлайн
         return taskDto;
     }
 
@@ -106,7 +106,7 @@ public class TaskService {
             }
             return dtoList;
         } else {
-            return null;
+            return null; // null в коде не используется. Или эксепшн, или пустой лист
         }
     }
 

@@ -17,12 +17,11 @@ public class Task implements ParentTask {
     private String name;
     private String startTime;
     private String description;
-    private LocalTime estimate;
+    private LocalTime estimate; // эстимейт в количестве дней давай сделаем
     private LocalTime spentTime;
-
     private Person person;
     private Progress progress;
-    private List<Group> groupsList;
+    private List<Group> groupsList; // одна группа
 
     public Task(Long id) {
         this.id = id;

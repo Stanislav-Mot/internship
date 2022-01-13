@@ -16,7 +16,7 @@ public class GroupService {
 
     private final GroupRepo groupRepo;
     private final GroupDtoMapper mapper;
-    private final TaskDtoMapper taskDtoMapper;
+    private final TaskDtoMapper taskDtoMapper; // не используется
 
     public GroupService(GroupRepo groupRepo, GroupDtoMapper mapper, TaskDtoMapper taskDtoMapper) {
         this.groupRepo = groupRepo;
@@ -24,7 +24,7 @@ public class GroupService {
         this.taskDtoMapper = taskDtoMapper;
     }
 
-    private static MapSqlParameterSource getMapSqlParameterSource(GroupDto groupDto) {
+    private static MapSqlParameterSource getMapSqlParameterSource(GroupDto groupDto) { // убери статику
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("id", groupDto.getId());
         parameters.addValue("name", groupDto.getName());
@@ -34,7 +34,7 @@ public class GroupService {
     public GroupDto getById(Long id) {
         Group group = groupRepo.getGroupById(id);
 
-        GroupDto groupDto = mapper.convertToDto(group);
+        GroupDto groupDto = mapper.convertToDto(group); // инлайн
         return groupDto;
     }
 

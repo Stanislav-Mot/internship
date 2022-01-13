@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class CompositeTask implements ParentTask {
+public class CompositeTask implements ParentTask { // пакет Composite  с маленькой буквы
     private List<ParentTask> childParentTask = new ArrayList<>();
 
     public void add(ParentTask task) {
@@ -26,4 +26,6 @@ public class CompositeTask implements ParentTask {
     public Integer size() {
         return childParentTask.size();
     }
+
+    // вот эта вся логика должна быть в Group- т.е. как бы group - это и есть наш compositeTask
 }

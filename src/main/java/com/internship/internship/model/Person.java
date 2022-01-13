@@ -15,7 +15,7 @@ public class Person {
     private String firstName;
     private String lastName;
     private Integer age;
-    private List<Group> groups;
+    private List<Group> groups; // тут должны быть не группы, а наши assignments
 
     public Person(Long id) {
         this.id = id;

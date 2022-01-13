@@ -18,7 +18,7 @@ public class PriorityMapper implements RowMapper<Priority> {
         priority.setId(rs.getLong("id"));
         priority.setPriority(rs.getInt("priority"));
 
-        long taskID = rs.getLong("id_task");
+        long taskID = rs.getLong("id_task"); // почему у тебя здесь  task--->ID<---, а ниже group--->Id<---. делай все единообразно
         if (taskID > 0) {
             priority.setTask(new Task(taskID));
         }

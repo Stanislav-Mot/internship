@@ -13,9 +13,9 @@ public class Group implements ParentTask {
 
     private Long id;
     private String name;
-    private CompositeTask tasks;
+    private CompositeTask tasks; // давай назовем это assignment
     private Person person;
-    private boolean priority;
+    private boolean priority; // почему булеан?
 
     /**
      * List of ids regulating task priority

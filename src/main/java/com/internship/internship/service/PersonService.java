@@ -19,7 +19,7 @@ public class PersonService {
 
     private final PersonRepo personRepo;
     private final PersonDtoMapper mapper;
-    private final GroupDtoMapper groupDtoMapper;
+    private final GroupDtoMapper groupDtoMapper; // не используется
 
     public PersonService(PersonRepo personRepo, PersonDtoMapper mapper, GroupDtoMapper groupDtoMapper) {
         this.personRepo = personRepo;
@@ -50,7 +50,7 @@ public class PersonService {
 
     public static Map<String, Object> getMapParamFromToken(String token) {
         Map<String, Object> params = new HashMap<>();
-        System.out.println(token);
+        System.out.println(token); // убери
         params.put("token", "%" + token + "%");
         return params;
     }

@@ -26,7 +26,7 @@ public class TaskMapper implements RowMapper<Task> {
             task.setEstimate(estimate.toLocalTime());
         }
 
-        Time spent_time = rs.getTime("spent_time");
+        Time spent_time = rs.getTime("spent_time"); // снейккейс
         if (spent_time != null) {
             task.setSpentTime(spent_time.toLocalTime());
         }

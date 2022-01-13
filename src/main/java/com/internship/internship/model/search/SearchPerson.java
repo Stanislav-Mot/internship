@@ -9,7 +9,7 @@ import org.hibernate.validator.constraints.Range;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class SearchPerson {
+public class SearchPerson { // весь пакет search в ДТО перенеси
 
     @Schema(example = "Denis")
     private String firstName;

@@ -55,7 +55,7 @@ public class PriorityService {
 
     public PriorityDto getById(Long id) {
         Priority priority = priorityRepo.getPriorityById(id);
-        PriorityDto priorityDto = mapper.convertToDto(priority);
+        PriorityDto priorityDto = mapper.convertToDto(priority); // инлайн
         return priorityDto;
     }
 
@@ -77,7 +77,7 @@ public class PriorityService {
                 priorityDtos.add(mapper.convertToDto(priority));
             return priorityDtos;
         } else {
-            return null;
+            return null; // null в коде не используется
         }
     }
 }
