@@ -4,7 +4,6 @@ import com.internship.internship.model.Composite.CompositeTask;
 import com.internship.internship.model.Composite.ParentTask;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
