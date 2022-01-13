@@ -54,11 +54,6 @@
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>1.6.3</version>
         </dependency>
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <version>LATEST</version>
-        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -94,15 +89,6 @@
                     </archive>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <fork>true</fork>
-                    <executable>javac9</executable>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
-
 </project>
