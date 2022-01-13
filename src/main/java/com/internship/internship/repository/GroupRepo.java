@@ -73,32 +73,29 @@ public class GroupRepo {
     }
 
     public Integer deleteGroup(Long id) {
-        String deleteTasksSql = "delete from task where id in (select id_task from task_group where id_group = ?);";
-        String deleteGroupsInSql = "delete from group_of_tasks where id in (select id_child from group_in_group where id_parent = ?);";
+//        String deleteTasksSql = "delete from task where id in (select id_task from task_group where id_group = ?);";
+//        String deleteGroupsInSql = "delete from group_of_tasks where id in (select id_child from group_in_group where id_parent = ?);";
         String deleteGroupSql = "delete from group_of_tasks where id = ?;";
 
-        jdbcTemplate.update(deleteTasksSql, id);
-        jdbcTemplate.update(deleteGroupsInSql, id);
+//        jdbcTemplate.update(deleteTasksSql, id);
+//        jdbcTemplate.update(deleteGroupsInSql, id);
 
         return jdbcTemplate.update(deleteGroupSql, id);
     }
 
     public Integer addTaskToGroup(Long id, Long taskId) {
-        String sql = "insert into task_group (id_group, id_task) values (?,?) ";
+        String sql = "update task set id_group = ? where id = ?";
         return jdbcTemplate.update(sql, id, taskId);
     }
 
     public Integer deleteTaskFromGroup(Long idGroup, Long idTask) {
-        String sql = "delete from task_group where id_task = ? and id_group = ?";
+        String sql = "update task set id_group = null where id = ? and id_group = ?";
 
         return jdbcTemplate.update(sql, idTask, idGroup);
     }
 
     public List<Task> getTasksById(Long id) {
-        String sqlForGroup = "select t.id, t.name, t.start_time, t.id_person,t.id_progress, " +
-                "t.description, t.estimate, t.spent_time from group_of_tasks g " +
-                "join task_group tg on g.id = tg.id_group " +
-                "join task t on tg.id_task = t.id where g.id = ?";
+        String sqlForGroup = "select * from task where id_group = ?";
 
         return jdbcTemplate.query(sqlForGroup, new TaskMapper(), id);
     }
@@ -132,19 +129,19 @@ public class GroupRepo {
     }
 
     private List<Group> getAllGroupInGroup(Long id) {
-        String sql = "select * from group_of_tasks g join group_in_group gig on g.id = gig.id_child where gig.id_parent = ?;";
+        String sql = "select * from group_of_tasks where id_parent = ?;";
         List<Group> groups = jdbcTemplate.query(sql, new GroupMapper(), id);
         return groups;
     }
 
     public Integer addGroupToGroup(Long id, Long idGroup) {
-        String sql = "insert into group_in_group (id_parent, id_child) values (?,?) ";
+        String sql = "update group_of_tasks set id_parent = ? where id = ?;";
 
         return jdbcTemplate.update(sql, id, idGroup);
     }
 
     public Integer deleteGroupFromGroup(Long id, Long idGroup) {
-        String sql = "delete from group_in_group where id_parent = ? and id_child = ?";
+        String sql = "update group_of_tasks set id_parent = null where id_parent = ? and id = ?";
 
         return jdbcTemplate.update(sql, id, idGroup);
     }
