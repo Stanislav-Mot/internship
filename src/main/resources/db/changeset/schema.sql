@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS groupOfTasks CASCADE;
+DROP TABLE IF EXISTS group_of_tasks CASCADE;
 DROP TABLE IF EXISTS person CASCADE;
 DROP TABLE IF EXISTS progress CASCADE;
 DROP TABLE IF EXISTS task CASCADE;
@@ -14,7 +14,7 @@ CREATE TABLE person
     age       SMALLINT
 );
 
-CREATE TABLE groupOfTasks
+CREATE TABLE group_of_tasks
 (
     id        INT8 NOT NULL PRIMARY KEY,
     name      VARCHAR(256),
@@ -50,7 +50,7 @@ CREATE TABLE task_group
     id_group INT8,
     PRIMARY KEY (id_task, id_group),
     FOREIGN KEY (id_task) REFERENCES task (id) ON DELETE CASCADE,
-    FOREIGN KEY (id_group) REFERENCES groupOfTasks (id) ON DELETE CASCADE
+    FOREIGN KEY (id_group) REFERENCES group_of_tasks (id) ON DELETE CASCADE
 );
 
 create table priority_of_task
@@ -59,7 +59,7 @@ create table priority_of_task
     id_group INT8 NOT NULL,
     id_task  INT8,
     priority SMALLINT,
-    FOREIGN KEY (id_group) REFERENCES groupOfTasks (id) ON DELETE CASCADE,
+    FOREIGN KEY (id_group) REFERENCES group_of_tasks (id) ON DELETE CASCADE,
     FOREIGN KEY (id_task) REFERENCES task (id) ON DELETE CASCADE
 );
 
@@ -68,6 +68,6 @@ create table group_in_group
     id_parent INT8 NOT NULL,
     id_child  INT8 NOT NULL,
     PRIMARY KEY (id_parent, id_child),
-    FOREIGN KEY (id_parent) REFERENCES groupOfTasks (id) ON DELETE CASCADE,
-    FOREIGN KEY (id_child) REFERENCES groupOfTasks (id) ON DELETE CASCADE
+    FOREIGN KEY (id_parent) REFERENCES group_of_tasks (id) ON DELETE CASCADE,
+    FOREIGN KEY (id_child) REFERENCES group_of_tasks (id) ON DELETE CASCADE
 );

@@ -1,4 +1,4 @@
-INSERT INTO groupOfTasks (id, name)
+INSERT INTO group_of_tasks (id, name)
 VALUES (1, 'one'),
        (2, 'two'),
        (3, 'three'),

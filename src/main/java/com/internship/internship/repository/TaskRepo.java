@@ -81,7 +81,7 @@ public class TaskRepo {
 
     public List<Group> getGroupsById(Long id) {
         String sqlForGroup = "select * from task t join task_group tg on t.id = tg.id_task " +
-                "join groupOfTasks g on tg.id_group = g.id where t.id = ?";
+                "join group_of_tasks g on tg.id_group = g.id where t.id = ?";
 
         return jdbcTemplate.query(sqlForGroup, new GroupMapper(), id);
     }

@@ -46,7 +46,7 @@ public class PersonRepo {
 
     public Integer deletePerson(Long id) {
         String deletePerson = "delete from person where id = ?;";
-        String deleteConstrains = "update groupOfTasks set id_person = null where id_person = ?;";
+        String deleteConstrains = "update group_of_tasks set id_person = null where id_person = ?;";
 
         jdbcTemplate.update(deleteConstrains, id);
 
@@ -74,19 +74,19 @@ public class PersonRepo {
     }
 
     public Integer addGroupToPerson(Long id, Long groupId) {
-        String sql = "update groupOfTasks set id_person = ? where id = ?;";
+        String sql = "update group_of_tasks set id_person = ? where id = ?;";
         return jdbcTemplate.update(sql, id, groupId);
     }
 
     public Integer deleteGroupFromPerson(Long personId, Long groupId) {
-        String sql = "update groupOfTasks set id_person = null  where id_person = ? and id = ?;";
+        String sql = "update group_of_tasks set id_person = null  where id_person = ? and id = ?;";
         return jdbcTemplate.update(sql, personId, groupId);
 
     }
 
     public List<Group> getGroupsById(Long id) {
         String sqlForGroup =
-                "select * from person p join groupOfTasks g on p.id = g.id_person where p.id = ?";
+                "select * from person p join group_of_tasks g on p.id = g.id_person where p.id = ?";
 
         return jdbcTemplate.query(sqlForGroup, new GroupMapper(), id);
     }
