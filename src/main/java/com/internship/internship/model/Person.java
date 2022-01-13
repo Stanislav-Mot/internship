@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@NoArgsConstructor
 @AllArgsConstructor
 @Data
 public class Person {
@@ -15,9 +16,6 @@ public class Person {
     private String lastName;
     private Integer age;
     private List<Group> groups;
-
-    public Person() {
-    }
 
     public Person(Long id) {
         this.id = id;
