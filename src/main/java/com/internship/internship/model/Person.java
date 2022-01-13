@@ -16,6 +16,7 @@ public class Person {
     private String lastName;
     private Integer age;
     private List<Group> groups;
+
     public Person(Long id) {
         this.id = id;
     }

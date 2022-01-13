@@ -31,14 +31,15 @@ public class TrustList<T> implements java.util.List<T> {
     public boolean contains(Object o) {
 
         for (int i = 0; i < size; i++) {
-            if (elementData[i] == o)
+            if (elementData[i] == o) {
                 return true;
+            }
         }
         for (int i = 0; i < size; i++) {
-            if (elementData[i].equals(o))
+            if (elementData[i].equals(o)) {
                 return true;
+            }
         }
-
         return false;
     }
 
@@ -54,19 +55,22 @@ public class TrustList<T> implements java.util.List<T> {
 
     @Override
     public <T1> T1[] toArray(T1[] a) {
-        if (a.length < size)
+        if (a.length < size) {
             return (T1[]) Arrays.copyOf(elementData, size, a.getClass());
+        }
         System.arraycopy(elementData, 0, a, 0, size);
-        if (a.length > size)
+        if (a.length > size) {
             a[size] = null;
+        }
         return a;
     }
 
     @Override
     public boolean add(T t) {
 
-        if (size == elementData.length)
+        if (size == elementData.length) {
             elementData = grow();
+        }
         elementData[size] = t;
         size++;
         return true;
@@ -79,9 +83,7 @@ public class TrustList<T> implements java.util.List<T> {
 
     @Override
     public boolean remove(Object o) {
-        int i;
-
-        for (i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++) {
             if (o.equals(elementData[i])) {
                 size -= 1;
                 elementData[size] = null;
@@ -94,8 +96,9 @@ public class TrustList<T> implements java.util.List<T> {
     @Override
     public boolean containsAll(Collection<?> c) {
         for (Object e : c)
-            if (!contains(e))
+            if (!contains(e)) {
                 return false;
+            }
         return true;
     }
 
@@ -103,10 +106,12 @@ public class TrustList<T> implements java.util.List<T> {
     public boolean addAll(Collection<? extends T> c) {
         Object[] a = c.toArray();
         int numNew = a.length;
-        if (numNew == 0)
+        if (numNew == 0) {
             return false;
-        if (numNew > (elementData).length - (size))
+        }
+        if (numNew > (elementData).length - (size)) {
             elementData = grow();
+        }
         System.arraycopy(a, 0, elementData, size, numNew);
         size += numNew;
         return true;
@@ -114,8 +119,9 @@ public class TrustList<T> implements java.util.List<T> {
 
     @Override
     public boolean addAll(int index, Collection<? extends T> c) {
-        if (index < 0 || index > this.size)
+        if (index < 0 || index > this.size) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + this.size);
+        }
 
         int cSize = c.size();
 
@@ -124,17 +130,19 @@ public class TrustList<T> implements java.util.List<T> {
         Object[] a = c.toArray();
 
         int numNew = a.length;
-        if (numNew == 0)
+        if (numNew == 0) {
             return false;
+        }
 
-        if (numNew > (elementData).length - (size))
+        if (numNew > (elementData).length - (size)) {
             elementData = grow();
+        }
 
         int numMoved = size - index;
-        if (numMoved > 0)
-            System.arraycopy(elementData, index,
-                    elementData, index + numNew,
-                    numMoved);
+        if (numMoved > 0) {
+            System.arraycopy(elementData, index, elementData, index + numNew, numMoved);
+        }
+
         System.arraycopy(a, 0, elementData, index, numNew);
         size = size + numNew;
         return true;
@@ -157,16 +165,19 @@ public class TrustList<T> implements java.util.List<T> {
         int r;
         // Optimize for initial run of survivors
         for (r = from; ; r++) {
-            if (r == end)
+            if (r == end) {
                 return false;
-            if (c.contains(elementData[r]) != complement)
+            }
+            if (c.contains(elementData[r]) != complement) {
                 break;
+            }
         }
         int w = r++;
         try {
             for (; r < end; r++) {
-                if (c.contains(elementData[r]) == complement)
+                if (c.contains(elementData[r]) == complement) {
                     elementData[w++] = elementData[r];
+                }
             }
         } finally {
             System.arraycopy(elementData, r, elementData, w, end - r);
@@ -178,14 +189,16 @@ public class TrustList<T> implements java.util.List<T> {
 
     private void shiftTailOverGap(int lo, int hi) {
         System.arraycopy(elementData, hi, elementData, lo, size - hi);
-        for (int to = size, i = (size -= hi - lo); i < to; i++)
+        for (int to = size, i = (size -= hi - lo); i < to; i++) {
             elementData[i] = null;
+        }
     }
 
     @Override
     public void clear() {
-        for (int to = size, i = size = 0; i < to; i++)
+        for (int to = size, i = size = 0; i < to; i++) {
             elementData[i] = null;
+        }
     }
 
     @Override
@@ -203,11 +216,13 @@ public class TrustList<T> implements java.util.List<T> {
     @Override
     public void add(int index, T element) {
 
-        if (index > size || index < 0)
+        if (index > size || index < 0) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        }
 
-        if (size == elementData.length)
+        if (size == elementData.length) {
             elementData = grow();
+        }
 
         System.arraycopy(elementData, index,
                 elementData, index + 1,
@@ -224,8 +239,9 @@ public class TrustList<T> implements java.util.List<T> {
         T oldValue = (T) elementData[index];
 
         final int newSize;
-        if ((newSize = size - 1) > index)
+        if ((newSize = size - 1) > index) {
             System.arraycopy(elementData, index + 1, elementData, index, newSize - index);
+        }
 
         size = newSize;
         elementData[size] = null;
@@ -299,10 +315,12 @@ public class TrustList<T> implements java.util.List<T> {
         @SuppressWarnings("unchecked")
         public T next() {
             int i = cursor;
-            if (i >= size)
+            if (i >= size) {
                 throw new NoSuchElementException();
-            if (i >= elementData.length)
+            }
+            if (i >= elementData.length) {
                 throw new ConcurrentModificationException();
+            }
             cursor = i + 1;
             lastRet = i;
             return (T) elementData[lastRet];
@@ -310,8 +328,9 @@ public class TrustList<T> implements java.util.List<T> {
 
         @Override
         public void remove() {
-            if (lastRet < 0)
+            if (lastRet < 0) {
                 throw new IllegalStateException();
+            }
 
             try {
                 TrustList.this.remove(lastRet);
@@ -328,10 +347,12 @@ public class TrustList<T> implements java.util.List<T> {
             int i = cursor;
             if (i < size) {
                 final Object[] es = elementData;
-                if (i >= es.length)
+                if (i >= es.length) {
                     throw new ConcurrentModificationException();
-                for (; i < size; i++)
+                }
+                for (; i < size; i++) {
                     action.accept(elementAt(es, i));
+                }
                 // update once at end to reduce heap write traffic
                 cursor = i;
                 lastRet = i - 1;

@@ -4,7 +4,6 @@ import com.internship.internship.dto.GroupDto;
 import com.internship.internship.dto.TaskDto;
 import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.service.GroupService;
-import lombok.SneakyThrows;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

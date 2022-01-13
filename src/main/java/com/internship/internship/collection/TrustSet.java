@@ -1,20 +1,16 @@
 package com.internship.internship.collection;
 
-import jdk.internal.util.ArraysSupport;
-
-import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class TrustSet<T> implements java.util.Set<T>, Serializable {
+public class TrustSet<T> implements java.util.Set<T> {
 
+    public static final int SOFT_MAX_ARRAY_LENGTH = Integer.MAX_VALUE - 8;
     private static final Object[] EMPTY_CAPACITY = {};
-
     /**
      * Default initial capacity.
      */
     private static final int DEFAULT_CAPACITY = 10;
-
     private Integer size = 0;
 
     private Object[] elementData;
@@ -29,20 +25,42 @@ public class TrustSet<T> implements java.util.Set<T>, Serializable {
     }
 
     public TrustSet(Collection<? extends T> c) {
+
+        if (c.size() == 0) {
+            return;
+        }
+
         Object[] collection = c.toArray();
-        if ((size = collection.length) != 0) {
-            if (c.getClass() == TrustSet.class) {
-                elementData = collection;
-            } else {
-                elementData = Arrays.copyOf(collection, size, Object[].class);
-            }
-        } else {
-            elementData = EMPTY_CAPACITY;
+
+        for (int i = 0; i < collection.length; i++) {
+            add((T) collection[i]);
         }
     }
 
     static <E> E elementAt(Object[] es, int index) {
         return (E) es[index];
+    }
+
+    public static int newLength(int oldLength, int minGrowth, int prefGrowth) {
+
+        int prefLength = oldLength + Math.max(minGrowth, prefGrowth);
+        if (0 < prefLength && prefLength <= SOFT_MAX_ARRAY_LENGTH) {
+            return prefLength;
+        } else {
+            return hugeLength(oldLength, minGrowth);
+        }
+    }
+
+    private static int hugeLength(int oldLength, int minGrowth) {
+        int minLength = oldLength + minGrowth;
+        if (minLength < 0) { // overflow
+            throw new OutOfMemoryError(
+                    "Required array length " + oldLength + " + " + minGrowth + " is too large");
+        } else if (minLength <= SOFT_MAX_ARRAY_LENGTH) {
+            return SOFT_MAX_ARRAY_LENGTH;
+        } else {
+            return minLength;
+        }
     }
 
     @Override
@@ -57,13 +75,15 @@ public class TrustSet<T> implements java.util.Set<T>, Serializable {
 
     @Override
     public boolean add(T t) {
-        if (size == 0 || size == elementData.length)
+        if (size == 0 || size == elementData.length) {
             elementData = grow(size + 1);
+        }
 
         if (size != 0) {
             Object o = Arrays.stream(elementData, 0, size).filter(s -> s.equals(t)).findFirst().orElse(null);
-            if (o != null)
+            if (o != null) {
                 return false;
+            }
         }
 
         elementData[size] = t;
@@ -74,9 +94,7 @@ public class TrustSet<T> implements java.util.Set<T>, Serializable {
     private Object[] grow(int minCapacity) {
         int oldCapacity = elementData.length;
         if (oldCapacity > 0) {
-            int newCapacity = ArraysSupport.newLength(oldCapacity,
-                    minCapacity - oldCapacity, /* minimum growth */
-                    oldCapacity >> 1           /* preferred growth */);
+            int newCapacity = newLength(oldCapacity, minCapacity - oldCapacity, oldCapacity >> 1);
             return elementData = Arrays.copyOf(elementData, newCapacity);
         } else {
             return elementData = new Object[Math.max(DEFAULT_CAPACITY, minCapacity)];
@@ -85,8 +103,9 @@ public class TrustSet<T> implements java.util.Set<T>, Serializable {
 
     @Override
     public boolean addAll(Collection<? extends T> c) {
-        if (c.size() == 0)
+        if (c.size() == 0) {
             return false;
+        }
 
         Object[] collection = c.toArray();
 
@@ -105,20 +124,21 @@ public class TrustSet<T> implements java.util.Set<T>, Serializable {
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        if (c.size() == 0)
+        if (c.size() == 0) {
             return false;
+        }
+
         for (Object o : c) {
-            if (!contains(o))
+            if (!contains(o)) {
                 return false;
+            }
         }
         return true;
     }
 
     @Override
     public boolean remove(Object o) {
-        int i;
-
-        for (i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++) {
             if (o.equals(elementData[i])) {
                 size -= 1;
                 elementData[size] = null;
@@ -150,29 +170,34 @@ public class TrustSet<T> implements java.util.Set<T>, Serializable {
 
     @Override
     public <T1> T1[] toArray(T1[] a) {
-        if (a.length < size)
+        if (a.length < size) {
             return (T1[]) Arrays.copyOf(elementData, size, a.getClass());
+        }
         System.arraycopy(elementData, 0, a, 0, size);
-        if (a.length > size)
+        if (a.length > size) {
             a[size] = null;
+        }
         return a;
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        if (c.size() == 0)
+        if (c.size() == 0) {
             return false;
+        }
         for (Object o : c) {
-            if (!contains(o))
+            if (!contains(o)) {
                 remove(o);
+            }
         }
         return true;
     }
 
     @Override
     public void clear() {
-        for (int to = size, i = size = 0; i < to; i++)
+        for (int to = size, i = size = 0; i < to; i++) {
             elementData[i] = null;
+        }
     }
 
     private class Itr implements Iterator<T> {
@@ -190,10 +215,12 @@ public class TrustSet<T> implements java.util.Set<T>, Serializable {
         @SuppressWarnings("unchecked")
         public T next() {
             int i = cursor;
-            if (i >= size)
+            if (i >= size) {
                 throw new NoSuchElementException();
-            if (i >= elementData.length)
+            }
+            if (i >= elementData.length) {
                 throw new ConcurrentModificationException();
+            }
             cursor = i + 1;
             lastRet = i;
             return (T) elementData[lastRet];
@@ -201,8 +228,9 @@ public class TrustSet<T> implements java.util.Set<T>, Serializable {
 
         @Override
         public void remove() {
-            if (lastRet < 0)
+            if (lastRet < 0) {
                 throw new IllegalStateException();
+            }
 
             try {
                 TrustSet.this.remove(lastRet);
@@ -219,10 +247,12 @@ public class TrustSet<T> implements java.util.Set<T>, Serializable {
             int i = cursor;
             if (i < size) {
                 final Object[] es = elementData;
-                if (i >= es.length)
+                if (i >= es.length) {
                     throw new ConcurrentModificationException();
-                for (; i < size; i++)
+                }
+                for (; i < size; i++) {
                     action.accept(elementAt(es, i));
+                }
                 // update once at end to reduce heap write traffic
                 cursor = i;
                 lastRet = i - 1;

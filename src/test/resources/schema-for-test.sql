@@ -14,7 +14,7 @@ CREATE TABLE person
 
 CREATE TABLE groupOfTasks
 (
-    id        INT8   NOT NULL PRIMARY KEY,
+    id        INT8 NOT NULL PRIMARY KEY,
     id_person BIGINT,
     name      VARCHAR(256),
     FOREIGN KEY (id_person) REFERENCES person (id) ON DELETE CASCADE

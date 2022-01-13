@@ -12,6 +12,7 @@ public class Progress {
     private Long id;
     private Task task;
     private Short percents;
+
     public Progress(Long id) {
         this.id = id;
     }

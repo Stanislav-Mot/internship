@@ -15,6 +15,7 @@ public class Group {
     private String name;
     private List<Task> tasks;
     private Person person;
+
     public Group(Long id) {
         this.id = id;
     }
