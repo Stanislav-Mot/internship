@@ -19,10 +19,6 @@ UPDATE group_of_tasks
 SET id_person = 2
 where id = 3;
 
-insert into progress (id, id_task, percents)
-values (1, 2, 0),
-       (2, 4, 0);
-
 update task
 set id_progress = 1
 where id = 2;
@@ -70,16 +66,6 @@ VALUES (21, 'cleaning TASK', '2021-06-09', 11),
        (24, 'for_delete TASK', '2011-11-11', 22),
        (26, 'for_44_group TASK', '2011-11-11', 44),
        (25, 'for_33_group TASK', '2012-05-06', 33);
-
-
-INSERT INTO priority_of_task (id, id_task, id_group, priority)
-VALUES (111, 21, 11, 4),
-       (222, 22, 11, 92),
-       (333, 23, 11, 35);
-
-insert into progress (id, id_task, percents)
-values (98, 22, 54),
-       (97, 23, 55);
 
 update task
 set id_progress = 98

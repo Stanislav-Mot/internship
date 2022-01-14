@@ -2,8 +2,8 @@ package com.internship.internship.controller;
 
 import com.internship.internship.dto.PersonDto;
 import com.internship.internship.dto.TaskDto;
-import com.internship.internship.model.search.SearchPerson;
-import com.internship.internship.model.search.SearchTask;
+import com.internship.internship.dto.search.SearchPerson;
+import com.internship.internship.dto.search.SearchTask;
 import com.internship.internship.service.PersonService;
 import com.internship.internship.service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;

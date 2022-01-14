@@ -22,20 +22,13 @@ public class Helper {
         return new Group(CORRECT_ID, "TesterGroup", null, person);
     }
 
-    public static Progress newProgressForTest() {
-        return new Progress(CORRECT_ID, new Task(9L), (short) 99);
-    }
 
     public static Person newPersonForTest() {
         return new Person(CORRECT_ID, "Tester", "Rochester", 99, null);
     }
 
     public static Task newTaskForTest() {
-        return new Task(CORRECT_ID, "Tester", "2021-06-09", null, null, null);
-    }
-
-    public static Priority newPriorityForTest() {
-        return new Priority(CORRECT_ID, new Group(CORRECT_ID), new Task(CORRECT_ID), 34);
+        return new Task(CORRECT_ID, "Tester", "2021-06-09", null, null, null, null, null, null);
     }
 
     public static GroupDto newGroupDtoForTest() {
@@ -46,19 +39,11 @@ public class Helper {
         return new GroupDto(CORRECT_ID, "TesterGroup", null, person);
     }
 
-    public static ProgressDto newProgressDtoForTest() {
-        return new ProgressDto(CORRECT_ID, new TaskDto(9L), (short) 99);
-    }
-
     public static PersonDto newPersonDtoForTest() {
         return new PersonDto(CORRECT_ID, "Tester", "Rochester", 99, null);
     }
 
     public static TaskDto newTaskDtoForTest() {
-        return new TaskDto(CORRECT_ID, "Tester", "2021-06-09", null, null, null);
-    }
-
-    public static PriorityDto newPriorityDtoForTest() {
-        return new PriorityDto(CORRECT_ID, new GroupDto(CORRECT_ID), new TaskDto(CORRECT_ID), 34);
+        return new TaskDto(CORRECT_ID, "Tester", "2021-06-09", null, null, null, null, null, null);
     }
 }

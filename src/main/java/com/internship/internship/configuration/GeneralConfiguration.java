@@ -28,8 +28,8 @@ public class GeneralConfiguration {
                         .url("http://springdoc.org"))
                 .contact(
                         new Contact()
-                                .email("deniskabutkevich@gmail.com.ru")
-                                .url("https://github.com/DeniskaButkevich")
-                                .name("Denis Butkevich")));
+                                .email("${application-email}")
+                                .url("${application-url}")
+                                .name("${application-author}")));
     }
 }

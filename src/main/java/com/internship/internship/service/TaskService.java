@@ -3,7 +3,7 @@ package com.internship.internship.service;
 import com.internship.internship.dto.TaskDto;
 import com.internship.internship.mapper.TaskDtoMapper;
 import com.internship.internship.model.Task;
-import com.internship.internship.model.search.SearchTask;
+import com.internship.internship.dto.search.SearchTask;
 import com.internship.internship.repository.TaskRepo;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Service;
@@ -25,14 +25,13 @@ public class TaskService {
 
     public static MapSqlParameterSource getMapSqlParameterSource(Task task) {
         Long personId = (task.getPerson() != null) ? task.getPerson().getId() : null;
-        Long progressId = (task.getProgress() != null) ? task.getProgress().getId() : null;
         Date date = (task.getStartTime() != null) ? Date.valueOf(task.getStartTime()) : null;
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("id", task.getId());
         parameters.addValue("name", task.getName());
         parameters.addValue("personId", personId);
-        parameters.addValue("progressId", progressId);
+        parameters.addValue("progress", task.getProgress());
         parameters.addValue("start_time", date);
         return parameters;
     }
@@ -66,8 +65,15 @@ public class TaskService {
     }
 
     public List<TaskDto> getAll() {
-        List<Task> tasks = taskRepo.getAllTasks();
-        return getTaskDtos(tasks);
+        return getTaskDtos(taskRepo.getAllTasks());
+    }
+
+    public List<TaskDto> getByGroupId(Long id) {
+        return getTaskDtos(taskRepo.getByGroupId(id));
+    }
+
+    public List<TaskDto> getByPersonId(Long id) {
+        return getTaskDtos(taskRepo.getByPersonId(id));
     }
 
     public Integer add(TaskDto taskDto) {
@@ -83,7 +89,7 @@ public class TaskService {
 
         MapSqlParameterSource parameters = getMapSqlParameterSource(task);
 
-        return taskRepo.updateTask(parameters);
+        return taskRepo.update(parameters);
     }
 
     public Integer delete(Long id) {

@@ -1,5 +1,6 @@
 package com.internship.internship.dto;
 
+import com.internship.internship.model.Assignment;
 import com.internship.internship.transfer.Transfer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.List;
 
 @NoArgsConstructor
@@ -28,9 +30,9 @@ public class PersonDto {
 
     @Schema(example = "23")
     @NotNull(message = "age should be not null", groups = {Transfer.New.class})
-    private Integer age;
+    private LocalDate birthdate;
 
-    private List<GroupDto> groups;
+    private List<Assignment> groups;
 
     public PersonDto(Long id) {
         this.id = id;

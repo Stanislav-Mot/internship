@@ -16,12 +16,10 @@ public class GroupService {
 
     private final GroupRepo groupRepo;
     private final GroupDtoMapper mapper;
-    private final TaskDtoMapper taskDtoMapper;
 
-    public GroupService(GroupRepo groupRepo, GroupDtoMapper mapper, TaskDtoMapper taskDtoMapper) {
+    public GroupService(GroupRepo groupRepo, GroupDtoMapper mapper) {
         this.groupRepo = groupRepo;
         this.mapper = mapper;
-        this.taskDtoMapper = taskDtoMapper;
     }
 
     private static MapSqlParameterSource getMapSqlParameterSource(GroupDto groupDto) {
@@ -32,10 +30,17 @@ public class GroupService {
     }
 
     public GroupDto getById(Long id) {
-        Group group = groupRepo.getGroupById(id);
+        return mapper.convertToDto(groupRepo.getGroupById(id));
+    }
 
-        GroupDto groupDto = mapper.convertToDto(group);
-        return groupDto;
+    public List<GroupDto> getByPersonId(Long id) {
+        List<Group> groups = groupRepo.getByPersonId(id);
+
+        List<GroupDto> groupsDto = new ArrayList<>();
+        for (Group group : groups) {
+            groupsDto.add(mapper.convertToDto(group));
+        }
+        return groupsDto;
     }
 
     public List<GroupDto> getAll() {
@@ -71,10 +76,6 @@ public class GroupService {
         return groupRepo.deleteTaskFromGroup(id, taskId);
     }
 
-    public Integer setPriorityFlag(Long id, boolean flag) {
-        return groupRepo.setPriority(id, flag);
-    }
-
     public Integer addGroup(Long id, Long groupId) {
         return groupRepo.addGroupToGroup(id, groupId);
     }
@@ -82,4 +83,5 @@ public class GroupService {
     public Integer deleteGroup(Long id, Long groupId) {
         return groupRepo.deleteGroupFromGroup(id, groupId);
     }
+
 }

@@ -31,14 +31,9 @@ public class TaskRepo {
     }
 
     public Task getTaskById(Long id) {
-        String sql = "select * from task t " +
-                "left join person p on p.id = t.id_person " +
-                "left join progress pr on pr.id = t.id_progress " +
-                "where t.id = ?";
+        String sql = "select * from task t left join person p on p.id = t.id_person where t.id = ?";
         try {
-            Task task = jdbcTemplate.queryForObject(sql, new TaskMapper(), id);
-            task.setGroupsList(getGroupsById(id));
-            return task;
+            return jdbcTemplate.queryForObject(sql, new TaskMapper(), id);
         } catch (EmptyResultDataAccessException exception) {
             LOGGER.warn("handling 404 error on getTaskById method");
 
@@ -47,26 +42,43 @@ public class TaskRepo {
     }
 
     public List<Task> getAllTasks() {
+        String sql = "select * from task t left join person p on p.id = t.id_person ";
+
+        return jdbcTemplate.query(sql, new TaskMapper());
+    }
+
+    public List<Task> getByGroupId(Long id) {
         String sql = "select * from task t " +
                 "left join person p on p.id = t.id_person " +
-                "left join progress pr on pr.id = t.id_progress";
-        List<Task> tasks = jdbcTemplate.query(sql, new TaskMapper());
-        for (Task task : tasks) {
-            task.setGroupsList(getGroupsById(task.getId()));
-        }
-        return tasks;
+                "left join person_group pg on t.id = pg.id_task " +
+                "where pg.id_group = ?";
+
+        return jdbcTemplate.query(sql, new TaskMapper(), id);
+    }
+
+    public List<Task> getByPersonId(Long id) {
+        String sql = "select * from task t left join person p on p.id = t.id_person where p.id = ?";
+
+        return jdbcTemplate.query(sql, new TaskMapper(), id);
     }
 
     public Integer addTask(SqlParameterSource parameters) {
-        String sql = "insert into task (id, name, start_time, id_person, id_progress) " +
+        String sql = "insert into task (id, name, start_time, id_person, id_progress) " + // ??? person need?
                 "values (:id, :name, :start_time, :personId, :progressId);";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
 
-    public Integer updateTask(SqlParameterSource parameters) {
+    public Integer update(SqlParameterSource parameters) {
         String sql = "update task set name = :name," +
                 "start_time = :start_time, id_person = :personId where id = :id";
+
+        return namedParameterJdbcTemplate.update(sql, parameters);
+    }
+
+    public Integer upgradedUpdate(MapSqlParameterSource parameters) {
+        String sql = "update task set description = :description," +
+                "estimate = :estimate, spent_time = :spent_time where id = :id";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
@@ -96,12 +108,5 @@ public class TaskRepo {
                         "Or progress.percents BETWEEN :fromProgress and :toProgress;";
 
         return namedParameterJdbcTemplate.query(sql, mapSqlParameterSource, new TaskMapper());
-    }
-
-    public Integer upgradedUpdate(MapSqlParameterSource parameters) {
-        String sql = "update task set description = :description," +
-                "estimate = :estimate, spent_time = :spent_time where id = :id";
-
-        return namedParameterJdbcTemplate.update(sql, parameters);
     }
 }

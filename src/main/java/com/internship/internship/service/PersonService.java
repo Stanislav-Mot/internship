@@ -4,7 +4,7 @@ import com.internship.internship.dto.PersonDto;
 import com.internship.internship.mapper.GroupDtoMapper;
 import com.internship.internship.mapper.PersonDtoMapper;
 import com.internship.internship.model.Person;
-import com.internship.internship.model.search.SearchPerson;
+import com.internship.internship.dto.search.SearchPerson;
 import com.internship.internship.repository.PersonRepo;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Service;
@@ -19,12 +19,10 @@ public class PersonService {
 
     private final PersonRepo personRepo;
     private final PersonDtoMapper mapper;
-    private final GroupDtoMapper groupDtoMapper;
 
-    public PersonService(PersonRepo personRepo, PersonDtoMapper mapper, GroupDtoMapper groupDtoMapper) {
+    public PersonService(PersonRepo personRepo, PersonDtoMapper mapper) {
         this.personRepo = personRepo;
         this.mapper = mapper;
-        this.groupDtoMapper = groupDtoMapper;
     }
 
     public static MapSqlParameterSource getMapSqlParameterSource(Person person) {
@@ -33,7 +31,7 @@ public class PersonService {
         parameters.addValue("id", person.getId());
         parameters.addValue("firstname", person.getFirstName());
         parameters.addValue("lastname", person.getLastName());
-        parameters.addValue("age", person.getAge());
+        parameters.addValue("age", person.getBirthdate());
         return parameters;
     }
 

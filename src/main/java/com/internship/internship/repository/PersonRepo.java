@@ -3,6 +3,7 @@ package com.internship.internship.repository;
 import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.mapper.GroupMapper;
 import com.internship.internship.mapper.PersonMapper;
+import com.internship.internship.model.Assignment;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,15 +33,13 @@ public class PersonRepo {
     }
 
     public Integer addPerson(SqlParameterSource parameters) {
-        String sql = "insert into person (id, firstname, lastname, age) " +
-                "values (:id, :firstname, :lastname, :age);";
+        String sql = "insert into person (id, firstname, lastname, age) values (:id, :firstname, :lastname, :age);";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
 
     public Integer updatePerson(SqlParameterSource parameters) {
-        String sql = "update person set firstname = :firstname," +
-                " lastname = :lastname, age = :age where id = :id;";
+        String sql = "update person set firstname = :firstname, lastname = :lastname, age = :age where id = :id;";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
@@ -68,27 +68,30 @@ public class PersonRepo {
         String sql = "select * from person";
         List<Person> persons = jdbcTemplate.query(sql, new PersonMapper());
         for (Person person : persons) {
-            person.setGroups(getGroupsById(person.getId()));
+            person.setGroups(new ArrayList<>(getGroupsById(person.getId())));
         }
         return persons;
     }
 
     public Integer addGroupToPerson(Long id, Long groupId) {
         String sql = "update group_of_tasks set id_person = ? where id = ?;";
+
         return jdbcTemplate.update(sql, id, groupId);
     }
 
     public Integer deleteGroupFromPerson(Long personId, Long groupId) {
         String sql = "update group_of_tasks set id_person = null  where id_person = ? and id = ?;";
+
         return jdbcTemplate.update(sql, personId, groupId);
 
     }
 
     public List<Group> getGroupsById(Long id) {
-        String sqlForGroup =
-                "select * from person p join group_of_tasks g on p.id = g.id_person where p.id = ?";
+        String sqlForGroup = "select * from  group_of_tasks got left join person_group pg on pot.id = pg.id_group where pg.id = ?";
+
 
         return jdbcTemplate.query(sqlForGroup, new GroupMapper(), id);
+
     }
 
     public List<Person> search(SqlParameterSource sqlParameterSource) {
@@ -105,6 +108,7 @@ public class PersonRepo {
 
     public List<Person> searchByTokenInName(Map<String, Object> params) {
         String sql = "select * from person where CONCAT(firstname, ' ' , lastname) like :token";
+
         return namedParameterJdbcTemplate.query(sql, params, new PersonMapper());
     }
 }

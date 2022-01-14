@@ -2,11 +2,9 @@ package com.internship.internship.repository;
 
 import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.mapper.GroupMapper;
-import com.internship.internship.mapper.PriorityMapper;
 import com.internship.internship.mapper.TaskMapper;
-import com.internship.internship.model.Composite.CompositeTask;
+import com.internship.internship.model.Assignment;
 import com.internship.internship.model.Group;
-import com.internship.internship.model.Priority;
 import com.internship.internship.model.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +15,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Transactional
@@ -36,10 +35,8 @@ public class GroupRepo {
         String sql = "select * from group_of_tasks g left join person p on p.id = g.id_person where g.id = ?";
         try {
             Group group = jdbcTemplate.queryForObject(sql, new GroupMapper(), id);
-            group.setTasks(getCompositeTasks(id));
-            if (group.isPriority()) {
-                group.setPriorityList(getAllPriorityByGroupId(group.getId()));
-            }
+            group.setAssignments(getComposite(id));
+
             return group;
         } catch (EmptyResultDataAccessException exception) {
             LOGGER.warn("handling 404 error on getGroupById method");
@@ -48,14 +45,20 @@ public class GroupRepo {
         }
     }
 
+    public List<Group> getByPersonId(Long id) {
+        String sql = "select * from  group_of_tasks got left join person_group pg on pot.id = pg.id_group where pg.id = ?";
+        List<Group> groups = jdbcTemplate.query(sql, new GroupMapper(), id);
+        for (Group group : groups) {
+            group.setAssignments(getComposite(group.getId()));
+        }
+        return groups;
+    }
+
     public List<Group> getAll() {
         String sql = "select * from group_of_tasks g left join person p on p.id = g.id_person";
         List<Group> groups = jdbcTemplate.query(sql, new GroupMapper());
         for (Group group : groups) {
-            group.setTasks(getCompositeTasks(group.getId()));
-            if (group.isPriority()) {
-                group.setPriorityList(getAllPriorityByGroupId(group.getId()));
-            }
+            group.setAssignments(getComposite(group.getId()));
         }
         return groups;
     }
@@ -73,12 +76,7 @@ public class GroupRepo {
     }
 
     public Integer deleteGroup(Long id) {
-//        String deleteTasksSql = "delete from task where id in (select id_task from task_group where id_group = ?);";
-//        String deleteGroupsInSql = "delete from group_of_tasks where id in (select id_child from group_in_group where id_parent = ?);";
         String deleteGroupSql = "delete from group_of_tasks where id = ?;";
-
-//        jdbcTemplate.update(deleteTasksSql, id);
-//        jdbcTemplate.update(deleteGroupsInSql, id);
 
         return jdbcTemplate.update(deleteGroupSql, id);
     }
@@ -100,38 +98,27 @@ public class GroupRepo {
         return jdbcTemplate.query(sqlForGroup, new TaskMapper(), id);
     }
 
-    public Integer setPriority(Long id, boolean flag) {
-        String sql = "update group_of_tasks set priority = ? where id = ?";
-        return jdbcTemplate.update(sql, flag, id);
-    }
-
-    public List<Priority> getAllPriorityByGroupId(Long id) {
-        String sql = "select * from priority_of_task p where p.id_group = ?";
-
-        return jdbcTemplate.query(sql, new PriorityMapper(), id);
-    }
-
-    private CompositeTask getCompositeTasks(Long id) {
-        CompositeTask compositeTasks = new CompositeTask();
+    private List<Assignment> getComposite(Long id) {
+        List<Assignment> assignments = new ArrayList<>();
 
         List<Task> taskList = getTasksById(id);
-        compositeTasks.addAll(taskList);
+        assignments.addAll(taskList);
 
         List<Group> groupList = getAllGroupInGroup(id);
         if (groupList.size() > 0) {
             for (Group group : groupList) {
-                group.setTasks(getCompositeTasks(group.getId()));
+                group.setAssignments(getComposite(group.getId()));
             }
         }
-        compositeTasks.addAll(groupList);
+        assignments.addAll(groupList);
 
-        return compositeTasks;
+        return assignments;
     }
 
     private List<Group> getAllGroupInGroup(Long id) {
         String sql = "select * from group_of_tasks where id_parent = ?;";
-        List<Group> groups = jdbcTemplate.query(sql, new GroupMapper(), id);
-        return groups;
+
+        return jdbcTemplate.query(sql, new GroupMapper(), id);
     }
 
     public Integer addGroupToGroup(Long id, Long idGroup) {

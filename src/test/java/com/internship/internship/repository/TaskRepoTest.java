@@ -3,7 +3,7 @@ package com.internship.internship.repository;
 import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Task;
-import com.internship.internship.model.search.SearchTask;
+import com.internship.internship.dto.search.SearchTask;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

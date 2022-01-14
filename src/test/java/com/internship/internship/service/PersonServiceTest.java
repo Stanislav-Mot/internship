@@ -5,7 +5,7 @@ import com.internship.internship.mapper.GroupDtoMapper;
 import com.internship.internship.mapper.PersonDtoMapper;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
-import com.internship.internship.model.search.SearchPerson;
+import com.internship.internship.dto.search.SearchPerson;
 import com.internship.internship.repository.PersonRepo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

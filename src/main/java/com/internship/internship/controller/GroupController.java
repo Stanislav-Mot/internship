@@ -31,6 +31,12 @@ public class GroupController {
         return groupService.getById(id);
     }
 
+    @Operation(summary = "Get group by id")
+    @GetMapping("/group/{id}")
+    public List<GroupDto> getByPersonId(@PathVariable Long id) {
+        return groupService.getByPersonId(id);
+    }
+
     @Operation(summary = "Get all groups")
     @GetMapping("/group")
     public List<GroupDto> getAll() {
@@ -64,12 +70,6 @@ public class GroupController {
     @DeleteMapping("/group/{id}")
     public Integer delete(@PathVariable Long id) {
         return groupService.delete(id);
-    }
-
-    @Operation(summary = "Set priority true or false")
-    @PostMapping("group/{id}")
-    public Integer setPriorityFlag(@PathVariable Long id, @RequestBody boolean flag) {
-        return groupService.setPriorityFlag(id, flag);
     }
 
     @Operation(summary = "Add group to group")

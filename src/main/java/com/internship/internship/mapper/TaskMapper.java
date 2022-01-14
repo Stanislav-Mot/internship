@@ -1,7 +1,6 @@
 package com.internship.internship.mapper;
 
 import com.internship.internship.model.Person;
-import com.internship.internship.model.Progress;
 import com.internship.internship.model.Task;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -20,11 +19,8 @@ public class TaskMapper implements RowMapper<Task> {
         task.setName(rs.getString("name"));
         task.setStartTime(rs.getString("start_time"));
         task.setDescription(rs.getString("description"));
-
-        Time estimate = rs.getTime("estimate");
-        if (estimate != null) {
-            task.setEstimate(estimate.toLocalTime());
-        }
+        task.setEstimate(rs.getInt("estimate"));;
+        task.setProgress(rs.getShort("progress"));
 
         Time spent_time = rs.getTime("spent_time");
         if (spent_time != null) {
@@ -34,11 +30,6 @@ public class TaskMapper implements RowMapper<Task> {
         long personID = rs.getLong("id_person");
         if (personID > 0) {
             task.setPerson(new Person(personID));
-        }
-
-        long progressID = rs.getLong("id_progress");
-        if (progressID > 0) {
-            task.setProgress(new Progress(progressID));
         }
 
         return task;

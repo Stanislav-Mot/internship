@@ -1,4 +1,4 @@
-package com.internship.internship.model.search;
+package com.internship.internship.dto.search;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

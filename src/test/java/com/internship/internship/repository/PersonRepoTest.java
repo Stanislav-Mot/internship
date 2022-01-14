@@ -3,7 +3,7 @@ package com.internship.internship.repository;
 import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
-import com.internship.internship.model.search.SearchPerson;
+import com.internship.internship.dto.search.SearchPerson;
 import com.internship.internship.service.PersonService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -27,8 +27,20 @@ public class TaskController {
 
     @Operation(summary = "Get task by id")
     @GetMapping("/task/{id}")
-    public TaskDto getId(@PathVariable @Parameter(description = "Task id") Long id) {
+    public TaskDto getById(@PathVariable @Parameter(description = "Task id") Long id) {
         return taskService.getById(id);
+    }
+
+    @Operation(summary = "Get task by person id")
+    @GetMapping("/task/person/{id}")
+    public List<TaskDto> getByPersonId(@PathVariable @Parameter(description = "Task id") Long id) {
+        return taskService.getByPersonId(id);
+    }
+
+    @Operation(summary = "Get task by group id")
+    @GetMapping("/task/group/{id}")
+    public List<TaskDto> getByGroupId(@PathVariable @Parameter(description = "Task id") Long id) {
+        return taskService.getByGroupId(id);
     }
 
     @Operation(summary = "Get all tasks")
@@ -60,12 +72,6 @@ public class TaskController {
         return taskService.update(taskDto);
     }
 
-    @Operation(summary = "Delete task by id")
-    @DeleteMapping("/task/{id}")
-    public Integer delete(@PathVariable Long id) {
-        return taskService.delete(id);
-    }
-
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = {@ExampleObject(
                     value = "{\"id\": 0, \"description\": \"should something\", \"estimate\": \"07:37:16.00\", \"spentTime\": \"07:37:16.00\"}")})
@@ -75,5 +81,11 @@ public class TaskController {
     @PutMapping("/task/upgradedUpdate")
     public Integer upgradedUpdate(@Valid @RequestBody TaskDto taskDto) {
         return taskService.upgradedUpdate(taskDto);
+    }
+
+    @Operation(summary = "Delete task by id")
+    @DeleteMapping("/task/{id}")
+    public Integer delete(@PathVariable Long id) {
+        return taskService.delete(id);
     }
 }

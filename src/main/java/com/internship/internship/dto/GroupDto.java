@@ -1,7 +1,6 @@
 package com.internship.internship.dto;
 
-import com.internship.internship.model.Composite.CompositeTask;
-import com.internship.internship.model.Composite.ParentTask;
+import com.internship.internship.model.Assignment;
 import com.internship.internship.transfer.Transfer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -16,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class GroupDto implements ParentTask {
+public class GroupDto implements Assignment {
 
     @Schema(example = "2")
     @NotNull(message = "id should be not null", groups = {Transfer.Update.class})
@@ -27,25 +26,11 @@ public class GroupDto implements ParentTask {
     private String name;
 
     @Null(groups = {Transfer.New.class, Transfer.Update.class})
-    private CompositeTask tasks;
+    private List<Assignment> assignments;
 
-    private PersonDto person;
-
-    private boolean priority;
-
-    /**
-     * List of ids regulating task priority
-     */
-    private List<PriorityDto> priorityList;
+    private List<PersonDto> person;
 
     public GroupDto(Long id) {
         this.id = id;
-    }
-
-    public GroupDto(Long id, String name, CompositeTask tasks, PersonDto person) {
-        this.id = id;
-        this.name = name;
-        this.tasks = tasks;
-        this.person = person;
     }
 }

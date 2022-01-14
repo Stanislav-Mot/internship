@@ -3,7 +3,7 @@ package com.internship.internship.service;
 import com.internship.internship.dto.TaskDto;
 import com.internship.internship.mapper.TaskDtoMapper;
 import com.internship.internship.model.Task;
-import com.internship.internship.model.search.SearchTask;
+import com.internship.internship.dto.search.SearchTask;
 import com.internship.internship.repository.TaskRepo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
