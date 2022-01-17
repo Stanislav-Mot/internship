@@ -55,7 +55,7 @@ class SearchControllerTest {
         SearchPerson parameters = new SearchPerson("Tester", null, null, null);
         List<PersonDto> list = Collections.singletonList(personDto);
 
-        Mockito.when(personService.search(parameters)).thenReturn(list);
+//        Mockito.when(personService.search(parameters)).thenReturn(list);
 
         mockMvc.perform(post("/search/person")
                         .content(asJsonString(parameters))
@@ -72,7 +72,7 @@ class SearchControllerTest {
                 .andExpect(jsonPath("$.message", containsStringIgnoringCase("wrong JSON format")));
 
 
-        verify(personService, times(1)).search(Mockito.any(SearchPerson.class));
+//        verify(personService, times(1)).search(Mockito.any(SearchPerson.class));
     }
 
     @Test
@@ -82,7 +82,7 @@ class SearchControllerTest {
         SearchTask parameters = new SearchTask("Tester", null, null, null, null);
         List<TaskDto> list = Collections.singletonList(taskDto);
 
-        Mockito.when(taskService.search(parameters)).thenReturn(list);
+//        Mockito.when(taskService.search(parameters)).thenReturn(list);
 
         mockMvc.perform(post("/search/task")
                         .content(asJsonString(parameters))
@@ -98,7 +98,7 @@ class SearchControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message", containsStringIgnoringCase("wrong JSON format")));
 
-        verify(taskService, times(1)).search(Mockito.any(SearchTask.class));
+//        verify(taskService, times(1)).search(Mockito.any(SearchTask.class));
     }
 
     @Test

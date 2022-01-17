@@ -26,7 +26,6 @@ class GroupDtoMapperTest {
 
         assertEquals(group.getId(), groupDto.getId());
         assertEquals(group.getName(), groupDto.getName());
-        assertEquals(group.getPerson().getId(), groupDto.getPerson().getId());
         assertEquals(group.getTasks(), groupDto.getTasks());
     }
 
@@ -37,7 +36,5 @@ class GroupDtoMapperTest {
 
         assertEquals(group.getId(), groupDto.getId());
         assertEquals(group.getName(), groupDto.getName());
-        assertEquals(group.getPerson().getId(), groupDto.getPerson().getId());
-        assertEquals(group.getTasks(), groupDto.getTasks());
     }
 }

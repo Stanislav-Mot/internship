@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class TaskService {
@@ -36,14 +37,18 @@ public class TaskService {
         return parameters;
     }
 
-    public static MapSqlParameterSource getMapSqlParameterSource(SearchTask parameters) {
+    public static MapSqlParameterSource getMapSqlParameterSource(String name,
+                                                                 String fromProgress,
+                                                                 String toProgress,
+                                                                 String minStartTime,
+                                                                 String maxStartTime) {
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 
-        mapSqlParameterSource.addValue("name", parameters.getName());
-        mapSqlParameterSource.addValue("fromProgress", parameters.getFromProgress());
-        mapSqlParameterSource.addValue("toProgress", parameters.getToProgress());
-        mapSqlParameterSource.addValue("fromStartTime", parameters.getMinStartTime());
-        mapSqlParameterSource.addValue("toStartTime", parameters.getMaxStartTime());
+        mapSqlParameterSource.addValue("name", name);
+        mapSqlParameterSource.addValue("fromProgress", fromProgress);
+        mapSqlParameterSource.addValue("toProgress", toProgress);
+        mapSqlParameterSource.addValue("fromStartTime", minStartTime);
+        mapSqlParameterSource.addValue("toStartTime", maxStartTime);
         return mapSqlParameterSource;
     }
 
@@ -96,8 +101,13 @@ public class TaskService {
         return taskRepo.deleteTask(id);
     }
 
-    public List<TaskDto> search(SearchTask parameters) {
-        MapSqlParameterSource mapSqlParameterSource = getMapSqlParameterSource(parameters);
+    public List<TaskDto> search(String name,
+                                String fromProgress,
+                                String toProgress,
+                                String minStartTime,
+                                String maxStartTime) {
+        MapSqlParameterSource mapSqlParameterSource = getMapSqlParameterSource(name, fromProgress, toProgress, minStartTime, maxStartTime);
+
         List<Task> tasks = taskRepo.search(mapSqlParameterSource);
 
         return getTaskDtos(tasks);

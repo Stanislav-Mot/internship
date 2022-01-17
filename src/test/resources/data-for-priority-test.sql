@@ -11,9 +11,3 @@ VALUES (11, 'cleaning', '2021-06-09', 1),
        (44, 'for_delete', '2011-11-11', 4),
        (55, 'for_progress', '2011-11-11'),
        (66, 'for_progress', '2011-11-11');
-
-INSERT INTO priority_of_task (id, id_task, id_group, priority)
-VALUES (111, 11, 1, 91),
-       (222, 22, 2, 92),
-       (333, 33, 3, 93),
-       (444, 44, 4, 96);

@@ -5,6 +5,8 @@ import com.internship.internship.dto.*;
 import com.internship.internship.model.*;
 import lombok.SneakyThrows;
 
+import java.time.LocalDate;
+
 public class Helper {
 
     public static final Long CORRECT_ID = 999L;
@@ -15,16 +17,16 @@ public class Helper {
     }
 
     public static Group newGroupForTest() {
-        return new Group(CORRECT_ID, "Tester", null, new Person(1L));
+        return new Group(CORRECT_ID, "Tester", null, null);
     }
 
     public static Group newGroupForTest(Person person) {
-        return new Group(CORRECT_ID, "TesterGroup", null, person);
+        return new Group(CORRECT_ID, "TesterGroup", null, null);
     }
 
 
     public static Person newPersonForTest() {
-        return new Person(CORRECT_ID, "Tester", "Rochester", 99, null);
+        return new Person(CORRECT_ID, "Tester", "Rochester",  LocalDate.of(2012, 12,12), null);
     }
 
     public static Task newTaskForTest() {
@@ -32,15 +34,15 @@ public class Helper {
     }
 
     public static GroupDto newGroupDtoForTest() {
-        return new GroupDto(CORRECT_ID, "Tester", null, new PersonDto(1L));
+        return new GroupDto(CORRECT_ID, "Tester", null, null);
     }
 
     public static GroupDto newGroupDtoForTest(PersonDto person) {
-        return new GroupDto(CORRECT_ID, "TesterGroup", null, person);
+        return new GroupDto(CORRECT_ID, "TesterGroup", null, null);
     }
 
     public static PersonDto newPersonDtoForTest() {
-        return new PersonDto(CORRECT_ID, "Tester", "Rochester", 99, null);
+        return new PersonDto(CORRECT_ID, "Tester", "Rochester", LocalDate.of(2012, 12,12), null);
     }
 
     public static TaskDto newTaskDtoForTest() {

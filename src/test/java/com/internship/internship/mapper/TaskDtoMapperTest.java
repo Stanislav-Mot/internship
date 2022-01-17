@@ -29,7 +29,6 @@ class TaskDtoMapperTest {
         assertEquals(task.getProgress(), taskDto.getProgress());
         assertEquals(task.getName(), taskDto.getName());
         assertEquals(task.getStartTime(), taskDto.getStartTime());
-        assertEquals(task.getGroupsList(), taskDto.getGroupsList());
     }
 
     @Test
@@ -42,6 +41,5 @@ class TaskDtoMapperTest {
         assertEquals(task.getProgress(), taskDto.getProgress());
         assertEquals(task.getName(), taskDto.getName());
         assertEquals(task.getStartTime(), taskDto.getStartTime());
-        assertEquals(task.getGroupsList(), taskDto.getGroupsList());
     }
 }

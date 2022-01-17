@@ -35,13 +35,13 @@ public class PersonService {
         return parameters;
     }
 
-    public static MapSqlParameterSource getMapSqlParameterSource(SearchPerson parameters) {
+    public static MapSqlParameterSource getMapSqlParameterSource(String firstName, String lastName, String exactAge, String  rangeAge) {
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 
-        mapSqlParameterSource.addValue("firstName", parameters.getFirstName());
-        mapSqlParameterSource.addValue("lastName", parameters.getLastName());
-        mapSqlParameterSource.addValue("exactAge", parameters.getExactAge());
-        mapSqlParameterSource.addValue("rangeAge", parameters.getRangeAge());
+        mapSqlParameterSource.addValue("firstName", firstName);
+        mapSqlParameterSource.addValue("lastName", lastName);
+        mapSqlParameterSource.addValue("exactAge", exactAge);
+        mapSqlParameterSource.addValue("rangeAge", rangeAge);
 
         return mapSqlParameterSource;
     }
@@ -95,8 +95,8 @@ public class PersonService {
         return personRepo.addGroupToPerson(id, groupId);
     }
 
-    public List<PersonDto> search(SearchPerson parameters) {
-        MapSqlParameterSource mapSqlParameterSource = getMapSqlParameterSource(parameters);
+    public List<PersonDto> search(String firstName, String lastName, String exactAge, String  rangeAge) {
+        MapSqlParameterSource mapSqlParameterSource = getMapSqlParameterSource(firstName, lastName, exactAge, rangeAge);
         List<Person> list = personRepo.search(mapSqlParameterSource);
         return getPersonDtos(list);
     }

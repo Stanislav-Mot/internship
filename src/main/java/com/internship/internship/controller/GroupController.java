@@ -32,7 +32,7 @@ public class GroupController {
     }
 
     @Operation(summary = "Get group by id")
-    @GetMapping("/group/{id}")
+    @GetMapping("/group/person/{id}")
     public List<GroupDto> getByPersonId(@PathVariable Long id) {
         return groupService.getByPersonId(id);
     }

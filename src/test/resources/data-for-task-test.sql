@@ -16,21 +16,16 @@ VALUES (2, 'cleaning', '2021-06-09', 1),
        (8888, 'for_delete', '2011-11-11', 1),
        (8877, 'for_progress', '2011-11-11');
 
-INSERT INTO progress (id, id_task, percents)
-VALUES (11, 2, 11),
-       (12, 4, 22),
-       (13, 9999, 33),
-       (14, 8888, 44);
 
 update task
-set id_progress = 11
+set progress = 11
 where id = 2;
 update task
-set id_progress = 12
+set progress = 12
 where id = 4;
 update task
-set id_progress = 13
+set progress = 13
 where id = 9999;
 update task
-set id_progress = 15
+set progress = 15
 where id = 8888;

@@ -28,7 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Sql("/data-for-group-test.sql")
 class GroupRepoTest {
 
-    private final Long CORRECT_ID = 999L;
     private final Long ID_FOR_GET = 1L;
     private final Long ID_FOR_UPDATE = 3L;
     private final Long ID_FOR_DELETE = 4L;
@@ -122,7 +121,6 @@ class GroupRepoTest {
 
         parameters.addValue("id", group.getId());
         parameters.addValue("name", group.getName());
-        parameters.addValue("id_person", group.getPerson().getId());
         return parameters;
     }
 

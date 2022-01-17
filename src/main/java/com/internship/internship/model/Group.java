@@ -13,7 +13,7 @@ public class Group implements Assignment {
 
     private Long id;
     private String name;
-    private List<Assignment> assignments;
+    private List<Assignment> tasks;
     private List<Person> person;
 
     public Group(Long id) {
@@ -21,14 +21,14 @@ public class Group implements Assignment {
     }
 
     public void add(Assignment task) {
-        assignments.add(task);
+        tasks.add(task);
     }
 
     public void addAll(List<? extends Assignment> taskList) {
-        assignments.addAll(taskList);
+        tasks.addAll(taskList);
     }
 
     public Integer size() {
-        return assignments.size();
+        return tasks.size();
     }
 }

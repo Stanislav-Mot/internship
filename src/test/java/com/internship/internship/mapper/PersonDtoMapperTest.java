@@ -27,7 +27,7 @@ class PersonDtoMapperTest {
         assertEquals(person.getId(), personDto.getId());
         assertEquals(person.getFirstName(), personDto.getFirstName());
         assertEquals(person.getLastName(), personDto.getLastName());
-        assertEquals(person.getAge(), personDto.getAge());
+        assertEquals(person.getBirthdate(), personDto.getBirthdate());
         assertEquals(person.getGroups(), personDto.getGroups());
     }
 
@@ -39,7 +39,7 @@ class PersonDtoMapperTest {
         assertEquals(person.getId(), personDto.getId());
         assertEquals(person.getFirstName(), personDto.getFirstName());
         assertEquals(person.getLastName(), personDto.getLastName());
-        assertEquals(person.getAge(), personDto.getAge());
+        assertEquals(person.getBirthdate(), personDto.getBirthdate());
         assertEquals(person.getGroups(), personDto.getGroups());
     }
 }

@@ -35,7 +35,7 @@ public class GroupRepo {
         String sql = "select * from group_of_tasks g left join person p on p.id = g.id_person where g.id = ?";
         try {
             Group group = jdbcTemplate.queryForObject(sql, new GroupMapper(), id);
-            group.setAssignments(getComposite(id));
+            group.setTasks(getComposite(id));
 
             return group;
         } catch (EmptyResultDataAccessException exception) {
@@ -49,7 +49,7 @@ public class GroupRepo {
         String sql = "select * from  group_of_tasks got left join person_group pg on pot.id = pg.id_group where pg.id = ?";
         List<Group> groups = jdbcTemplate.query(sql, new GroupMapper(), id);
         for (Group group : groups) {
-            group.setAssignments(getComposite(group.getId()));
+            group.setTasks(getComposite(group.getId()));
         }
         return groups;
     }
@@ -58,7 +58,7 @@ public class GroupRepo {
         String sql = "select * from group_of_tasks g left join person p on p.id = g.id_person";
         List<Group> groups = jdbcTemplate.query(sql, new GroupMapper());
         for (Group group : groups) {
-            group.setAssignments(getComposite(group.getId()));
+            group.setTasks(getComposite(group.getId()));
         }
         return groups;
     }
@@ -107,7 +107,7 @@ public class GroupRepo {
         List<Group> groupList = getAllGroupInGroup(id);
         if (groupList.size() > 0) {
             for (Group group : groupList) {
-                group.setAssignments(getComposite(group.getId()));
+                group.setTasks(getComposite(group.getId()));
             }
         }
         assignments.addAll(groupList);
