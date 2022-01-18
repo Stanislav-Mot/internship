@@ -33,13 +33,13 @@ public class PersonRepo {
     }
 
     public Integer addPerson(SqlParameterSource parameters) {
-        String sql = "insert into person (id, firstname, lastname, age) values (:id, :firstname, :lastname, :age);";
+        String sql = "insert into person (id, firstname, lastname, birthdate) values (:id, :firstname, :lastname, :birthdate);";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
 
     public Integer updatePerson(SqlParameterSource parameters) {
-        String sql = "update person set firstname = :firstname, lastname = :lastname, age = :age where id = :id;";
+        String sql = "update person set firstname = :firstname, lastname = :lastname where id = :id;";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
@@ -83,15 +83,13 @@ public class PersonRepo {
         String sql = "update group_of_tasks set id_person = null  where id_person = ? and id = ?;";
 
         return jdbcTemplate.update(sql, personId, groupId);
-
     }
 
     public List<Group> getGroupsById(Long id) {
-        String sqlForGroup = "select * from  group_of_tasks got left join person_group pg on pot.id = pg.id_group where pg.id = ?";
-
+        String sqlForGroup = "select * from  group_of_tasks got left join person_group pg " +
+                "on got.id = pg.id_group where pg.id_person = ?";
 
         return jdbcTemplate.query(sqlForGroup, new GroupMapper(), id);
-
     }
 
     public List<Person> search(SqlParameterSource sqlParameterSource) {
@@ -104,7 +102,6 @@ public class PersonRepo {
 
         return namedParameterJdbcTemplate.query(sql, sqlParameterSource, new PersonMapper());
     }
-
 
     public List<Person> searchByTokenInName(Map<String, Object> params) {
         String sql = "select * from person where CONCAT(firstname, ' ' , lastname) like :token";

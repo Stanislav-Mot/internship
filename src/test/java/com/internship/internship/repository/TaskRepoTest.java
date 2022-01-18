@@ -71,7 +71,7 @@ class TaskRepoTest {
 
     @Test
     void updateTask() {
-        Task taskFroUpdate = new Task(ID_FOR_UPDATE, "updated", "2001-01-01", "123", 2, (LocalTime) null, (short) 44, 22, new Person(1L));
+        Task taskFroUpdate = new Task(ID_FOR_UPDATE, "updated", null, "123", 2,  null,  44, 22, new Person(1L));
 
         Integer answer = taskRepo.update(getMapSqlParameterSource(taskFroUpdate));
 

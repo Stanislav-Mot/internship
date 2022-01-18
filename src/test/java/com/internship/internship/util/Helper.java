@@ -30,7 +30,7 @@ public class Helper {
     }
 
     public static Task newTaskForTest() {
-        return new Task(CORRECT_ID, "Tester", "2021-06-09", null, null, null, null, null, null);
+        return new Task(CORRECT_ID, "Tester", null, null, null, null, null, null, null);
     }
 
     public static GroupDto newGroupDtoForTest() {
@@ -46,6 +46,6 @@ public class Helper {
     }
 
     public static TaskDto newTaskDtoForTest() {
-        return new TaskDto(CORRECT_ID, "Tester", "2021-06-09", null, null, null, null, null, null);
+        return new TaskDto(CORRECT_ID, "Tester", null, null, null, null, null, null, null);
     }
 }

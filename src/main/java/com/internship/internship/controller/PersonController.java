@@ -39,8 +39,10 @@ public class PersonController {
 
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = {@ExampleObject(
-                    value = "{\"id\": 1, \"firstName\": \"Denis\", \"lastName\": \"Denisov\", \"age\": 12}")})
-    )
+                    value = "{\"id\": 1, " +
+                            "\"firstName\": \"Denis\", " +
+                            "\"lastName\": \"Denisov\", " +
+                            "\"birthdate\": \"1967-05-10\"}")}))
     @Operation(summary = "Add new person")
     @Validated(Transfer.New.class)
     @PostMapping("/person")
@@ -51,8 +53,9 @@ public class PersonController {
 
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = {@ExampleObject(
-                    value = "{\"id\": 1, \"firstName\": \"Denis\", \"lastName\": \"Denisov\", \"age\": 12}")})
-    )
+                    value = "{\"id\": 1, " +
+                            "\"firstName\": \"Denis\", " +
+                            "\"lastName\": \"Denisov\"}")}))
     @Operation(summary = "Update person")
     @Validated(Transfer.Update.class)
     @PutMapping("/person")

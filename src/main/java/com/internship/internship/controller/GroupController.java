@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +32,7 @@ public class GroupController {
         return groupService.getById(id);
     }
 
-    @Operation(summary = "Get group by id")
+    @Operation(summary = "Get group by person id")
     @GetMapping("/group/person/{id}")
     public List<GroupDto> getByPersonId(@PathVariable Long id) {
         return groupService.getByPersonId(id);
@@ -45,8 +46,7 @@ public class GroupController {
 
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = {@ExampleObject(
-                    value = "{\"id\": 1, \"name\": \"Home\"}")})
-    )
+                    value = "{\"id\": 1, \"name\": \"Home\"}")}))
     @Operation(summary = "Add new group")
     @Validated(Transfer.New.class)
     @ResponseStatus(HttpStatus.CREATED)
@@ -57,8 +57,7 @@ public class GroupController {
 
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = {@ExampleObject(
-                    value = "{\"id\": 1, \"name\": \"Home\"}")})
-    )
+                    value = "{\"id\": 1, \"name\": \"Home\"}")}))
     @Operation(summary = "Update group")
     @Validated(Transfer.Update.class)
     @PutMapping("/group")

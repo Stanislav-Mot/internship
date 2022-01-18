@@ -17,19 +17,19 @@ public class GeneralConfiguration {
         return new ModelMapper();
     }
 
-    @Bean
-    public OpenAPI customOpenApi(@Value("${application-description}") String appDescription,
-                                 @Value("${application-version}") String appVersion) {
-        return new OpenAPI().info(new Info().title("Application API")
-                .version(appVersion)
-                .description(appDescription)
-                .title("Task Tracker")
-                .license(new License().name("Apache 3.0")
-                        .url("http://springdoc.org"))
-                .contact(
-                        new Contact()
-                                .email("${application-email}")
-                                .url("${application-url}")
-                                .name("${application-author}")));
-    }
+//    @Bean
+//    public OpenAPI customOpenApi(@Value("${application-description}") String appDescription,
+//                                 @Value("${application-version}") String appVersion) {
+//        return new OpenAPI().info(new Info().title("Application API")
+//                .version(appVersion)
+//                .description(appDescription)
+//                .title("Task Tracker")
+//                .license(new License().name("Apache 3.0")
+//                        .url("http://springdoc.org"))
+//                .contact(
+//                        new Contact()
+//                                .email("${application-email}")
+//                                .url("${application-url}")
+//                                .name("${application-author}")));
+//    }
 }

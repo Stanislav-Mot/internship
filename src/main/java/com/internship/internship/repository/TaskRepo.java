@@ -63,8 +63,8 @@ public class TaskRepo {
     }
 
     public Integer addTask(SqlParameterSource parameters) {
-        String sql = "insert into task (id, name, start_time, id_person, id_progress) " + // ??? person need?
-                "values (:id, :name, :start_time, :personId, :progressId);";
+        String sql = "insert into task (id, name, description, estimate, priority) " +
+                "values (:id, :name, :description, :estimate, :priority);";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
@@ -76,24 +76,20 @@ public class TaskRepo {
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
 
-    public Integer upgradedUpdate(MapSqlParameterSource parameters) {
-        String sql = "update task set description = :description," +
-                "estimate = :estimate, spent_time = :spent_time where id = :id";
-
-        return namedParameterJdbcTemplate.update(sql, parameters);
+    public Integer updateProgress(Long id, Integer progress) {
+        String sql = "update task set progress = ? where id = :id";
+        // need set spent time
+        return jdbcTemplate.update(sql, progress, id);
     }
 
     public Integer deleteTask(Long id) {
-        String sql = "delete from progress where id_task = ?; " +
-                "delete from task_group where id_task = ?; " +
-                "delete from task where id = ?;";
+        String sql = "delete from task where id = ?;";
 
-        return jdbcTemplate.update(sql, id, id, id);
+        return jdbcTemplate.update(sql, id);
     }
 
     public List<Group> getGroupsById(Long id) {
-        String sqlForGroup = "select * from task t join task_group tg on t.id = tg.id_task " +
-                "join group_of_tasks g on tg.id_group = g.id where t.id = ?";
+        String sqlForGroup = "select * from group_of_tasks got join task t on got.id = t.id_group  where t.id = ?";
 
         return jdbcTemplate.query(sqlForGroup, new GroupMapper(), id);
     }

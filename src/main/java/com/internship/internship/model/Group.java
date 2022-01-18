@@ -14,7 +14,7 @@ public class Group implements Assignment {
     private Long id;
     private String name;
     private List<Assignment> tasks;
-    private List<Person> person;
+    private List<Person> persons;
 
     public Group(Long id) {
         this.id = id;

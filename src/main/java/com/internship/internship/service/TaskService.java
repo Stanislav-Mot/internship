@@ -25,15 +25,13 @@ public class TaskService {
     }
 
     public static MapSqlParameterSource getMapSqlParameterSource(Task task) {
-        Long personId = (task.getPerson() != null) ? task.getPerson().getId() : null;
-        Date date = (task.getStartTime() != null) ? Date.valueOf(task.getStartTime()) : null;
-
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("id", task.getId());
         parameters.addValue("name", task.getName());
-        parameters.addValue("personId", personId);
+        parameters.addValue("description", task.getDescription());
+        parameters.addValue("estimate", task.getEstimate());
         parameters.addValue("progress", task.getProgress());
-        parameters.addValue("start_time", date);
+
         return parameters;
     }
 
@@ -52,21 +50,8 @@ public class TaskService {
         return mapSqlParameterSource;
     }
 
-    public static MapSqlParameterSource getParameterForUpgradedUpdate(Task task) {
-        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-
-        mapSqlParameterSource.addValue("id", task.getId());
-        mapSqlParameterSource.addValue("description", task.getDescription());
-        mapSqlParameterSource.addValue("estimate", task.getEstimate());
-        mapSqlParameterSource.addValue("spent_time", task.getSpentTime());
-
-        return mapSqlParameterSource;
-    }
-
     public TaskDto getById(Long id) {
-        Task task = taskRepo.getTaskById(id);
-        TaskDto taskDto = mapper.convertToDto(task);
-        return taskDto;
+        return mapper.convertToDto(taskRepo.getTaskById(id));
     }
 
     public List<TaskDto> getAll() {
@@ -126,11 +111,7 @@ public class TaskService {
         }
     }
 
-    public Integer upgradedUpdate(TaskDto taskDto) {
-        Task task = mapper.convertToEntity(taskDto);
-
-        MapSqlParameterSource parameters = getParameterForUpgradedUpdate(task);
-
-        return taskRepo.upgradedUpdate(parameters);
+    public Integer updateProgress(Long id, Integer progress) {
+        return taskRepo.updateProgress(id, progress);
     }
 }

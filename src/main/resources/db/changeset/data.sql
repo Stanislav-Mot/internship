@@ -1,10 +1,10 @@
-INSERT INTO person (id, firstname, lastname, age)
-VALUES (1, 'Ivan', 'Ivanov', 23),
-       (2, 'Kolya', 'Denisov', 15);
+INSERT INTO person (id, firstname, lastname, birthdate)
+VALUES (1, 'Ivan', 'Ivanov', '2021-06-09'),
+       (2, 'Kolya', 'Denisov', '2021-06-09');
 
-INSERT INTO group_of_tasks (id, name, priority)
-VALUES (1, 'Programming GROUp', false),
-       (3, 'Build GROUP', false);
+INSERT INTO group_of_tasks (id, name)
+VALUES (1, 'Programming GROUp'),
+       (3, 'Build GROUP');
 
 INSERT INTO task (id, name, start_time, id_group)
 VALUES (2, 'Build something TASK', '2021-06-09', 1),
@@ -20,24 +20,24 @@ SET id_person = 2
 where id = 3;
 
 update task
-set id_progress = 1
+set progress = 1
 where id = 2;
 
 update task
-set id_progress = 2
+set progress = 2
 where id = 4;
 
 
-INSERT INTO person (id, firstname, lastname, age)
-VALUES (1111, 'Denis', 'Denisov', 23),
-       (2222, 'Tester', 'Testerovich', 0);
+INSERT INTO person (id, firstname, lastname, birthdate)
+VALUES (1111, 'Denis', 'Denisov', '2021-06-09'),
+       (2222, 'Tester', 'Testerovich', '2021-06-09');
 
-INSERT INTO group_of_tasks (id, name, priority)
-VALUES (11, 'ForDenis GROUP', true),
-       (22, 'ForTester GROUP', false),
-       (44, 'for_33_task GROUP', false),
-       (33, 'ForDenisGroup GROUP', false),
-       (55, '55 GROUP', false);
+INSERT INTO group_of_tasks (id, name)
+VALUES (11, 'ForDenis GROUP'),
+       (22, 'ForTester GROUP'),
+       (44, 'for_33_task GROUP'),
+       (33, 'ForDenisGroup GROUP'),
+       (55, '55 GROUP');
 
 UPDATE group_of_tasks
 SET id_person = 1111
@@ -68,8 +68,8 @@ VALUES (21, 'cleaning TASK', '2021-06-09', 11),
        (25, 'for_33_group TASK', '2012-05-06', 33);
 
 update task
-set id_progress = 98
+set progress = 98
 where id = 22;
 update task
-set id_progress = 97
+set progress = 97
 where id = 23;

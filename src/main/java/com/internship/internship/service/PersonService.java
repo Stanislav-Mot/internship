@@ -31,7 +31,7 @@ public class PersonService {
         parameters.addValue("id", person.getId());
         parameters.addValue("firstname", person.getFirstName());
         parameters.addValue("lastname", person.getLastName());
-        parameters.addValue("age", person.getBirthdate());
+        parameters.addValue("birthdate", person.getBirthdate());
         return parameters;
     }
 
@@ -54,12 +54,7 @@ public class PersonService {
     }
 
     public PersonDto getById(Long id) {
-        Person person = personRepo.getPersonById(id);
-        if (person != null) {
-            return mapper.convertToDto(person);
-        } else {
-            return null;
-        }
+        return mapper.convertToDto(personRepo.getPersonById(id));
     }
 
     public List<PersonDto> getAll() {
@@ -95,6 +90,11 @@ public class PersonService {
         return personRepo.addGroupToPerson(id, groupId);
     }
 
+    public List<PersonDto> searchByTokenInName(String token) {
+        List<Person> list = personRepo.searchByTokenInName(getMapParamFromToken(token));
+        return getPersonDtos(list);
+    }
+
     public List<PersonDto> search(String firstName, String lastName, String exactAge, String  rangeAge) {
         MapSqlParameterSource mapSqlParameterSource = getMapSqlParameterSource(firstName, lastName, exactAge, rangeAge);
         List<Person> list = personRepo.search(mapSqlParameterSource);
@@ -112,10 +112,5 @@ public class PersonService {
         } else {
             return null;
         }
-    }
-
-    public List<PersonDto> searchByTokenInName(String token) {
-        List<Person> list = personRepo.searchByTokenInName(getMapParamFromToken(token));
-        return getPersonDtos(list);
     }
 }

@@ -7,6 +7,8 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 
 public class TaskMapper implements RowMapper<Task> {
@@ -17,15 +19,13 @@ public class TaskMapper implements RowMapper<Task> {
 
         task.setId(rs.getLong("id"));
         task.setName(rs.getString("name"));
-        task.setStartTime(rs.getString("start_time"));
         task.setDescription(rs.getString("description"));
         task.setEstimate(rs.getInt("estimate"));;
-        task.setProgress(rs.getShort("progress"));
+        task.setProgress(rs.getInt("progress"));
+        task.setPriority(rs.getInt("priority"));
+        task.setSpentTime(rs.getInt("spent_time"));
 
-        Time spent_time = rs.getTime("spent_time");
-        if (spent_time != null) {
-            task.setSpentTime(spent_time.toLocalTime());
-        }
+        task.setStartTime(convertToLocalDateTime(rs.getDate("start_time")));
 
         long personID = rs.getLong("id_person");
         if (personID > 0) {
@@ -33,5 +33,10 @@ public class TaskMapper implements RowMapper<Task> {
         }
 
         return task;
+    }
+
+    private LocalDateTime convertToLocalDateTime(Date dateToConvert) {
+        return new java.sql.Timestamp(
+                dateToConvert.getTime()).toLocalDateTime();
     }
 }

@@ -52,8 +52,11 @@ public class TaskController {
 
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = {@ExampleObject(
-                    value = "{\"id\": 0, \"name\": \"Cooking\", \"start_time\": \"2012-06-09\", \"id_person\": 0}")})
-    )
+                    value = "{\"id\": 0, " +
+                            "\"name\": \"Cooking\", " +
+                            "\"description\": \"cook fish\"," +
+                            "\"estimate\": \"2\"," +
+                            "\"priority\": \"2\"}")}))
     @Operation(summary = "Add new Task")
     @Validated(Transfer.New.class)
     @PostMapping("/task")
@@ -63,24 +66,23 @@ public class TaskController {
 
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = {@ExampleObject(
-                    value = "{\"id\": 0, \"name\": \"Cooking\", \"start_time\": \"2012-06-09\", \"id_person\": 0, \"id_progress\": 0}")})
-    )
-    @Operation(summary = "update task")
+                    value = "{\"id\": 0, " +
+                            "\"name\": \"Cooking\", " +
+                            "\"description\": \"should something\", " +
+                            "\"estimate\": \"3\"}"
+            )}))
+    @Operation(summary = "update name, description and estimate")
     @Validated(Transfer.Update.class)
     @PutMapping("/task")
     public Integer update(@Valid @RequestBody TaskDto taskDto) {
         return taskService.update(taskDto);
     }
 
-    @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            content = @Content(examples = {@ExampleObject(
-                    value = "{\"id\": 0, \"description\": \"should something\", \"estimate\": \"07:37:16.00\", \"spentTime\": \"07:37:16.00\"}")})
-    )
-    @Operation(summary = "update description, estimate, time spent")
+    @Operation(summary = "update progress")
     @Validated(Transfer.Update.class)
-    @PutMapping("/task/upgradedUpdate")
-    public Integer upgradedUpdate(@Valid @RequestBody TaskDto taskDto) {
-        return taskService.upgradedUpdate(taskDto);
+    @PutMapping("/task/{id}/progress")
+    public Integer updateProgress(@RequestBody Integer progress, @PathVariable Long id) {
+        return taskService.updateProgress(id, progress);
     }
 
     @Operation(summary = "Delete task by id")

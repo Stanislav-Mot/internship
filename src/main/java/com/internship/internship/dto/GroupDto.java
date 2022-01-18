@@ -28,7 +28,8 @@ public class GroupDto implements Assignment {
     @Null(groups = {Transfer.New.class, Transfer.Update.class})
     private List<Assignment> tasks;
 
-    private List<PersonDto> person;
+    @Null(groups = {Transfer.New.class, Transfer.Update.class})
+    private List<PersonDto> persons;
 
     public GroupDto(Long id) {
         this.id = id;

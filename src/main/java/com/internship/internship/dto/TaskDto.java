@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -25,19 +26,14 @@ public class TaskDto implements Assignment {
     private String name;
 
     @Schema(example = "2012-06-09")
-    private String startTime;
-
-    private PersonDto person;
-
-    private Short progress;
-
-    private Integer priority;
+    private LocalDateTime startTime;
 
     private String description;
-
-    private LocalTime estimate;
-
-    private LocalTime spentTime;
+    private Integer progress;
+    private Integer priority;
+    private Integer estimate;
+    private Integer spentTime;
+    private PersonDto person;
 
     public TaskDto(Long id) {
         this.id = id;
