@@ -1,8 +1,12 @@
 package com.internship.internship.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.internship.internship.dto.*;
-import com.internship.internship.model.*;
+import com.internship.internship.dto.GroupDto;
+import com.internship.internship.dto.PersonDto;
+import com.internship.internship.dto.TaskDto;
+import com.internship.internship.model.Group;
+import com.internship.internship.model.Person;
+import com.internship.internship.model.Task;
 import lombok.SneakyThrows;
 
 import java.time.LocalDate;
@@ -26,11 +30,11 @@ public class Helper {
 
 
     public static Person newPersonForTest() {
-        return new Person(CORRECT_ID, "Tester", "Rochester",  LocalDate.of(2012, 12,12), null);
+        return new Person(CORRECT_ID, "Tester", "Rochester", LocalDate.of(2012, 12, 12), null);
     }
 
     public static Task newTaskForTest() {
-        return new Task(CORRECT_ID, "Tester", null, null, null, null, null, null, null);
+        return new Task(CORRECT_ID, "Tester", null, null, null, null, null, null);
     }
 
     public static GroupDto newGroupDtoForTest() {
@@ -42,10 +46,10 @@ public class Helper {
     }
 
     public static PersonDto newPersonDtoForTest() {
-        return new PersonDto(CORRECT_ID, "Tester", "Rochester", LocalDate.of(2012, 12,12), null);
+        return new PersonDto(CORRECT_ID, "Tester", "Rochester", LocalDate.of(2012, 12, 12), null);
     }
 
     public static TaskDto newTaskDtoForTest() {
-        return new TaskDto(CORRECT_ID, "Tester", null, null, null, null, null, null, null);
+        return new TaskDto(CORRECT_ID, "Tester", null, null, null, null, null, null);
     }
 }

@@ -25,7 +25,6 @@ class TaskDtoMapperTest {
         TaskDto taskDto = taskDtoMapper.convertToDto(task);
 
         assertEquals(task.getId(), taskDto.getId());
-        assertEquals(task.getPerson(), taskDto.getPerson());
         assertEquals(task.getProgress(), taskDto.getProgress());
         assertEquals(task.getName(), taskDto.getName());
         assertEquals(task.getStartTime(), taskDto.getStartTime());
@@ -37,7 +36,6 @@ class TaskDtoMapperTest {
         Task task = taskDtoMapper.convertToEntity(taskDto);
 
         assertEquals(task.getId(), taskDto.getId());
-        assertEquals(task.getPerson(), taskDto.getPerson());
         assertEquals(task.getProgress(), taskDto.getProgress());
         assertEquals(task.getName(), taskDto.getName());
         assertEquals(task.getStartTime(), taskDto.getStartTime());

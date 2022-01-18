@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,23 +63,22 @@ public class TaskRepo {
         return jdbcTemplate.query(sql, new TaskMapper(), id);
     }
 
-    public Integer addTask(SqlParameterSource parameters) {
-        String sql = "insert into task (id, name, description, estimate, priority) " +
-                "values (:id, :name, :description, :estimate, :priority);";
+    public Integer addTask(SqlParameterSource parameters, KeyHolder keyHolder) {
+        String sql = "insert into task (name, description, estimate, priority, progress) " +
+                "values (:name, :description, :estimate, :priority, 0);";
 
-        return namedParameterJdbcTemplate.update(sql, parameters);
+        return namedParameterJdbcTemplate.update(sql, parameters, keyHolder);
     }
 
     public Integer update(SqlParameterSource parameters) {
-        String sql = "update task set name = :name," +
-                "start_time = :start_time, id_person = :personId where id = :id";
+        String sql = "update task set name = :name, description = :description, " +
+                "estimate = :estimate, priority = :priority where id = :id";
 
         return namedParameterJdbcTemplate.update(sql, parameters);
     }
 
     public Integer updateProgress(Long id, Integer progress) {
-        String sql = "update task set progress = ? where id = :id";
-        // need set spent time
+        String sql = "update task set  progress = ? WHERE id = ? and start_time IS NOT NULL";
         return jdbcTemplate.update(sql, progress, id);
     }
 
@@ -104,5 +104,16 @@ public class TaskRepo {
                         "Or progress.percents BETWEEN :fromProgress and :toProgress;";
 
         return namedParameterJdbcTemplate.query(sql, mapSqlParameterSource, new TaskMapper());
+    }
+
+    public Integer setStartTime(Long taskId) {
+        String sql = "update task set start_time = NOW()::timestamp where id = ?";
+        return jdbcTemplate.update(sql, taskId);
+    }
+
+    public Integer setSpentTime(Long id) {
+        String sql = "update task set spent_time = extract(minutes from NOW() - start_time) where id = ?";
+        return jdbcTemplate.update(sql, id);
+
     }
 }

@@ -39,16 +39,16 @@ public class PersonController {
 
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = {@ExampleObject(
-                    value = "{\"id\": 1, " +
-                            "\"firstName\": \"Denis\", " +
+                    value = "{\"firstName\": \"Denis\", " +
                             "\"lastName\": \"Denisov\", " +
                             "\"birthdate\": \"1967-05-10\"}")}))
     @Operation(summary = "Add new person")
     @Validated(Transfer.New.class)
     @PostMapping("/person")
     @ResponseStatus(HttpStatus.CREATED)
-    public Integer add(@Valid @RequestBody PersonDto personDto) {
-        return personService.add(personDto);
+    public PersonDto add(@Valid @RequestBody PersonDto personDto) {
+        PersonDto dto = personService.add(personDto);
+        return dto;
     }
 
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -70,14 +70,14 @@ public class PersonController {
     }
 
     @Operation(summary = "Add group to person")
-    @PutMapping("/person/{id}/addGroup/{groupId}")
-    public Integer addGroupToPerson(@PathVariable Long id, @PathVariable Long groupId) {
-        return personService.addGroup(id, groupId);
+    @PutMapping("/person/{personId}/addGroup/{groupId}")
+    public Integer addGroupToPerson(@PathVariable Long personId, @PathVariable Long groupId) {
+        return personService.addGroup(personId, groupId);
     }
 
     @Operation(summary = "Delete group from person")
-    @PutMapping("/person/{id}/deleteGroup/{groupId}")
-    public Integer deleteGroupFromPerson(@PathVariable Long id, @PathVariable Long groupId) {
-        return personService.deleteGroup(id, groupId);
+    @PutMapping("/person/{personId}/deleteGroup/{groupId}")
+    public Integer deleteGroupFromPerson(@PathVariable Long personId, @PathVariable Long groupId) {
+        return personService.deleteGroup(personId, groupId);
     }
 }

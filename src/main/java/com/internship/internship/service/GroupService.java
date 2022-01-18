@@ -2,10 +2,12 @@ package com.internship.internship.service;
 
 import com.internship.internship.dto.GroupDto;
 import com.internship.internship.mapper.GroupDtoMapper;
-import com.internship.internship.mapper.TaskDtoMapper;
 import com.internship.internship.model.Group;
 import com.internship.internship.repository.GroupRepo;
+import com.internship.internship.repository.TaskRepo;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,11 +17,13 @@ import java.util.List;
 public class GroupService {
 
     private final GroupRepo groupRepo;
+    private final TaskRepo taskRepo;
     private final GroupDtoMapper mapper;
 
-    public GroupService(GroupRepo groupRepo, GroupDtoMapper mapper) {
+    public GroupService(GroupRepo groupRepo, GroupDtoMapper mapper, TaskRepo taskRepo) {
         this.groupRepo = groupRepo;
         this.mapper = mapper;
+        this.taskRepo = taskRepo;
     }
 
     private static MapSqlParameterSource getMapSqlParameterSource(GroupDto groupDto) {
@@ -53,10 +57,14 @@ public class GroupService {
         return groupsDto;
     }
 
-    public Integer add(GroupDto groupDto) {
-
+    public GroupDto add(GroupDto groupDto) {
         MapSqlParameterSource parameters = getMapSqlParameterSource(groupDto);
-        return groupRepo.addGroup(parameters);
+
+        KeyHolder holder = new GeneratedKeyHolder();
+
+        groupRepo.addGroup(parameters, holder);
+
+        return mapper.getDtoFromHolder(holder);
     }
 
     public Integer update(GroupDto groupDto) {
@@ -69,7 +77,11 @@ public class GroupService {
     }
 
     public Integer addTask(Long id, Long taskId) {
-        return groupRepo.addTaskToGroup(id, taskId);
+        Integer answer = groupRepo.addTaskToGroup(id, taskId);
+        if (answer > 0) {
+            taskRepo.setStartTime(taskId);
+        }
+        return answer;
     }
 
     public Integer deleteTask(Long id, Long taskId) {

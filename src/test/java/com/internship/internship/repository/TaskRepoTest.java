@@ -2,9 +2,7 @@ package com.internship.internship.repository;
 
 import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.model.Group;
-import com.internship.internship.model.Person;
 import com.internship.internship.model.Task;
-import com.internship.internship.dto.search.SearchTask;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,9 +14,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.Month;
 import java.util.List;
 
 import static com.internship.internship.service.TaskService.getMapSqlParameterSource;
@@ -61,7 +56,7 @@ class TaskRepoTest {
     void addTask() {
         MapSqlParameterSource parameters = getMapSqlParameterSource(newTaskForTest());
 
-        taskRepo.addTask(parameters);
+//        taskRepo.addTask(parameters);
         Iterable<Task> tasks = taskRepo.getAllTasks();
 
         Assertions.assertThat(tasks).extracting(Task::getName).contains("Tester");
@@ -71,7 +66,7 @@ class TaskRepoTest {
 
     @Test
     void updateTask() {
-        Task taskFroUpdate = new Task(ID_FOR_UPDATE, "updated", null, "123", 2,  null,  44, 22, new Person(1L));
+        Task taskFroUpdate = new Task(ID_FOR_UPDATE, "updated", null, "123", 2, null, 44, 22);
 
         Integer answer = taskRepo.update(getMapSqlParameterSource(taskFroUpdate));
 

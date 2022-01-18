@@ -83,7 +83,7 @@ class TaskControllerTest {
     void addTask() throws Exception {
         Task task = newTaskForTest();
 
-        Mockito.when(taskService.add(any(TaskDto.class))).thenReturn(1);
+//        Mockito.when(taskService.add(any(TaskDto.class))).thenReturn(1);
 
         mockMvc.perform(post("/task")
                         .contentType(MediaType.APPLICATION_JSON)

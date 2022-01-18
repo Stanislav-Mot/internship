@@ -3,15 +3,14 @@ package com.internship.internship.service;
 import com.internship.internship.dto.TaskDto;
 import com.internship.internship.mapper.TaskDtoMapper;
 import com.internship.internship.model.Task;
-import com.internship.internship.dto.search.SearchTask;
 import com.internship.internship.repository.TaskRepo;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class TaskService {
@@ -30,7 +29,7 @@ public class TaskService {
         parameters.addValue("name", task.getName());
         parameters.addValue("description", task.getDescription());
         parameters.addValue("estimate", task.getEstimate());
-        parameters.addValue("progress", task.getProgress());
+        parameters.addValue("priority", task.getPriority());
 
         return parameters;
     }
@@ -66,12 +65,16 @@ public class TaskService {
         return getTaskDtos(taskRepo.getByPersonId(id));
     }
 
-    public Integer add(TaskDto taskDto) {
+    public TaskDto add(TaskDto taskDto) {
         Task task = mapper.convertToEntity(taskDto);
 
         MapSqlParameterSource parameters = getMapSqlParameterSource(task);
 
-        return taskRepo.addTask(parameters);
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        taskRepo.addTask(parameters, keyHolder);
+
+        return mapper.getDtoFromHolder(keyHolder);
     }
 
     public Integer update(TaskDto taskDto) {
@@ -112,6 +115,10 @@ public class TaskService {
     }
 
     public Integer updateProgress(Long id, Integer progress) {
-        return taskRepo.updateProgress(id, progress);
+        Integer answer = taskRepo.updateProgress(id, progress);
+        if (answer > 0) {
+            taskRepo.setSpentTime(id);
+        }
+        return answer;
     }
 }

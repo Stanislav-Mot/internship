@@ -19,7 +19,6 @@ public class Task implements Assignment {
     private Integer progress;
     private Integer spentTime;
     private Integer priority;
-    private Person person;
 
     public Task(Long id) {
         this.id = id;

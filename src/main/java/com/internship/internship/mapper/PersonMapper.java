@@ -6,7 +6,6 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Time;
 
 public class PersonMapper implements RowMapper<Person> {
 

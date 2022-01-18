@@ -83,7 +83,7 @@ class PersonControllerTest {
     void addPerson() throws Exception {
         PersonDto person = newPersonDtoForTest();
 
-        Mockito.when(personService.add(any(PersonDto.class))).thenReturn(1);
+//        Mockito.when(personService.add(any(PersonDto.class))).thenReturn(1);
 
         mockMvc.perform(post("/person")
                         .contentType(MediaType.APPLICATION_JSON)

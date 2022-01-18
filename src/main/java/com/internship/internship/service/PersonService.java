@@ -1,12 +1,12 @@
 package com.internship.internship.service;
 
 import com.internship.internship.dto.PersonDto;
-import com.internship.internship.mapper.GroupDtoMapper;
 import com.internship.internship.mapper.PersonDtoMapper;
 import com.internship.internship.model.Person;
-import com.internship.internship.dto.search.SearchPerson;
 import com.internship.internship.repository.PersonRepo;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class PersonService {
         return parameters;
     }
 
-    public static MapSqlParameterSource getMapSqlParameterSource(String firstName, String lastName, String exactAge, String  rangeAge) {
+    public static MapSqlParameterSource getMapSqlParameterSource(String firstName, String lastName, String exactAge, String rangeAge) {
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 
         mapSqlParameterSource.addValue("firstName", firstName);
@@ -62,12 +62,16 @@ public class PersonService {
         return getPersonDtos(list);
     }
 
-    public Integer add(PersonDto personDto) {
+    public PersonDto add(PersonDto personDto) {
         Person person = mapper.convertToEntity(personDto);
 
         MapSqlParameterSource parameters = getMapSqlParameterSource(person);
 
-        return personRepo.addPerson(parameters);
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        personRepo.addPerson(parameters, keyHolder);
+
+        return mapper.getDtoFromHolder(keyHolder);
     }
 
     public Integer update(PersonDto personDto) {
@@ -82,12 +86,12 @@ public class PersonService {
         return personRepo.deletePerson(id);
     }
 
-    public Integer deleteGroup(Long id, Long groupId) {
-        return personRepo.deleteGroupFromPerson(id, groupId);
+    public Integer deleteGroup(Long personId, Long groupId) {
+        return personRepo.deleteGroupFromPerson(personId, groupId);
     }
 
-    public Integer addGroup(Long id, Long groupId) {
-        return personRepo.addGroupToPerson(id, groupId);
+    public Integer addGroup(Long personId, Long groupId) {
+        return personRepo.addGroupToPerson(personId, groupId);
     }
 
     public List<PersonDto> searchByTokenInName(String token) {
@@ -95,7 +99,7 @@ public class PersonService {
         return getPersonDtos(list);
     }
 
-    public List<PersonDto> search(String firstName, String lastName, String exactAge, String  rangeAge) {
+    public List<PersonDto> search(String firstName, String lastName, String exactAge, String rangeAge) {
         MapSqlParameterSource mapSqlParameterSource = getMapSqlParameterSource(firstName, lastName, exactAge, rangeAge);
         List<Person> list = personRepo.search(mapSqlParameterSource);
         return getPersonDtos(list);

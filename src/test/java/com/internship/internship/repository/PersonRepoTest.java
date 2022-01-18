@@ -3,7 +3,6 @@ package com.internship.internship.repository;
 import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
-import com.internship.internship.dto.search.SearchPerson;
 import com.internship.internship.service.PersonService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -63,7 +62,7 @@ class PersonRepoTest {
     void addPerson() {
         MapSqlParameterSource parameters = getMapSqlParameterSource(newPersonForTest());
 
-        personRepo.addPerson(parameters);
+//        personRepo.addPerson(parameters);
         Iterable<Person> persons = personRepo.getAllPersons();
 
         Assertions.assertThat(persons).extracting(Person::getFirstName).contains("Tester");
@@ -106,7 +105,7 @@ class PersonRepoTest {
         parameters.addValue("id", group.getId());
         parameters.addValue("name", group.getName());
 
-        groupRepo.addGroup(parameters);
+//        groupRepo.addGroup(parameters);
 
         Integer answer = personRepo.addGroupToPerson(person.getId(), group.getId());
         assertEquals(1, answer);
@@ -158,7 +157,7 @@ class PersonRepoTest {
     void searchByTokenInName() {
         Person personForSearchByToken = newPersonForTest();
         personForSearchByToken.setFirstName("VladIsLove");
-        personRepo.addPerson(getMapSqlParameterSource(personForSearchByToken));
+//        personRepo.addPerson(getMapSqlParameterSource(personForSearchByToken));
 
         List<Person> personList = personRepo.searchByTokenInName(PersonService.getMapParamFromToken("IsLo"));
 

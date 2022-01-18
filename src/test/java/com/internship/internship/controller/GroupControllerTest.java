@@ -83,7 +83,7 @@ class GroupControllerTest {
     void addGroup() throws Exception {
         GroupDto group = newGroupDtoForTest();
 
-        Mockito.when(groupService.add(any(GroupDto.class))).thenReturn(1);
+//        Mockito.when(groupService.add(any(GroupDto.class))).thenReturn(1);
 
         mockMvc.perform(post("/group")
                         .contentType(MediaType.APPLICATION_JSON)

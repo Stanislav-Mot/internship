@@ -1,5 +1,5 @@
 databaseChangeLog: #параметр в котором находятся миграции
   - include: # список активных миграций
       file: db/changeset/schema.sql # путь к файлу миграции
-  - include:
-      file: db/changeset/data.sql
+#  - include:
+#      file: db/changeset/data.sql

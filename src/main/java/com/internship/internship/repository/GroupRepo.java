@@ -12,6 +12,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,14 +27,16 @@ public class GroupRepo {
     private static final Logger LOGGER = LoggerFactory.getLogger(GroupRepo.class);
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private final SimpleJdbcInsert simpleJdbcInsert;
 
     public GroupRepo(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+        this.simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
     }
 
     public Group getGroupById(Long id) {
-        String sql = "select * from group_of_tasks g left join person p on p.id = g.id_person where g.id = ?";
+        String sql = "select * from group_of_tasks where id = ?";
         try {
             Group group = jdbcTemplate.queryForObject(sql, new GroupMapper(), id);
             group.setTasks(getComposite(id));
@@ -46,7 +50,7 @@ public class GroupRepo {
     }
 
     public List<Group> getByPersonId(Long id) {
-        String sql = "select * from  group_of_tasks got left join person_group pg on pot.id = pg.id_group where pg.id = ?";
+        String sql = "select * from  group_of_tasks got left join person_group pg on got.id = pg.id_group where pg.id_person = ?";
         List<Group> groups = jdbcTemplate.query(sql, new GroupMapper(), id);
         for (Group group : groups) {
             group.setTasks(getComposite(group.getId()));
@@ -55,7 +59,7 @@ public class GroupRepo {
     }
 
     public List<Group> getAll() {
-        String sql = "select * from group_of_tasks g left join person p on p.id = g.id_person";
+        String sql = "select * from group_of_tasks";
         List<Group> groups = jdbcTemplate.query(sql, new GroupMapper());
         for (Group group : groups) {
             group.setTasks(getComposite(group.getId()));
@@ -63,10 +67,10 @@ public class GroupRepo {
         return groups;
     }
 
-    public Integer addGroup(MapSqlParameterSource parameters) {
-        String sql = "insert into group_of_tasks ( id, name) values (:id, :name)";
+    public void addGroup(MapSqlParameterSource parameters, KeyHolder holder) {
+        String sql = "insert into group_of_tasks (name) values (:name)";
 
-        return namedParameterJdbcTemplate.update(sql, parameters);
+        namedParameterJdbcTemplate.update(sql, parameters, holder);
     }
 
     public Integer updateGroup(Group group) {

@@ -3,7 +3,6 @@ package com.internship.internship.repository;
 import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.mapper.GroupMapper;
 import com.internship.internship.mapper.PersonMapper;
-import com.internship.internship.model.Assignment;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
 import org.slf4j.Logger;
@@ -12,6 +11,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,10 +32,10 @@ public class PersonRepo {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    public Integer addPerson(SqlParameterSource parameters) {
-        String sql = "insert into person (id, firstname, lastname, birthdate) values (:id, :firstname, :lastname, :birthdate);";
+    public Integer addPerson(SqlParameterSource parameters, KeyHolder keyHolder) {
+        String sql = "insert into person (firstname, lastname, birthdate) values (:firstname, :lastname, :birthdate);";
 
-        return namedParameterJdbcTemplate.update(sql, parameters);
+        return namedParameterJdbcTemplate.update(sql, parameters, keyHolder);
     }
 
     public Integer updatePerson(SqlParameterSource parameters) {
@@ -73,14 +73,14 @@ public class PersonRepo {
         return persons;
     }
 
-    public Integer addGroupToPerson(Long id, Long groupId) {
-        String sql = "update group_of_tasks set id_person = ? where id = ?;";
+    public Integer addGroupToPerson(Long personId, Long groupId) {
+        String sql = "insert  into person_group (id_person, id_group) values (?, ?)";
 
-        return jdbcTemplate.update(sql, id, groupId);
+        return jdbcTemplate.update(sql, personId, groupId);
     }
 
     public Integer deleteGroupFromPerson(Long personId, Long groupId) {
-        String sql = "update group_of_tasks set id_person = null  where id_person = ? and id = ?;";
+        String sql = "delete from person_group where id_person = ? and id_group = ?";
 
         return jdbcTemplate.update(sql, personId, groupId);
     }

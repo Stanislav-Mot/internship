@@ -3,6 +3,7 @@ package com.internship.internship.mapper;
 import com.internship.internship.dto.GroupDto;
 import com.internship.internship.model.Group;
 import org.modelmapper.ModelMapper;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -20,5 +21,9 @@ public class GroupDtoMapper {
 
     public Group convertToEntity(GroupDto groupDto) {
         return modelMapper.map(groupDto, Group.class);
+    }
+
+    public GroupDto getDtoFromHolder(KeyHolder holder) {
+        return modelMapper.map(holder.getKeys(), GroupDto.class);
     }
 }

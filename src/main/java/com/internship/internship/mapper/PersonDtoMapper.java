@@ -3,7 +3,10 @@ package com.internship.internship.mapper;
 import com.internship.internship.dto.PersonDto;
 import com.internship.internship.model.Person;
 import org.modelmapper.ModelMapper;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
 
 @Component
 public class PersonDtoMapper {
@@ -20,5 +23,11 @@ public class PersonDtoMapper {
 
     public Person convertToEntity(PersonDto personDto) {
         return modelMapper.map(personDto, Person.class);
+    }
+
+    public PersonDto getDtoFromHolder(KeyHolder holder) {
+        PersonDto dto = modelMapper.map(holder.getKeys(), PersonDto.class);
+        dto.setBirthdate(LocalDate.parse(holder.getKeyList().get(0).get("birthdate").toString()));
+        return dto;
     }
 }

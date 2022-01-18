@@ -52,15 +52,14 @@ public class TaskController {
 
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = {@ExampleObject(
-                    value = "{\"id\": 0, " +
-                            "\"name\": \"Cooking\", " +
+                    value = "{\"name\": \"Cooking\", " +
                             "\"description\": \"cook fish\"," +
                             "\"estimate\": \"2\"," +
                             "\"priority\": \"2\"}")}))
     @Operation(summary = "Add new Task")
     @Validated(Transfer.New.class)
     @PostMapping("/task")
-    public Integer add(@Valid @RequestBody TaskDto taskDto) {
+    public TaskDto add(@Valid @RequestBody TaskDto taskDto) {
         return taskService.add(taskDto);
     }
 
@@ -69,6 +68,7 @@ public class TaskController {
                     value = "{\"id\": 0, " +
                             "\"name\": \"Cooking\", " +
                             "\"description\": \"should something\", " +
+                            "\"priority\": 7, " +
                             "\"estimate\": \"3\"}"
             )}))
     @Operation(summary = "update name, description and estimate")

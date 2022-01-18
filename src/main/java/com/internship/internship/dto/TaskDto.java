@@ -8,9 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,6 +17,7 @@ import java.util.List;
 public class TaskDto implements Assignment {
 
     @Schema(example = "4")
+    @Null(message = "id should be generate be db", groups = {Transfer.New.class})
     @NotNull(message = "id should be not null", groups = {Transfer.Update.class})
     private Long id;
 
@@ -33,7 +33,6 @@ public class TaskDto implements Assignment {
     private Integer priority;
     private Integer estimate;
     private Integer spentTime;
-    private PersonDto person;
 
     public TaskDto(Long id) {
         this.id = id;

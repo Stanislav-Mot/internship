@@ -6,10 +6,4 @@ public class Transfer {
 
     public interface Update {
     }
-
-    public interface PriorityAdd {
-    }
-
-    public interface PriorityUpdate {
-    }
 }

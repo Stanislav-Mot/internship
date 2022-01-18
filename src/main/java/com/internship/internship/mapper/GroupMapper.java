@@ -1,7 +1,6 @@
 package com.internship.internship.mapper;
 
 import com.internship.internship.model.Group;
-import com.internship.internship.model.Person;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;

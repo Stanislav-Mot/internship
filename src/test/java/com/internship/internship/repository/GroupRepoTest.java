@@ -53,7 +53,7 @@ class GroupRepoTest {
     void addGroup() {
         MapSqlParameterSource parameters = getMapSqlParameterSource(newGroupForTest());
 
-        groupRepo.addGroup(parameters);
+//        groupRepo.addGroup(parameters);
         Iterable<Group> groups = groupRepo.getAll();
 
         Assertions.assertThat(groups).extracting(Group::getName).contains("Tester");

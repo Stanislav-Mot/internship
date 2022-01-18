@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -46,12 +45,12 @@ public class GroupController {
 
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = {@ExampleObject(
-                    value = "{\"id\": 1, \"name\": \"Home\"}")}))
+                    value = "{\"name\": \"Home\"}")}))
     @Operation(summary = "Add new group")
     @Validated(Transfer.New.class)
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/group")
-    public Integer add(@Valid @RequestBody GroupDto groupDto) {
+    public GroupDto add(@Valid @RequestBody GroupDto groupDto) {
         return groupService.add(groupDto);
     }
 
