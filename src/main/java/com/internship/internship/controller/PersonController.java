@@ -59,25 +59,25 @@ public class PersonController {
     @Operation(summary = "Update person")
     @Validated(Transfer.Update.class)
     @PutMapping("/person")
-    public Integer update(@Valid @RequestBody PersonDto personDto) {
+    public PersonDto update(@Valid @RequestBody PersonDto personDto) {
         return personService.update(personDto);
     }
 
     @Operation(summary = "Delete person by id")
     @DeleteMapping("/person/{id}")
-    public Integer delete(@PathVariable Long id) {
-        return personService.delete(id);
+    public void delete(@PathVariable Long id) {
+        personService.delete(id);
     }
 
     @Operation(summary = "Add group to person")
     @PutMapping("/person/{personId}/addGroup/{groupId}")
-    public Integer addGroupToPerson(@PathVariable Long personId, @PathVariable Long groupId) {
+    public PersonDto addGroupToPerson(@PathVariable Long personId, @PathVariable Long groupId) {
         return personService.addGroup(personId, groupId);
     }
 
     @Operation(summary = "Delete group from person")
     @PutMapping("/person/{personId}/deleteGroup/{groupId}")
-    public Integer deleteGroupFromPerson(@PathVariable Long personId, @PathVariable Long groupId) {
-        return personService.deleteGroup(personId, groupId);
+    public void deleteGroupFromPerson(@PathVariable Long personId, @PathVariable Long groupId) {
+        personService.deleteGroup(personId, groupId);
     }
 }

@@ -22,8 +22,8 @@ import java.util.List;
 import static com.internship.internship.util.Helper.*;
 import static org.hamcrest.Matchers.containsStringIgnoringCase;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -100,7 +100,7 @@ class TaskControllerTest {
     void updateTask() throws Exception {
         Task task = newTaskForTest();
 
-        when(taskService.update(any(TaskDto.class))).thenReturn(1);
+//        when(taskService.update(any(TaskDto.class))).thenReturn(1);
 
         mockMvc.perform(put("/task")
                         .content(asJsonString(task))

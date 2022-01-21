@@ -1,6 +1,7 @@
 package com.internship.internship.service;
 
 import com.internship.internship.dto.GroupDto;
+import com.internship.internship.exeption.ChangesNotAppliedExemption;
 import com.internship.internship.mapper.GroupDtoMapper;
 import com.internship.internship.model.Group;
 import com.internship.internship.repository.GroupRepo;
@@ -26,7 +27,7 @@ public class GroupService {
         this.taskRepo = taskRepo;
     }
 
-    private static MapSqlParameterSource getMapSqlParameterSource(GroupDto groupDto) {
+    private MapSqlParameterSource getMapSqlParameterSource(GroupDto groupDto) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("id", groupDto.getId());
         parameters.addValue("name", groupDto.getName());
@@ -67,33 +68,54 @@ public class GroupService {
         return mapper.getDtoFromHolder(holder);
     }
 
-    public Integer update(GroupDto groupDto) {
+    public GroupDto update(GroupDto groupDto) {
         Group group = mapper.convertToEntity(groupDto);
-        return groupRepo.updateGroup(group);
+        Group response = groupRepo.updateGroup(group);
+
+        return mapper.convertToDto(response);
     }
 
     public Integer delete(Long id) {
         return groupRepo.deleteGroup(id);
     }
 
-    public Integer addTask(Long id, Long taskId) {
-        Integer answer = groupRepo.addTaskToGroup(id, taskId);
-        if (answer > 0) {
+    public GroupDto addTask(Long id, Long taskId) {
+        if (taskRepo.getTaskById(taskId) == null) {
+            throw new ChangesNotAppliedExemption(String.format("Task with id: %d is not found", taskId));
+        }
+        if (groupRepo.getGroupById(id) == null) {
+            throw new ChangesNotAppliedExemption(String.format("Group with id: %d is not found", id));
+        }
+        Group group = groupRepo.addTaskToGroup(id, taskId);
+        if (group != null) {
             taskRepo.setStartTime(taskId);
         }
-        return answer;
+        return mapper.convertToDto(group);
     }
 
-    public Integer deleteTask(Long id, Long taskId) {
-        return groupRepo.deleteTaskFromGroup(id, taskId);
+    public void deleteTask(Long id, Long taskId) {
+        Integer answer = groupRepo.deleteTaskFromGroup(id, taskId);
+        if (answer < 1) {
+            throw new ChangesNotAppliedExemption(String.format("Group Id %d or Task id %d is not found", id, taskId));
+        }
     }
 
-    public Integer addGroup(Long id, Long groupId) {
-        return groupRepo.addGroupToGroup(id, groupId);
+    public GroupDto addGroup(Long id, Long groupId) {
+        if (groupRepo.getGroupById(groupId) == null) {
+            throw new ChangesNotAppliedExemption(String.format("Group with id: %d is not found", groupId));
+        }
+        if (groupRepo.getGroupById(id) == null) {
+            throw new ChangesNotAppliedExemption(String.format("Group with id: %d is not found", id));
+        }
+        Group group = groupRepo.addGroupToGroup(id, groupId);
+        return mapper.convertToDto(group);
     }
 
-    public Integer deleteGroup(Long id, Long groupId) {
-        return groupRepo.deleteGroupFromGroup(id, groupId);
+    public void deleteGroup(Long id, Long groupId) {
+        Integer answer = groupRepo.deleteGroupFromGroup(id, groupId);
+        if (answer < 1) {
+            throw new ChangesNotAppliedExemption(String.format("Group Id %d or %d is not found", id, groupId));
+        }
     }
 
 }

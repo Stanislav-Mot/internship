@@ -36,11 +36,13 @@ public class SearchController {
             @Parameter(description = "Person surname", example = "Denisov")
             @RequestParam(required = false) String lastName,
             @Parameter(description = "Person age", example = "33")
-            @RequestParam(required = false) String exactAge,
-            @Parameter(description = "If you want search in a range age, you should set this value", example = "44")
-            @RequestParam(required = false) String rangeAge
+            @RequestParam(required = false) Integer exactAge,
+            @Parameter(description = "If you want search in a range age, set start", example = "1")
+            @RequestParam(required = false) Integer rangeAgeStart,
+            @Parameter(description = "If you want search in a range age, set end", example = "99")
+            @RequestParam(required = false) Integer rangeAgeEnd
     ) {
-        return personService.search(firstName, lastName, exactAge, rangeAge);
+        return personService.search(firstName, lastName, exactAge, rangeAgeStart, rangeAgeEnd);
     }
 
     @Operation(
@@ -63,9 +65,9 @@ public class SearchController {
             @Parameter(description = "Task name", example = "cleaning")
             @RequestParam(required = false) String name,
             @Parameter(description = "Search from min progress", example = "0")
-            @RequestParam(required = false) String fromProgress,
+            @RequestParam(required = false) Integer fromProgress,
             @Parameter(description = "Search to max progress", example = "100")
-            @RequestParam(required = false) String toProgress,
+            @RequestParam(required = false) Integer toProgress,
             @Parameter(description = "Search from min start time", example = "2012-12-12")
             @RequestParam(required = false) String minStartTime,
             @Parameter(description = "Search from to start time", example = "2022-12-12")

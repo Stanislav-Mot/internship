@@ -12,7 +12,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,19 +23,17 @@ import java.util.List;
 @Repository
 public class GroupRepo {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GroupRepo.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(GroupRepo.class);
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    private final SimpleJdbcInsert simpleJdbcInsert;
 
     public GroupRepo(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
-        this.simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
     }
 
     public Group getGroupById(Long id) {
-        String sql = "select * from group_of_tasks where id = ?";
+        String sql = "SELECT * FROM group_of_tasks WHERE id = ?";
         try {
             Group group = jdbcTemplate.queryForObject(sql, new GroupMapper(), id);
             group.setTasks(getComposite(id));
@@ -50,7 +47,7 @@ public class GroupRepo {
     }
 
     public List<Group> getByPersonId(Long id) {
-        String sql = "select * from  group_of_tasks got left join person_group pg on got.id = pg.id_group where pg.id_person = ?";
+        String sql = "SELECT * FROM  group_of_tasks got LEFT JOIN person_group pg ON got.id = pg.id_group WHERE pg.id_person = ?";
         List<Group> groups = jdbcTemplate.query(sql, new GroupMapper(), id);
         for (Group group : groups) {
             group.setTasks(getComposite(group.getId()));
@@ -59,7 +56,7 @@ public class GroupRepo {
     }
 
     public List<Group> getAll() {
-        String sql = "select * from group_of_tasks";
+        String sql = "SELECT * FROM group_of_tasks";
         List<Group> groups = jdbcTemplate.query(sql, new GroupMapper());
         for (Group group : groups) {
             group.setTasks(getComposite(group.getId()));
@@ -68,36 +65,38 @@ public class GroupRepo {
     }
 
     public void addGroup(MapSqlParameterSource parameters, KeyHolder holder) {
-        String sql = "insert into group_of_tasks (name) values (:name)";
+        String sql = "INSERT INTO group_of_tasks (name) VALUES (:name)";
 
         namedParameterJdbcTemplate.update(sql, parameters, holder);
     }
 
-    public Integer updateGroup(Group group) {
-        String sql = "update group_of_tasks set name = ? where id = ?;";
+    public Group updateGroup(Group group) {
+        String sql = "UPDATE group_of_tasks SET name = ? WHERE id = ?;";
+        jdbcTemplate.update(sql, group.getName(), group.getId());
 
-        return jdbcTemplate.update(sql, group.getName(), group.getId());
+        return getGroupById(group.getId());
     }
 
     public Integer deleteGroup(Long id) {
-        String deleteGroupSql = "delete from group_of_tasks where id = ?;";
+        String deleteGroupSql = "DELETE FROM group_of_tasks WHERE id = ?;";
 
         return jdbcTemplate.update(deleteGroupSql, id);
     }
 
-    public Integer addTaskToGroup(Long id, Long taskId) {
-        String sql = "update task set id_group = ? where id = ?";
-        return jdbcTemplate.update(sql, id, taskId);
+    public Group addTaskToGroup(Long id, Long taskId) {
+        String sql = "UPDATE task SET id_group = ? WHERE id = ?";
+        jdbcTemplate.update(sql, id, taskId);
+        return getGroupById(id);
     }
 
     public Integer deleteTaskFromGroup(Long idGroup, Long idTask) {
-        String sql = "update task set id_group = null where id = ? and id_group = ?";
+        String sql = "UPDATE task SET id_group = NULL WHERE id = ? AND id_group = ?";
 
         return jdbcTemplate.update(sql, idTask, idGroup);
     }
 
     public List<Task> getTasksById(Long id) {
-        String sqlForGroup = "select * from task where id_group = ?";
+        String sqlForGroup = "SELECT * FROM task WHERE id_group = ?";
 
         return jdbcTemplate.query(sqlForGroup, new TaskMapper(), id);
     }
@@ -120,19 +119,19 @@ public class GroupRepo {
     }
 
     private List<Group> getAllGroupInGroup(Long id) {
-        String sql = "select * from group_of_tasks where id_parent = ?;";
+        String sql = "SELECT * FROM group_of_tasks WHERE id_parent = ?;";
 
         return jdbcTemplate.query(sql, new GroupMapper(), id);
     }
 
-    public Integer addGroupToGroup(Long id, Long idGroup) {
-        String sql = "update group_of_tasks set id_parent = ? where id = ?;";
-
-        return jdbcTemplate.update(sql, id, idGroup);
+    public Group addGroupToGroup(Long id, Long idGroup) {
+        String sql = "UPDATE group_of_tasks SET id_parent = ? WHERE id = ?;";
+        jdbcTemplate.update(sql, id, idGroup);
+        return getGroupById(id);
     }
 
     public Integer deleteGroupFromGroup(Long id, Long idGroup) {
-        String sql = "update group_of_tasks set id_parent = null where id_parent = ? and id = ?";
+        String sql = "UPDATE group_of_tasks SET id_parent = NULL WHERE id_parent = ? AND id = ?";
 
         return jdbcTemplate.update(sql, id, idGroup);
     }

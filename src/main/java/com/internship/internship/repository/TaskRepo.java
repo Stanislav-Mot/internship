@@ -22,7 +22,7 @@ import java.util.List;
 @Repository
 public class TaskRepo {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TaskRepo.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(TaskRepo.class);
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -32,7 +32,7 @@ public class TaskRepo {
     }
 
     public Task getTaskById(Long id) {
-        String sql = "select * from task t left join person p on p.id = t.id_person where t.id = ?";
+        String sql = "SELECT * FROM task t LEFT JOIN person p ON p.id = t.id_person WHERE t.id = ?";
         try {
             return jdbcTemplate.queryForObject(sql, new TaskMapper(), id);
         } catch (EmptyResultDataAccessException exception) {
@@ -43,76 +43,77 @@ public class TaskRepo {
     }
 
     public List<Task> getAllTasks() {
-        String sql = "select * from task t left join person p on p.id = t.id_person ";
+        String sql = "SELECT * FROM task t LEFT JOIN person p on p.id = t.id_person ";
 
         return jdbcTemplate.query(sql, new TaskMapper());
     }
 
     public List<Task> getByGroupId(Long id) {
-        String sql = "select * from task t " +
-                "left join person p on p.id = t.id_person " +
-                "left join person_group pg on t.id = pg.id_task " +
-                "where pg.id_group = ?";
+        String sql = "SELECT * FROM task t WHERE id_group = ?";
 
         return jdbcTemplate.query(sql, new TaskMapper(), id);
     }
 
     public List<Task> getByPersonId(Long id) {
-        String sql = "select * from task t left join person p on p.id = t.id_person where p.id = ?";
+        String sql = "SELECT * FROM task t JOIN person_group pg ON t.id_group = pg.id_group WHERE pg.id_person = ?";
 
         return jdbcTemplate.query(sql, new TaskMapper(), id);
     }
 
     public Integer addTask(SqlParameterSource parameters, KeyHolder keyHolder) {
-        String sql = "insert into task (name, description, estimate, priority, progress) " +
-                "values (:name, :description, :estimate, :priority, 0);";
+        String sql = "INSERT INTO task (name, description, estimate, priority, progress) " +
+                "VALUES (:name, :description, :estimate, :priority, 0);";
 
         return namedParameterJdbcTemplate.update(sql, parameters, keyHolder);
     }
 
-    public Integer update(SqlParameterSource parameters) {
-        String sql = "update task set name = :name, description = :description, " +
-                "estimate = :estimate, priority = :priority where id = :id";
+    public Task update(SqlParameterSource parameters) {
+        String sql = "UPDATE task SET name = :name, description = :description, " +
+                "estimate = :estimate, priority = :priority WHERE id = :id";
 
-        return namedParameterJdbcTemplate.update(sql, parameters);
+        namedParameterJdbcTemplate.update(sql, parameters);
+
+        return getTaskById((Long) parameters.getValue("id"));
     }
 
-    public Integer updateProgress(Long id, Integer progress) {
-        String sql = "update task set  progress = ? WHERE id = ? and start_time IS NOT NULL";
-        return jdbcTemplate.update(sql, progress, id);
+    public Task updateProgress(Long id, Integer progress) {
+        String sql = "UPDATE task SET  progress = ? WHERE id = ? AND start_time IS NOT NULL";
+        jdbcTemplate.update(sql, progress, id);
+        setSpentTime(id);
+        return getTaskById(id);
     }
 
     public Integer deleteTask(Long id) {
-        String sql = "delete from task where id = ?;";
+        String sql = "DELETE FROM task WHERE id = ?;";
 
         return jdbcTemplate.update(sql, id);
     }
 
     public List<Group> getGroupsById(Long id) {
-        String sqlForGroup = "select * from group_of_tasks got join task t on got.id = t.id_group  where t.id = ?";
+        String sqlForGroup = "SELECT * FROM group_of_tasks got JOIN task t ON got.id = t.id_group  WHERE t.id = ?";
 
         return jdbcTemplate.query(sqlForGroup, new GroupMapper(), id);
     }
 
     public List<Task> search(MapSqlParameterSource mapSqlParameterSource) {
         String sql =
-                "select * from task LEFT join progress on task.id = progress.id_task " +
-                        "where cast(:name as VARCHAR) is null or task.name = :name " +
-                        "and (cast(:fromStartTime as date) is null or cast(:toStartTime as date) is null) " +
-                        "or task.start_time BETWEEN :fromStartTime::timestamp and :toStartTime::timestamp " +
-                        "and (cast(:fromProgress as SMALLINT) is null or cast(:toProgress as SMALLINT) is null) " +
-                        "Or progress.percents BETWEEN :fromProgress and :toProgress;";
+                "SELECT * FROM task WHERE " +
+                        "cast(:name AS VARCHAR) IS NULL OR task.name = :name " +
+                        "AND (cast(:fromStartTime AS TIMESTAMP) IS NULL OR cast(:toStartTime AS TIMESTAMP) IS NULL) " +
+                        "OR task.start_time BETWEEN :fromStartTime::TIMESTAMP and :toStartTime::TIMESTAMP " +
+                        "AND (cast(:fromProgress AS INT8) IS NULL OR :toProgress IS NULL) " +
+                        "OR progress BETWEEN :fromProgress AND :toProgress;";
 
         return namedParameterJdbcTemplate.query(sql, mapSqlParameterSource, new TaskMapper());
     }
 
     public Integer setStartTime(Long taskId) {
-        String sql = "update task set start_time = NOW()::timestamp where id = ?";
+        String sql = "UPDATE task SET start_time = NOW()::timestamp WHERE id = ?";
         return jdbcTemplate.update(sql, taskId);
     }
 
     public Integer setSpentTime(Long id) {
-        String sql = "update task set spent_time = extract(minutes from NOW() - start_time) where id = ?";
+        String sql = "UPDATE task SET spent_time = EXTRACT(MINUTES FROM NOW() - start_time) WHERE id = ?";
         return jdbcTemplate.update(sql, id);
 
     }

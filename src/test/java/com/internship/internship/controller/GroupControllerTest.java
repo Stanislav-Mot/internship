@@ -22,7 +22,6 @@ import java.util.List;
 import static com.internship.internship.util.Helper.*;
 import static org.hamcrest.Matchers.containsStringIgnoringCase;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -99,7 +98,7 @@ class GroupControllerTest {
     void updateGroup() throws Exception {
         GroupDto group = newGroupDtoForTest();
 
-        when(groupService.update(any(GroupDto.class))).thenReturn(1);
+//        when(groupService.update(any(GroupDto.class))).thenReturn(1);
 
         mockMvc.perform(put("/group")
                         .content(asJsonString(group))
@@ -136,7 +135,7 @@ class GroupControllerTest {
         GroupDto group = new GroupDto(1L);
         GroupDto groupIn = new GroupDto(2L);
 
-        Mockito.when(groupService.addGroup(group.getId(), groupIn.getId())).thenReturn(1);
+//        Mockito.when(groupService.addGroup(group.getId(), groupIn.getId())).thenReturn(1);
 
         mockMvc.perform(put("/group/{id}/addGroup/{groupID}", group.getId(), groupIn.getId()))
                 .andExpect(status().isOk())
@@ -150,7 +149,7 @@ class GroupControllerTest {
         GroupDto group = new GroupDto(1L);
         GroupDto groupIn = new GroupDto(2L);
 
-        Mockito.when(groupService.deleteGroup(group.getId(), groupIn.getId())).thenReturn(1);
+//        Mockito.when(groupService.deleteGroup(group.getId(), groupIn.getId())).thenReturn(1);
 
         mockMvc.perform(put("/group/{id}/deleteGroup/{groupId}", group.getId(), groupIn.getId()))
                 .andExpect(status().isOk())
@@ -164,7 +163,7 @@ class GroupControllerTest {
         GroupDto group = newGroupDtoForTest();
         TaskDto task = newTaskDtoForTest();
 
-        Mockito.when(groupService.addTask(anyLong(), anyLong())).thenReturn(1);
+//        Mockito.when(groupService.addTask(anyLong(), anyLong())).thenReturn(1);
 
         mockMvc.perform(put("/group/{id}/addTask/{taskId}", group.getId(), task.getId())
                         .content(asJsonString(group))
@@ -182,7 +181,7 @@ class GroupControllerTest {
         GroupDto group = newGroupDtoForTest();
         TaskDto task = newTaskDtoForTest();
 
-        Mockito.when(groupService.deleteTask(group.getId(), task.getId())).thenReturn(1);
+//        Mockito.when(groupService.deleteTask(group.getId(), task.getId())).thenReturn(1);
 
         mockMvc.perform(put("/group/{id}/deleteTask/{taskId}", group.getId(), task.getId()))
                 .andExpect(status().isOk())

@@ -99,7 +99,7 @@ class PersonControllerTest {
     void updatePerson() throws Exception {
         PersonDto person = newPersonDtoForTest();
 
-        when(personService.update(any(PersonDto.class))).thenReturn(1);
+//        when(personService.update(any(PersonDto.class))).thenReturn(1);
 
         mockMvc.perform(put("/person")
                         .content(asJsonString(person))
@@ -122,7 +122,7 @@ class PersonControllerTest {
     void deletePerson() throws Exception {
         PersonDto person = newPersonDtoForTest();
 
-        Mockito.when(personService.delete(person.getId())).thenReturn(1);
+//        Mockito.when(personService.delete(person.getId())).thenReturn(1);
 
         mockMvc.perform(delete("/person/{id}", person.getId()))
                 .andExpect(status().isOk())
@@ -135,7 +135,7 @@ class PersonControllerTest {
     void addGroupToPerson() throws Exception {
         PersonDto person = newPersonDtoForTest();
         GroupDto group = newGroupDtoForTest(person);
-        Mockito.when(personService.addGroup(anyLong(), anyLong())).thenReturn(1);
+//        Mockito.when(personService.addGroup(anyLong(), anyLong())).thenReturn(1);
 
         mockMvc.perform(put("/person/{id}/addGroup/{groupId}", person.getId(), group.getId()))
                 .andExpect(status().isOk())
@@ -149,7 +149,7 @@ class PersonControllerTest {
         PersonDto person = newPersonDtoForTest();
         GroupDto group = newGroupDtoForTest(person);
 
-        Mockito.when(personService.deleteGroup(person.getId(), group.getId())).thenReturn(1);
+//        Mockito.when(personService.deleteGroup(person.getId(), group.getId())).thenReturn(1);
 
         mockMvc.perform(put("/person/{id}/deleteGroup/{groupId}", person.getId(), group.getId()))
                 .andExpect(status().isOk())

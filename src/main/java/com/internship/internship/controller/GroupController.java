@@ -60,37 +60,37 @@ public class GroupController {
     @Operation(summary = "Update group")
     @Validated(Transfer.Update.class)
     @PutMapping("/group")
-    public Integer update(@Valid @RequestBody GroupDto groupDto) {
+    public GroupDto update(@Valid @RequestBody GroupDto groupDto) {
         return groupService.update(groupDto);
     }
 
     @Operation(summary = "Delete group by id")
     @DeleteMapping("/group/{id}")
-    public Integer delete(@PathVariable Long id) {
-        return groupService.delete(id);
+    public void delete(@PathVariable Long id) {
+        groupService.delete(id);
     }
 
     @Operation(summary = "Add group to group")
     @PutMapping("/group/{id}/addGroup/{groupId}")
-    public Integer addGroupToGroup(@PathVariable Long id, @PathVariable Long groupId) {
+    public GroupDto addGroupToGroup(@PathVariable Long id, @PathVariable Long groupId) {
         return groupService.addGroup(id, groupId);
     }
 
     @Operation(summary = "Delete group from group")
     @PutMapping("/group/{id}/deleteGroup/{groupId}")
-    public Integer deleteGroupFromGroup(@PathVariable Long id, @PathVariable Long groupId) {
-        return groupService.deleteGroup(id, groupId);
+    public void deleteGroupFromGroup(@PathVariable Long id, @PathVariable Long groupId) {
+        groupService.deleteGroup(id, groupId);
     }
 
     @Operation(summary = "Add task to group")
     @PutMapping("/group/{id}/addTask/{taskId}")
-    public Integer addTaskToGroup(@PathVariable Long id, @PathVariable Long taskId) {
+    public GroupDto addTaskToGroup(@PathVariable Long id, @PathVariable Long taskId) {
         return groupService.addTask(id, taskId);
     }
 
     @Operation(summary = "Delete task from group")
     @PutMapping("/group/{id}/deleteTask/{taskId}")
-    public Integer deleteTaskFromGroup(@PathVariable Long id, @PathVariable Long taskId) {
-        return groupService.deleteTask(id, taskId);
+    public void deleteTaskFromGroup(@PathVariable Long id, @PathVariable Long taskId) {
+        groupService.deleteTask(id, taskId);
     }
 }

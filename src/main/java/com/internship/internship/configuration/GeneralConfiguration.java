@@ -12,6 +12,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class GeneralConfiguration {
 
+    @Value("${application-email}")
+    private String email;
+    @Value("${application-url}")
+    private String url;
+    @Value("${application-author}")
+    private String author;
+
     @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();
@@ -28,8 +35,8 @@ public class GeneralConfiguration {
                         .url("http://springdoc.org"))
                 .contact(
                         new Contact()
-                                .email("${application-email}")
-                                .url("${application-url}")
-                                .name("${application-author}")));
+                                .email(email)
+                                .url(url)
+                                .name(author)));
     }
 }

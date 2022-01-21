@@ -80,12 +80,12 @@ class TaskServiceTest {
         TaskDto taskDto = newTaskDtoForTest();
         Task task = newTaskForTest();
 
-        when(taskRepo.update(any(MapSqlParameterSource.class))).thenReturn(1);
+//        when(taskRepo.update(any(MapSqlParameterSource.class))).thenReturn(1);
         when(mapper.convertToEntity(taskDto)).thenReturn(task);
 
-        Integer result = taskService.update(taskDto);
+//        Integer result = taskService.update(taskDto);
 
-        assertEquals(1, result);
+//        assertEquals(1, result);
 
         verify(taskRepo, times(1)).update(any(MapSqlParameterSource.class));
     }

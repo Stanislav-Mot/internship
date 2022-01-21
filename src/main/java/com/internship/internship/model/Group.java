@@ -24,10 +24,6 @@ public class Group implements Assignment {
         tasks.add(task);
     }
 
-    public void addAll(List<? extends Assignment> taskList) {
-        tasks.addAll(taskList);
-    }
-
     public Integer size() {
         return tasks.size();
     }

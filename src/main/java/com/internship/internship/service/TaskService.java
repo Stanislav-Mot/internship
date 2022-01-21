@@ -35,8 +35,8 @@ public class TaskService {
     }
 
     public static MapSqlParameterSource getMapSqlParameterSource(String name,
-                                                                 String fromProgress,
-                                                                 String toProgress,
+                                                                 Integer fromProgress,
+                                                                 Integer toProgress,
                                                                  String minStartTime,
                                                                  String maxStartTime) {
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
@@ -77,12 +77,14 @@ public class TaskService {
         return mapper.getDtoFromHolder(keyHolder);
     }
 
-    public Integer update(TaskDto taskDto) {
+    public TaskDto update(TaskDto taskDto) {
         Task task = mapper.convertToEntity(taskDto);
 
         MapSqlParameterSource parameters = getMapSqlParameterSource(task);
 
-        return taskRepo.update(parameters);
+        Task response = taskRepo.update(parameters);
+
+        return mapper.convertToDto(response);
     }
 
     public Integer delete(Long id) {
@@ -90,8 +92,8 @@ public class TaskService {
     }
 
     public List<TaskDto> search(String name,
-                                String fromProgress,
-                                String toProgress,
+                                Integer fromProgress,
+                                Integer toProgress,
                                 String minStartTime,
                                 String maxStartTime) {
         MapSqlParameterSource mapSqlParameterSource = getMapSqlParameterSource(name, fromProgress, toProgress, minStartTime, maxStartTime);
@@ -114,11 +116,9 @@ public class TaskService {
         }
     }
 
-    public Integer updateProgress(Long id, Integer progress) {
-        Integer answer = taskRepo.updateProgress(id, progress);
-        if (answer > 0) {
-            taskRepo.setSpentTime(id);
-        }
-        return answer;
+    public TaskDto updateProgress(Long id, Integer progress) {
+        Task task = taskRepo.updateProgress(id, progress);
+
+        return mapper.convertToDto(task);
     }
 }

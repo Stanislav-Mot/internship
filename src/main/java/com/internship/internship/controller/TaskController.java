@@ -74,14 +74,14 @@ public class TaskController {
     @Operation(summary = "update name, description and estimate")
     @Validated(Transfer.Update.class)
     @PutMapping("/task")
-    public Integer update(@Valid @RequestBody TaskDto taskDto) {
+    public TaskDto update(@Valid @RequestBody TaskDto taskDto) {
         return taskService.update(taskDto);
     }
 
-    @Operation(summary = "update progress")
+    @Operation(summary = "update progress", description = "start time should be not null")
     @Validated(Transfer.Update.class)
     @PutMapping("/task/{id}/progress")
-    public Integer updateProgress(@RequestBody Integer progress, @PathVariable Long id) {
+    public TaskDto updateProgress(@RequestBody Integer progress, @PathVariable Long id) {
         return taskService.updateProgress(id, progress);
     }
 
