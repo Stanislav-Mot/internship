@@ -117,5 +117,4 @@ public class GroupService {
             throw new ChangesNotAppliedExemption(String.format("Group Id %d or %d is not found", id, groupId));
         }
     }
-
 }

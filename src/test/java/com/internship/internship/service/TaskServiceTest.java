@@ -1,7 +1,7 @@
 package com.internship.internship.service;
 
 import com.internship.internship.dto.TaskDto;
-import com.internship.internship.dto.search.SearchTask;
+//import com.internship.internship.dto.search.SearchTask;
 import com.internship.internship.mapper.TaskDtoMapper;
 import com.internship.internship.model.Task;
 import com.internship.internship.repository.TaskRepo;
@@ -105,7 +105,7 @@ class TaskServiceTest {
 
     @Test
     void search() {
-        SearchTask parameters = new SearchTask("Tester", null, null, null, null);
+//        SearchTask parameters = new SearchTask("Tester", null, null, null, null);
         Task task = newTaskForTest();
         List<Task> list = Collections.singletonList(task);
 

@@ -2,8 +2,6 @@ package com.internship.internship.controller;
 
 import com.internship.internship.dto.PersonDto;
 import com.internship.internship.dto.TaskDto;
-import com.internship.internship.dto.search.SearchPerson;
-import com.internship.internship.dto.search.SearchTask;
 import com.internship.internship.service.PersonService;
 import com.internship.internship.service.TaskService;
 import org.hamcrest.Matchers;
@@ -52,13 +50,13 @@ class SearchControllerTest {
     void getPersonsByParameters() throws Exception {
         PersonDto personDto = newPersonDtoForTest();
 
-        SearchPerson parameters = new SearchPerson("Tester", null, null, null);
+//        SearchPerson parameters = new SearchPerson("Tester", null, null, null);
         List<PersonDto> list = Collections.singletonList(personDto);
 
 //        Mockito.when(personService.search(parameters)).thenReturn(list);
 
         mockMvc.perform(post("/search/person")
-                        .content(asJsonString(parameters))
+//                        .content(asJsonString(parameters))
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -79,13 +77,13 @@ class SearchControllerTest {
     void getTasksByParameters() throws Exception {
         TaskDto taskDto = newTaskDtoForTest();
 
-        SearchTask parameters = new SearchTask("Tester", null, null, null, null);
+//        SearchTask parameters = new SearchTask("Tester", null, null, null, null);
         List<TaskDto> list = Collections.singletonList(taskDto);
 
 //        Mockito.when(taskService.search(parameters)).thenReturn(list);
 
         mockMvc.perform(post("/search/task")
-                        .content(asJsonString(parameters))
+//                        .content(asJsonString(parameters))
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

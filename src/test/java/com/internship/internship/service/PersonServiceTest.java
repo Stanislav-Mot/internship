@@ -1,7 +1,6 @@
 package com.internship.internship.service;
 
 import com.internship.internship.dto.PersonDto;
-import com.internship.internship.dto.search.SearchPerson;
 import com.internship.internship.mapper.PersonDtoMapper;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
@@ -150,7 +149,7 @@ class PersonServiceTest {
 
     @Test
     void search() {
-        SearchPerson parameters = new SearchPerson("Tester", null, null, null);
+//        SearchPerson parameters = new SearchPerson("Tester", null, null, null);
         Person person = newPersonForTest();
         List<Person> list = Collections.singletonList(person);
 
