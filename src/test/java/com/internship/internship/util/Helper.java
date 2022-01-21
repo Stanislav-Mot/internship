@@ -1,6 +1,8 @@
 package com.internship.internship.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.internship.internship.dto.GroupDto;
 import com.internship.internship.dto.PersonDto;
 import com.internship.internship.dto.TaskDto;
@@ -17,17 +19,16 @@ public class Helper {
 
     @SneakyThrows
     public static String asJsonString(final Object obj) {
-        return new ObjectMapper().writeValueAsString(obj);
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        return mapper.writeValueAsString(obj);
     }
 
     public static Group newGroupForTest() {
         return new Group(CORRECT_ID, "Tester", null, null);
     }
-
-    public static Group newGroupForTest(Person person) {
-        return new Group(CORRECT_ID, "TesterGroup", null, null);
-    }
-
 
     public static Person newPersonForTest() {
         return new Person(CORRECT_ID, "Tester", "Rochester", LocalDate.of(2012, 12, 12), null);
@@ -46,7 +47,7 @@ public class Helper {
     }
 
     public static PersonDto newPersonDtoForTest() {
-        return new PersonDto(CORRECT_ID, "Tester", "Rochester", LocalDate.of(2012, 12, 12), null);
+        return new PersonDto(null, "Tester", "Rochester", LocalDate.of(2012, 12, 12), null);
     }
 
     public static TaskDto newTaskDtoForTest() {

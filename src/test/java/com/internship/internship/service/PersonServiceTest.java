@@ -11,6 +11,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.support.KeyHolder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -66,14 +68,15 @@ class PersonServiceTest {
         PersonDto personDto = newPersonDtoForTest();
         Person person = newPersonForTest();
 
-//        when(personRepo.addPerson(any(MapSqlParameterSource.class))).thenReturn(1);
+        when(personRepo.addPerson(any(SqlParameterSource.class), any(KeyHolder.class))).thenReturn(1);
         when(mapper.convertToEntity(personDto)).thenReturn(person);
+        when(mapper.getDtoFromHolder(any(KeyHolder.class))).thenReturn(personDto);
 
-//        Integer result = personService.add(personDto);
+        PersonDto result = personService.add(personDto);
 
-//        assertEquals(1, result);
+        assertEquals(personDto.getId(), result.getId());
 
-//        verify(personRepo, times(1)).addPerson(any(MapSqlParameterSource.class));
+        verify(personRepo, times(1)).addPerson(any(MapSqlParameterSource.class), any(KeyHolder.class));
     }
 
     @Test
@@ -81,12 +84,13 @@ class PersonServiceTest {
         PersonDto personDto = newPersonDtoForTest();
         Person person = newPersonForTest();
 
-//        when(personRepo.updatePerson(any(MapSqlParameterSource.class))).thenReturn(1);
         when(mapper.convertToEntity(personDto)).thenReturn(person);
+        when(personRepo.updatePerson(any(MapSqlParameterSource.class))).thenReturn(person);
+        when(mapper.convertToDto(person)).thenReturn(personDto);
 
-//        Integer result = personService.update(personDto);
+        PersonDto result = personService.update(personDto);
 
-//        assertEquals(1, result);
+        assertEquals(personDto.getId(), result.getId());
 
         verify(personRepo, times(1)).updatePerson(any(MapSqlParameterSource.class));
     }
@@ -97,9 +101,7 @@ class PersonServiceTest {
 
         when(personRepo.deletePerson(person.getId())).thenReturn(1);
 
-//        Integer result = personService.delete(person.getId());
-
-//        assertEquals(1, result);
+        personService.delete(person.getId());
 
         verify(personRepo, times(1)).deletePerson(person.getId());
     }
@@ -107,13 +109,11 @@ class PersonServiceTest {
     @Test
     void deleteGroup() {
         Person person = newPersonForTest();
-        Group group = newGroupForTest(person);
+        Group group = newGroupForTest();
 
         when(personRepo.deleteGroupFromPerson(person.getId(), group.getId())).thenReturn(1);
 
-//        Integer result = personService.deleteGroup(person.getId(), group.getId());
-
-//        assertEquals(1, result);
+        personService.deleteGroup(person.getId(), group.getId());
 
         verify(personRepo, times(1)).deleteGroupFromPerson(person.getId(), group.getId());
     }
@@ -121,43 +121,29 @@ class PersonServiceTest {
     @Test
     void addGroup() {
         PersonDto personDto = newPersonDtoForTest();
+        Person person = newPersonForTest();
         Group group = newGroupForTest();
 
-//        when(personRepo.addGroupToPerson(personDto.getId(), group.getId())).thenReturn(1);
+        when(personRepo.addGroupToPerson(personDto.getId(), group.getId())).thenReturn(person);
+        when(mapper.convertToDto(any(Person.class))).thenReturn(personDto);
+        PersonDto result = personService.addGroup(personDto.getId(), group.getId());
 
-//        Integer result = personService.addGroup(personDto.getId(), group.getId());
-
-//        assertEquals(1, result);
+        assertEquals(personDto.getId(), result.getId());
 
         verify(personRepo, times(1)).addGroupToPerson(personDto.getId(), group.getId());
     }
 
-    @Test
-    void getMapSqlParameterSource() {
-        Person person = newPersonForTest();
-
-        MapSqlParameterSource parametersFromService = PersonService.getMapSqlParameterSource(person);
-        MapSqlParameterSource parametersFromTest = new MapSqlParameterSource();
-
-        parametersFromTest.addValue("id", person.getId());
-        parametersFromTest.addValue("firstname", person.getFirstName());
-        parametersFromTest.addValue("lastname", person.getLastName());
-        parametersFromTest.addValue("age", person.getBirthdate());
-
-        assertEquals(parametersFromService.getValues(), parametersFromTest.getValues());
-    }
 
     @Test
     void search() {
-//        SearchPerson parameters = new SearchPerson("Tester", null, null, null);
         Person person = newPersonForTest();
         List<Person> list = Collections.singletonList(person);
 
         when(personRepo.search(any(MapSqlParameterSource.class))).thenReturn(list);
 
-//        List<PersonDto> personList = personService.search(parameters);
+        List<PersonDto> personList = personService.search("", "", 1, 1, 1);
 
-//        assertEquals(1, personList.size());
+        assertEquals(1, personList.size());
         verify(personRepo, times(1)).search(any(MapSqlParameterSource.class));
     }
 

@@ -1,8 +1,6 @@
 package com.internship.internship.controller;
 
 import com.internship.internship.dto.GroupDto;
-import com.internship.internship.dto.TaskDto;
-import com.internship.internship.exeption.ChangesNotAppliedExemption;
 import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.service.GroupService;
 import org.hamcrest.Matchers;
@@ -20,7 +18,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Collections;
 import java.util.List;
 
-import static com.internship.internship.util.Helper.*;
+import static com.internship.internship.util.Helper.asJsonString;
+import static com.internship.internship.util.Helper.newGroupDtoForTest;
 import static org.hamcrest.Matchers.containsStringIgnoringCase;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -104,9 +103,9 @@ class GroupControllerTest {
         Mockito.when(groupService.add(any(GroupDto.class))).thenReturn(group);
 
         mockMvc.perform(post("/group")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(group))
-                        .characterEncoding("utf-8"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(group))
+                .characterEncoding("utf-8"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name", containsStringIgnoringCase("Tester")));
 
@@ -120,16 +119,16 @@ class GroupControllerTest {
         when(groupService.update(any(GroupDto.class))).thenReturn(group);
 
         mockMvc.perform(put("/group")
-                        .content(asJsonString(group))
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
+                .content(asJsonString(group))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", containsStringIgnoringCase("Tester")));
 
         mockMvc.perform(put("/group")
-                        .content("Wrong JSON")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
+                .content("Wrong JSON")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$", containsStringIgnoringCase("wrong JSON format")));
 
@@ -166,9 +165,9 @@ class GroupControllerTest {
 
     @Test
     void deleteGroupFromGroup() throws Exception {
-        doNothing().when(groupService).deleteGroup(anyLong(),anyLong());
+        doNothing().when(groupService).deleteGroup(anyLong(), anyLong());
 
-        mockMvc.perform(put("/group/{id}/deleteGroup/{groupId}", anyLong(),anyLong()))
+        mockMvc.perform(put("/group/{id}/deleteGroup/{groupId}", anyLong(), anyLong()))
                 .andExpect(status().isOk());
 
         verify(groupService, times(1)).deleteGroup(anyLong(), anyLong());
@@ -181,9 +180,9 @@ class GroupControllerTest {
         Mockito.when(groupService.addTask(anyLong(), anyLong())).thenReturn(groupDto);
 
         mockMvc.perform(put("/group/{id}/addTask/{taskId}", anyLong(), anyLong())
-                        .content(asJsonString(groupDto))
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
+                .content(asJsonString(groupDto))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", containsStringIgnoringCase("Tester")));
 

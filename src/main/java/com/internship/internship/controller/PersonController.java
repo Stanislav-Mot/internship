@@ -47,8 +47,7 @@ public class PersonController {
     @PostMapping("/person")
     @ResponseStatus(HttpStatus.CREATED)
     public PersonDto add(@Valid @RequestBody PersonDto personDto) {
-        PersonDto dto = personService.add(personDto);
-        return dto;
+        return personService.add(personDto);
     }
 
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
