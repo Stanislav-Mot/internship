@@ -69,7 +69,6 @@ class TaskControllerTest {
     @Test
     void getAllTasks() throws Exception {
         TaskDto taskDto = newTaskDtoForTest();
-
         List<TaskDto> tasks = Arrays.asList(taskDto);
 
         when(taskService.getAll()).thenReturn(tasks);

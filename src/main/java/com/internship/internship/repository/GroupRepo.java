@@ -38,11 +38,9 @@ public class GroupRepo {
         try {
             Group group = jdbcTemplate.queryForObject(sql, new GroupMapper(), id);
             group.setTasks(getComposite(id));
-
             return group;
         } catch (EmptyResultDataAccessException exception) {
             LOGGER.warn("handling 404 error on getGroupById method");
-
             throw new DataNotFoundException(String.format("Group Id %d is not found", id));
         }
     }
@@ -64,7 +62,6 @@ public class GroupRepo {
     public KeyHolder addGroup(MapSqlParameterSource parameters) {
         String sql = "INSERT INTO group_of_tasks (name) VALUES (:name)";
         KeyHolder holder = new GeneratedKeyHolder();
-
         namedParameterJdbcTemplate.update(sql, parameters, holder);
         return holder;
     }
@@ -72,13 +69,11 @@ public class GroupRepo {
     public Group updateGroup(Group group) {
         String sql = "UPDATE group_of_tasks SET name = ? WHERE id = ?;";
         jdbcTemplate.update(sql, group.getName(), group.getId());
-
         return getGroupById(group.getId());
     }
 
     public Integer deleteGroup(Long id) {
         String deleteGroupSql = "DELETE FROM group_of_tasks WHERE id = ?;";
-
         return jdbcTemplate.update(deleteGroupSql, id);
     }
 
@@ -90,13 +85,11 @@ public class GroupRepo {
 
     public Integer deleteTaskFromGroup(Long idGroup, Long idTask) {
         String sql = "UPDATE task SET id_group = NULL WHERE id = ? AND id_group = ?";
-
         return jdbcTemplate.update(sql, idTask, idGroup);
     }
 
     public List<Task> getTasksById(Long id) {
         String sqlForGroup = "SELECT * FROM task WHERE id_group = ?";
-
         return jdbcTemplate.query(sqlForGroup, new TaskMapper(), id);
     }
 
@@ -107,9 +100,8 @@ public class GroupRepo {
         assignments.addAll(taskList);
 
         List<Group> groupList = getAllGroupInGroup(id);
-        if (groupList.size() > 0) {
-            groupList.forEach(group -> group.setTasks(getComposite(group.getId())));
-        }
+        groupList.forEach(group -> group.setTasks(getComposite(group.getId())));
+
         assignments.addAll(groupList);
 
         return assignments;
@@ -117,7 +109,6 @@ public class GroupRepo {
 
     private List<Group> getAllGroupInGroup(Long id) {
         String sql = "SELECT * FROM group_of_tasks WHERE id_parent = ?;";
-
         return jdbcTemplate.query(sql, new GroupMapper(), id);
     }
 
@@ -129,7 +120,6 @@ public class GroupRepo {
 
     public Integer deleteGroupFromGroup(Long id, Long idGroup) {
         String sql = "UPDATE group_of_tasks SET id_parent = NULL WHERE id_parent = ? AND id = ?";
-
         return jdbcTemplate.update(sql, id, idGroup);
     }
 }

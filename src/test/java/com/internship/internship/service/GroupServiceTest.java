@@ -43,9 +43,7 @@ class GroupServiceTest {
         when(mapper.convertToDto(group)).thenReturn(groupDto);
 
         GroupDto groupFromService = groupService.getById(groupDto.getId());
-
         assertEquals(groupFromService, groupDto);
-
         verify(groupRepo, times(1)).getGroupById(group.getId());
     }
 
@@ -59,7 +57,6 @@ class GroupServiceTest {
         when(groupRepo.getAll()).thenReturn(list);
 
         List<GroupDto> groupList = groupService.getAll();
-
         assertEquals(3, groupList.size());
         verify(groupRepo, times(1)).getAll();
     }
@@ -73,9 +70,7 @@ class GroupServiceTest {
         when(mapper.getDtoFromHolder(any(KeyHolder.class))).thenReturn(groupDto);
 
         GroupDto groupDtoReturned = groupService.add(groupDto);
-
         assertEquals(groupDto.getId(), groupDtoReturned.getId());
-
         verify(groupRepo, times(1)).addGroup(any(MapSqlParameterSource.class));
     }
 
@@ -89,9 +84,7 @@ class GroupServiceTest {
         when(mapper.convertToDto(any(Group.class))).thenReturn(groupDto);
 
         GroupDto dto = groupService.update(groupDto);
-
         assertEquals(groupDto.getId(), dto.getId());
-
         verify(groupRepo, times(1)).updateGroup(any(Group.class));
     }
 
@@ -102,9 +95,7 @@ class GroupServiceTest {
         when(groupRepo.deleteGroup(group.getId())).thenReturn(1);
 
         Integer result = groupService.delete(group.getId());
-
         assertEquals(1, result);
-
         verify(groupRepo, times(1)).deleteGroup(group.getId());
     }
 
@@ -120,9 +111,7 @@ class GroupServiceTest {
         when(mapper.convertToDto(group)).thenReturn(groupDto);
 
         GroupDto result = groupService.addTask(group.getId(), task.getId());
-
         assertEquals(groupDto, result);
-
         verify(groupRepo, times(1)).addTaskToGroup(anyLong(), anyLong());
     }
 
@@ -132,9 +121,7 @@ class GroupServiceTest {
         Task task = newTaskForTest();
 
         when(groupRepo.deleteTaskFromGroup(group.getId(), task.getId())).thenReturn(1);
-
         groupService.deleteTask(group.getId(), task.getId());
-
         verify(groupRepo, times(1)).deleteTaskFromGroup(group.getId(), task.getId());
     }
 
@@ -148,7 +135,6 @@ class GroupServiceTest {
         when(mapper.convertToDto(any(Group.class))).thenReturn(any(GroupDto.class));
 
         groupService.addGroup(group.getId(), groupIn.getId());
-
         verify(groupRepo, times(1)).addGroupToGroup(group.getId(), groupIn.getId());
     }
 
@@ -158,9 +144,7 @@ class GroupServiceTest {
         Group groupIn = new Group(1L);
 
         when(groupRepo.deleteGroupFromGroup(group.getId(), groupIn.getId())).thenReturn(1);
-
         groupService.deleteGroup(group.getId(), groupIn.getId());
-
         verify(groupRepo, times(1)).deleteGroupFromGroup(group.getId(), groupIn.getId());
     }
 }

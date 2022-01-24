@@ -48,7 +48,6 @@ class PersonControllerTest {
     @Test
     void getAllPersons() throws Exception {
         PersonDto personDto = newPersonDtoForTest();
-
         List<PersonDto> persons = Collections.singletonList(personDto);
 
         Mockito.when(personService.getAll()).thenReturn(persons);
@@ -100,6 +99,7 @@ class PersonControllerTest {
     void updatePerson() throws Exception {
         PersonDto person = newPersonDtoForTest();
         person.setId(CORRECT_ID);
+
         when(personService.update(any(PersonDto.class))).thenReturn(person);
 
         mockMvc.perform(put("/person")

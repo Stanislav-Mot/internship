@@ -78,14 +78,12 @@ class GroupControllerTest {
                 .andExpect(jsonPath("$..id", Matchers.contains(Math.toIntExact(CORRECT_ID))))
                 .andExpect(jsonPath("$..name", Matchers.contains("Tester")));
 
-
         verify(groupService, times(1)).getByPersonId(Mockito.any());
     }
 
     @Test
     void getAllGroups() throws Exception {
         GroupDto groupDto = newGroupDtoForTest();
-
         List<GroupDto> groups = Collections.singletonList(groupDto);
 
         Mockito.when(groupService.getAll()).thenReturn(groups);

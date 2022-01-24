@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class GroupDtoMapper {
-
     private final ModelMapper modelMapper;
 
     public GroupDtoMapper(ModelMapper modelMapper) {

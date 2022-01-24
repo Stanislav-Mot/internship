@@ -44,9 +44,7 @@ class PersonServiceTest {
         when(mapper.convertToDto(person)).thenReturn(personDto);
 
         PersonDto personFromService = personService.getById(person.getId());
-
         assertEquals(personFromService, personDto);
-
         verify(personRepo, times(1)).getPersonById(person.getId());
     }
 
@@ -60,7 +58,6 @@ class PersonServiceTest {
         when(personRepo.getAllPersons()).thenReturn(list);
 
         List<PersonDto> personList = personService.getAll();
-
         assertEquals(3, personList.size());
         verify(personRepo, times(1)).getAllPersons();
     }
@@ -76,9 +73,7 @@ class PersonServiceTest {
         when(mapper.getDtoFromHolder(any(KeyHolder.class))).thenReturn(personDto);
 
         PersonDto result = personService.add(personDto);
-
         assertEquals(personDto.getId(), result.getId());
-
         verify(personRepo, times(1)).addPerson(any(MapSqlParameterSource.class));
     }
 
@@ -92,9 +87,7 @@ class PersonServiceTest {
         when(mapper.convertToDto(person)).thenReturn(personDto);
 
         PersonDto result = personService.update(personDto);
-
         assertEquals(personDto.getId(), result.getId());
-
         verify(personRepo, times(1)).updatePerson(any(MapSqlParameterSource.class));
     }
 
@@ -105,7 +98,6 @@ class PersonServiceTest {
         when(personRepo.deletePerson(person.getId())).thenReturn(1);
 
         personService.delete(person.getId());
-
         verify(personRepo, times(1)).deletePerson(person.getId());
     }
 
@@ -117,7 +109,6 @@ class PersonServiceTest {
         when(personRepo.deleteGroupFromPerson(person.getId(), group.getId())).thenReturn(1);
 
         personService.deleteGroup(person.getId(), group.getId());
-
         verify(personRepo, times(1)).deleteGroupFromPerson(person.getId(), group.getId());
     }
 
@@ -132,7 +123,6 @@ class PersonServiceTest {
         PersonDto result = personService.addGroup(personDto.getId(), group.getId());
 
         assertEquals(personDto.getId(), result.getId());
-
         verify(personRepo, times(1)).addGroupToPerson(personDto.getId(), group.getId());
     }
 
@@ -146,7 +136,6 @@ class PersonServiceTest {
         when(personRepo.search(any(MapSqlParameterSource.class))).thenReturn(list);
 
         List<PersonDto> personList = personService.search(searchPersonDto);
-
         assertEquals(1, personList.size());
         verify(personRepo, times(1)).search(any(MapSqlParameterSource.class));
     }
@@ -159,7 +148,6 @@ class PersonServiceTest {
         when(personRepo.searchByTokenInName(any(Map.class))).thenReturn(list);
 
         List<PersonDto> personList = personService.searchByTokenInName(person.getFirstName());
-
         assertEquals(1, personList.size());
         verify(personRepo, times(1)).searchByTokenInName(any(Map.class));
     }

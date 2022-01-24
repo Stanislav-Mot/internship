@@ -38,93 +38,70 @@ class GroupRepoTest {
     @Test
     void getGroupById() {
         Group group = groupRepo.getGroupById(ID_FOR_GET);
-
         Assertions.assertThat(group).returns("forGet", from(Group::getName));
     }
 
     @Test
     void getAll() {
         List<Group> groups = groupRepo.getAll();
-
         assertEquals(countGroups, groups.size());
     }
 
     @Test
     void addGroup() {
         MapSqlParameterSource parameters = getMapSqlParameterSource(newGroupForTest());
-
         groupRepo.addGroup(parameters);
-
         Iterable<Group> groups = groupRepo.getAll();
-
         Assertions.assertThat(groups).extracting(Group::getName).contains("Tester");
-
         countGroups += 1;
     }
 
     @Test
     void updateGroup() {
         Group groupForUpdate = new Group(ID_FOR_UPDATE, "nameUpdate", null, null);
-
         Group group = groupRepo.updateGroup(groupForUpdate);
-
         Assertions.assertThat(group).returns("nameUpdate", from(Group::getName));
     }
 
     @Test
     void deleteGroup() {
-
         Group group = groupRepo.getGroupById(ID_FOR_DELETE);
-
         assertEquals(ID_FOR_DELETE, group.getId());
-
         groupRepo.deleteGroup(ID_FOR_DELETE);
-
         Assertions.assertThatThrownBy(() -> groupRepo.getGroupById(ID_FOR_DELETE)).isInstanceOf(DataNotFoundException.class);
     }
 
     @Test
     void addTaskToGroup() {
         groupRepo.addTaskToGroup(ID_FOR_GET, 1L);
-
         Iterable<Task> tasks = groupRepo.getTasksById(ID_FOR_GET);
-
         Assertions.assertThat(tasks).extracting(Task::getName).contains("cleaning");
     }
 
     @Test
     void deleteTaskFromGroup() {
-
         groupRepo.deleteTaskFromGroup(ID_FOR_GET, ID_FOR_DELETE);
-
         List<Task> tasks = groupRepo.getTasksById(ID_FOR_GET);
-
         Assertions.assertThat(tasks).extracting(Task::getName).isNotIn("for_delete");
     }
 
     @Test
     void getTasksById() {
         List<Task> tasks = groupRepo.getTasksById(ID_FOR_GET);
-
         Assertions.assertThat(tasks).extracting(Task::getName).contains("cleaning");
     }
 
     @Test
     void addGroupToGroup() {
-
         groupRepo.addGroupToGroup(2L, 3L);
-
         Group group = groupRepo.getGroupById(2L);
-
         assertEquals(1, group.getTasks().size());
     }
 
     @Test
     void deleteGroupFromGroup() {
         groupRepo.deleteGroupFromGroup(3L, 1L);
-
         Group group = groupRepo.getGroupById(3L);
-
         assertEquals(0, group.getTasks().size());
     }
 

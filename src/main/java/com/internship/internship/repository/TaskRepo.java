@@ -38,33 +38,28 @@ public class TaskRepo {
             return jdbcTemplate.queryForObject(sql, new TaskMapper(), id);
         } catch (EmptyResultDataAccessException exception) {
             LOGGER.warn("handling 404 error on getTaskById method");
-
             throw new DataNotFoundException(String.format("Task Id %d is not found", id));
         }
     }
 
     public List<Task> getAllTasks() {
         String sql = "SELECT * FROM task";
-
         return jdbcTemplate.query(sql, new TaskMapper());
     }
 
     public List<Task> getByGroupId(Long id) {
         String sql = "SELECT * FROM task t WHERE id_group = ?";
-
         return jdbcTemplate.query(sql, new TaskMapper(), id);
     }
 
     public List<Task> getByPersonId(Long id) {
         String sql = "SELECT * FROM task t JOIN person_group pg ON t.id_group = pg.id_group WHERE pg.id_person = ?";
-
         return jdbcTemplate.query(sql, new TaskMapper(), id);
     }
 
     public KeyHolder addTask(SqlParameterSource parameters) {
         String sql = "INSERT INTO task (name, description, estimate, priority, progress) " +
                 "VALUES (:name, :description, :estimate, :priority, 0);";
-
         KeyHolder keyHolder = new GeneratedKeyHolder();
         namedParameterJdbcTemplate.update(sql, parameters, keyHolder);
         return keyHolder;
@@ -73,9 +68,7 @@ public class TaskRepo {
     public Task update(SqlParameterSource parameters) {
         String sql = "UPDATE task SET name = :name, description = :description, " +
                 "estimate = :estimate, priority = :priority WHERE id = :id";
-
         namedParameterJdbcTemplate.update(sql, parameters);
-
         return getTaskById((Long) parameters.getValue("id"));
     }
 
@@ -88,13 +81,11 @@ public class TaskRepo {
 
     public Integer deleteTask(Long id) {
         String sql = "DELETE FROM task WHERE id = ?;";
-
         return jdbcTemplate.update(sql, id);
     }
 
     public List<Group> getGroupsById(Long id) {
         String sqlForGroup = "SELECT * FROM group_of_tasks got JOIN task t ON got.id = t.id_group  WHERE t.id = ?";
-
         return jdbcTemplate.query(sqlForGroup, new GroupMapper(), id);
     }
 
@@ -106,7 +97,6 @@ public class TaskRepo {
                         "OR task.start_time BETWEEN :fromStartTime::TIMESTAMP and :toStartTime::TIMESTAMP " +
                         "AND (cast(:fromProgress AS INT8) IS NULL OR :toProgress IS NULL) " +
                         "OR progress BETWEEN :fromProgress AND :toProgress;";
-
         return namedParameterJdbcTemplate.query(sql, mapSqlParameterSource, new TaskMapper());
     }
 

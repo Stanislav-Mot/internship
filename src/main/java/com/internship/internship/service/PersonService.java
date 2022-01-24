@@ -50,7 +50,6 @@ public class PersonService {
         mapSqlParameterSource.addValue("exactAge", searchPersonDto.getExactAge());
         mapSqlParameterSource.addValue("rangeAgeStart", searchPersonDto.getRangeAgeStart());
         mapSqlParameterSource.addValue("rangeAgeEnd", searchPersonDto.getRangeAgeEnd());
-
         return mapSqlParameterSource;
     }
 
@@ -65,18 +64,14 @@ public class PersonService {
     public PersonDto add(PersonDto personDto) {
         Person person = mapper.convertToEntity(personDto);
         MapSqlParameterSource parameters = getMapSqlParameterSource(person);
-
         KeyHolder keyHolder = personRepo.addPerson(parameters);
-
         return mapper.getDtoFromHolder(keyHolder);
     }
 
     public PersonDto update(PersonDto personDto) {
         Person person = mapper.convertToEntity(personDto);
         MapSqlParameterSource parameters = getMapSqlParameterSource(person);
-
         Person response = personRepo.updatePerson(parameters);
-
         return mapper.convertToDto(response);
     }
 
@@ -87,8 +82,7 @@ public class PersonService {
     public void deleteGroup(Long personId, Long groupId) {
         Integer answer = personRepo.deleteGroupFromPerson(personId, groupId);
         if (answer < 1) {
-            throw new ChangesNotAppliedExemption(
-                    String.format("Person id: %d or Group id %d is wrong", personId, groupId));
+            throw new ChangesNotAppliedExemption(String.format("Person id: %d or Group id %d is wrong", personId, groupId));
         }
     }
 

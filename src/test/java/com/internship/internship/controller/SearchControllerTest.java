@@ -70,7 +70,6 @@ class SearchControllerTest {
     @Test
     void getTasksByParameters() throws Exception {
         TaskDto taskDto = newTaskDtoForTest();
-
         List<TaskDto> list = Collections.singletonList(taskDto);
 
         Mockito.when(taskService.search(any(SearchTaskDto.class))).thenReturn(list);
@@ -91,7 +90,6 @@ class SearchControllerTest {
     void searchPersonByTokenInName() throws Exception {
         String token = "ster";
         PersonDto personDto = newPersonDtoForTest();
-
         List<PersonDto> list = Collections.singletonList(personDto);
 
         Mockito.when(personService.searchByTokenInName(token)).thenReturn(list);

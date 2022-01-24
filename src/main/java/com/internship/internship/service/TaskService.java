@@ -31,13 +31,11 @@ public class TaskService {
         parameters.addValue("description", task.getDescription());
         parameters.addValue("estimate", task.getEstimate());
         parameters.addValue("priority", task.getPriority());
-
         return parameters;
     }
 
     private MapSqlParameterSource getMapSqlParameterSource(SearchTaskDto searchTaskDto) {
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-
         mapSqlParameterSource.addValue("name", searchTaskDto.getName());
         mapSqlParameterSource.addValue("fromProgress", searchTaskDto.getFromProgress());
         mapSqlParameterSource.addValue("toProgress", searchTaskDto.getToProgress());
@@ -53,6 +51,7 @@ public class TaskService {
             localDate = LocalDate.parse(searchTaskDto.getMaxStartTime());
         }
         mapSqlParameterSource.addValue("toStartTime", localDate);
+
         return mapSqlParameterSource;
     }
 
@@ -74,21 +73,15 @@ public class TaskService {
 
     public TaskDto add(TaskDto taskDto) {
         Task task = mapper.convertToEntity(taskDto);
-
         MapSqlParameterSource parameters = getMapSqlParameterSource(task);
-
         KeyHolder keyHolder = taskRepo.addTask(parameters);
-
         return mapper.getDtoFromHolder(keyHolder);
     }
 
     public TaskDto update(TaskDto taskDto) {
         Task task = mapper.convertToEntity(taskDto);
-
         MapSqlParameterSource parameters = getMapSqlParameterSource(task);
-
         Task response = taskRepo.update(parameters);
-
         return mapper.convertToDto(response);
     }
 
@@ -98,9 +91,7 @@ public class TaskService {
 
     public List<TaskDto> search(SearchTaskDto searchTaskDto) {
         MapSqlParameterSource mapSqlParameterSource = getMapSqlParameterSource(searchTaskDto);
-
         List<Task> tasks = taskRepo.search(mapSqlParameterSource);
-
         return getTaskDtos(tasks);
     }
 
@@ -110,7 +101,6 @@ public class TaskService {
 
     public TaskDto updateProgress(Long id, Integer progress) {
         Task task = taskRepo.updateProgress(id, progress);
-
         return mapper.convertToDto(task);
     }
 }

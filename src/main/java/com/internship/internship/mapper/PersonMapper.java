@@ -22,7 +22,6 @@ public class PersonMapper implements RowMapper<Person> {
         if (birthdate != null) {
             person.setBirthdate(birthdate.toLocalDate());
         }
-
         return person;
     }
 }

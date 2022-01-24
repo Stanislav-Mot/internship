@@ -48,7 +48,6 @@ public class PersonRepo {
 
     public Integer deletePerson(Long id) {
         String deletePerson = "delete from person where id = ?;";
-
         return jdbcTemplate.update(deletePerson, id);
     }
 
@@ -78,14 +77,12 @@ public class PersonRepo {
 
     public Integer deleteGroupFromPerson(Long personId, Long groupId) {
         String sql = "DELETE FROM person_group WHERE id_person = ? AND id_group = ?";
-
         return jdbcTemplate.update(sql, personId, groupId);
     }
 
     public List<Group> getGroupsById(Long id) {
         String sqlForGroup = "SELECT * FROM  group_of_tasks got LEFT JOIN person_group pg " +
                 "ON got.id = pg.id_group WHERE pg.id_person = ?";
-
         return jdbcTemplate.query(sqlForGroup, new GroupMapper(), id);
     }
 
@@ -100,13 +97,11 @@ public class PersonRepo {
                         "AND (:rangeAgeStart::INT8 IS NULL AND :rangeAgeEnd::INT8 IS NULL OR " +
                         "extract(YEAR FROM NOW()::date) - extract(YEAR FROM person.birthdate) " +
                         "BETWEEN :rangeAgeStart AND :rangeAgeEnd)";
-
         return namedParameterJdbcTemplate.query(sql, sqlParameterSource, new PersonMapper());
     }
 
     public List<Person> searchByTokenInName(Map<String, Object> params) {
         String sql = "SELECT * FROM person WHERE LOWER(CONCAT(firstname, ' ' , lastname)) LIKE LOWER(:token)";
-
         return namedParameterJdbcTemplate.query(sql, params, new PersonMapper());
     }
 }

@@ -23,8 +23,6 @@ import static com.internship.internship.util.Helper.newTaskForTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-//import com.internship.internship.dto.search.SearchTask;
-
 @ExtendWith(MockitoExtension.class)
 class TaskServiceTest {
 
@@ -75,9 +73,7 @@ class TaskServiceTest {
         when(mapper.getDtoFromHolder(any(KeyHolder.class))).thenReturn(taskDto);
 
         TaskDto result = taskService.add(taskDto);
-
         assertEquals(result.getId(), result.getId());
-
         verify(taskRepo, times(1)).addTask(any(MapSqlParameterSource.class));
     }
 
@@ -91,9 +87,7 @@ class TaskServiceTest {
         when(mapper.convertToDto(task)).thenReturn(taskDto);
 
         TaskDto result = taskService.update(taskDto);
-
         assertEquals(result.getId(), result.getId());
-
         verify(taskRepo, times(1)).update(any(MapSqlParameterSource.class));
     }
 
@@ -104,9 +98,7 @@ class TaskServiceTest {
         when(taskRepo.deleteTask(task.getId())).thenReturn(1);
 
         Integer result = taskService.delete(task.getId());
-
         assertEquals(1, result);
-
         verify(taskRepo, times(1)).deleteTask(task.getId());
     }
 
@@ -118,9 +110,7 @@ class TaskServiceTest {
         when(taskRepo.search(any(MapSqlParameterSource.class))).thenReturn(list);
 
         SearchTaskDto searchTaskDto = new SearchTaskDto("", 1, 1, null, null);
-
         List<TaskDto> taskList = taskService.search(searchTaskDto);
-
         assertEquals(1, taskList.size());
         verify(taskRepo, times(1)).search(any(MapSqlParameterSource.class));
     }

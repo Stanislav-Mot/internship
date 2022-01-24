@@ -41,33 +41,27 @@ class TaskRepoTest {
     @Test
     void getTaskById() {
         Task task = taskRepo.getTaskById(ID_FOR_GET);
-
         Assertions.assertThat(task).returns("cleaning", from(Task::getName));
     }
 
     @Test
     void getAllTasks() {
         List<Task> tasks = taskRepo.getAllTasks();
-
         assertEquals(countTasks, tasks.size());
     }
 
     @Test
     void addTask() {
         MapSqlParameterSource parameters = getMapSqlParameterSource(newTaskForTest());
-
         taskRepo.addTask(parameters);
         Iterable<Task> tasks = taskRepo.getAllTasks();
-
         Assertions.assertThat(tasks).extracting(Task::getName).contains("Tester");
-
         countTasks += 1;
     }
 
     @Test
     void updateTask() {
         Task taskFroUpdate = new Task(ID_FOR_UPDATE, "updated", null, "123", 2, null, 44, 22);
-
         Task task = taskRepo.update(getMapSqlParameterSource(taskFroUpdate));
 
         Assertions.assertThat(task).returns("updated", from(Task::getName));
@@ -79,29 +73,23 @@ class TaskRepoTest {
     @Test
     void deleteTask() {
         Integer answer = taskRepo.deleteTask(ID_FOR_DELETE);
-
         assertEquals(1, answer);
-
         Assertions.assertThatThrownBy(() -> taskRepo.getTaskById(ID_FOR_DELETE)).isInstanceOf(DataNotFoundException.class);
     }
 
     @Test
     void getGroupsById() {
         List<Group> groups = taskRepo.getGroupsById(1L);
-
         Assertions.assertThat(groups).extracting(Group::getName).contains("testGroup");
     }
 
     @Test
     void search() {
-
         Task taskFroSearch = new Task(null, "searching", LocalDateTime.now(), "123", 2, null, 44, 22);
         taskRepo.addTask(getMapSqlParameterSource(taskFroSearch));
-
         SearchTaskDto searchTaskDto = new SearchTaskDto();
         searchTaskDto.setName("searching");
         List<Task> tasks = taskRepo.search(getMapSqlParameterSource(searchTaskDto));
-
         assertEquals(1, tasks.size());
     }
 

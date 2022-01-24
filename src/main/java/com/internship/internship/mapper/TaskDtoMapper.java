@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TaskDtoMapper {
-
     private final ModelMapper modelMapper;
 
     public TaskDtoMapper(ModelMapper modelMapper) {

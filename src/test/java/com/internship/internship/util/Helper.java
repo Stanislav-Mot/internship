@@ -42,10 +42,6 @@ public class Helper {
         return new GroupDto(CORRECT_ID, "Tester", null, null);
     }
 
-    public static GroupDto newGroupDtoForTest(PersonDto person) {
-        return new GroupDto(CORRECT_ID, "TesterGroup", null, null);
-    }
-
     public static PersonDto newPersonDtoForTest() {
         return new PersonDto(null, "Tester", "Rochester", LocalDate.of(2012, 12, 12), null);
     }

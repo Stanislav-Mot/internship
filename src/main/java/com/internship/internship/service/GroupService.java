@@ -39,28 +39,25 @@ public class GroupService {
 
     public List<GroupDto> getByPersonId(Long id) {
         return groupRepo.getByPersonId(id)
-                .stream().map(group -> mapper.convertToDto(group))
+                .stream().map(mapper::convertToDto)
                 .collect(Collectors.toList());
     }
 
     public List<GroupDto> getAll() {
         return groupRepo.getAll()
-                .stream().map(group -> mapper.convertToDto(group))
+                .stream().map(mapper::convertToDto)
                 .collect(Collectors.toList());
     }
 
     public GroupDto add(GroupDto groupDto) {
         MapSqlParameterSource parameters = getMapSqlParameterSource(groupDto);
-
         KeyHolder holder = groupRepo.addGroup(parameters);
-
         return mapper.getDtoFromHolder(holder);
     }
 
     public GroupDto update(GroupDto groupDto) {
         Group group = mapper.convertToEntity(groupDto);
         Group response = groupRepo.updateGroup(group);
-
         return mapper.convertToDto(response);
     }
 
@@ -69,11 +66,8 @@ public class GroupService {
     }
 
     public GroupDto addTask(Long id, Long taskId) {
-        if (taskRepo.getTaskById(taskId) == null) {
-            throw new ChangesNotAppliedExemption(String.format("Task with id: %d is not found", taskId));
-        }
-        if (groupRepo.getGroupById(id) == null) {
-            throw new ChangesNotAppliedExemption(String.format("Group with id: %d is not found", id));
+        if (taskRepo.getTaskById(taskId) == null || groupRepo.getGroupById(id) == null) {
+            throw new ChangesNotAppliedExemption(String.format("id: %d or %d is not found", id, taskId));
         }
         Group group = groupRepo.addTaskToGroup(id, taskId);
         if (group != null) {
@@ -90,11 +84,8 @@ public class GroupService {
     }
 
     public GroupDto addGroup(Long id, Long groupId) {
-        if (groupRepo.getGroupById(groupId) == null) {
-            throw new ChangesNotAppliedExemption(String.format("Group with id: %d is not found", groupId));
-        }
-        if (groupRepo.getGroupById(id) == null) {
-            throw new ChangesNotAppliedExemption(String.format("Group with id: %d is not found", id));
+        if (groupRepo.getGroupById(groupId) == null || groupRepo.getGroupById(id) == null) {
+            throw new ChangesNotAppliedExemption(String.format("Group with id: %d or %d is not found", id, groupId));
         }
         Group group = groupRepo.addGroupToGroup(id, groupId);
         return mapper.convertToDto(group);

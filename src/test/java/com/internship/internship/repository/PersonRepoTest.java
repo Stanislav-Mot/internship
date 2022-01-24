@@ -45,26 +45,21 @@ class PersonRepoTest {
     @Test
     void getPersonById() {
         Person person = personRepo.getPersonById(ID_FOR_GET);
-
         Assertions.assertThat(person).returns("GetTester", from(Person::getFirstName));
     }
 
     @Test
     void getAllPersons() {
         List<Person> persons = personRepo.getAllPersons();
-
         assertEquals(COUNT_PERSONS, persons.size());
     }
 
     @Test
     void addPerson() {
         MapSqlParameterSource parameters = getMapSqlParameterSource(newPersonForTest());
-
         personRepo.addPerson(parameters);
         Iterable<Person> persons = personRepo.getAllPersons();
-
         Assertions.assertThat(persons).extracting(Person::getFirstName).contains("Tester");
-
         COUNT_PERSONS += 1;
     }
 
@@ -83,9 +78,7 @@ class PersonRepoTest {
     @Test
     void deletePerson() {
         Integer answer = personRepo.deletePerson(ID_FOR_DELETE);
-
         assertEquals(1, answer);
-
         Assertions.assertThatThrownBy(() -> personRepo.getPersonById(ID_FOR_DELETE))
                 .isInstanceOf(DataNotFoundException.class);
     }
@@ -93,26 +86,20 @@ class PersonRepoTest {
     @Test
     void addGroupToPerson() {
         personRepo.addGroupToPerson(ID_FOR_GET, ID_GROUP_FOR_ADD);
-
         Iterable<Group> groups = personRepo.getGroupsById(ID_FOR_GET);
-
         Assertions.assertThat(groups).extracting(Group::getName).contains("secondGroup");
     }
 
     @Test
     void deleteGroupFromPerson() {
-
         personRepo.deleteGroupFromPerson(ID_FOR_GET, ID_GROUP_FOR_DELETE);
-
         List<Group> groups = personRepo.getGroupsById(ID_FOR_GET);
-
         Assertions.assertThat(groups).extracting(Group::getName).isNotIn("DeleteGroupTester");
     }
 
     @Test
     void getGroupsById() {
         List<Group> groups = personRepo.getGroupsById(ID_FOR_GET);
-
         Assertions.assertThat(groups).extracting(Group::getName).contains("testGroup");
     }
 
@@ -127,11 +114,8 @@ class PersonRepoTest {
         personRepo.addPerson(getMapSqlParameterSource(person_three));
 
         List<Person> personList = personRepo.search(getMapSqlParameterSource(new SearchPersonDto("SearchTest", null, null, null, null)));
-
         assertEquals(1, personList.size());
-
         personList = personRepo.search(getMapSqlParameterSource(new SearchPersonDto(null, null, null, 29, 39)));
-
         assertEquals(4, personList.size());
     }
 
@@ -139,16 +123,14 @@ class PersonRepoTest {
     void searchByTokenInName() {
         Person personForSearchByToken = newPersonForTest();
         personForSearchByToken.setFirstName("VladIsLove");
+
         personRepo.addPerson(getMapSqlParameterSource(personForSearchByToken));
-
         List<Person> personList = personRepo.searchByTokenInName(getMapParamFromToken("IsLo"));
-
         assertEquals(1, personList.size());
     }
 
     private MapSqlParameterSource getMapSqlParameterSource(Person person) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
-
         parameters.addValue("id", person.getId());
         parameters.addValue("firstname", person.getFirstName());
         parameters.addValue("lastname", person.getLastName());
@@ -164,13 +146,11 @@ class PersonRepoTest {
 
     private MapSqlParameterSource getMapSqlParameterSource(SearchPersonDto searchPersonDto) {
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-
         mapSqlParameterSource.addValue("firstName", searchPersonDto.getFirstName());
         mapSqlParameterSource.addValue("lastName", searchPersonDto.getLastName());
         mapSqlParameterSource.addValue("exactAge", searchPersonDto.getExactAge());
         mapSqlParameterSource.addValue("rangeAgeStart", searchPersonDto.getRangeAgeStart());
         mapSqlParameterSource.addValue("rangeAgeEnd", searchPersonDto.getRangeAgeEnd());
-
         return mapSqlParameterSource;
     }
 }
