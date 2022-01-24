@@ -1,14 +1,13 @@
 package com.internship.internship.service;
 
-import com.internship.internship.dto.GroupDto;
 import com.internship.internship.dto.PersonDto;
-import com.internship.internship.mapper.GroupDtoMapper;
+import com.internship.internship.exeption.ChangesNotAppliedExemption;
 import com.internship.internship.mapper.PersonDtoMapper;
-import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
-import com.internship.internship.model.search.SearchPerson;
 import com.internship.internship.repository.PersonRepo;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,12 +20,10 @@ public class PersonService {
 
     private final PersonRepo personRepo;
     private final PersonDtoMapper mapper;
-    private final GroupDtoMapper groupDtoMapper;
 
-    public PersonService(PersonRepo personRepo, PersonDtoMapper mapper, GroupDtoMapper groupDtoMapper) {
+    public PersonService(PersonRepo personRepo, PersonDtoMapper mapper) {
         this.personRepo = personRepo;
         this.mapper = mapper;
-        this.groupDtoMapper = groupDtoMapper;
     }
 
     public static MapSqlParameterSource getMapSqlParameterSource(Person person) {
@@ -35,35 +32,30 @@ public class PersonService {
         parameters.addValue("id", person.getId());
         parameters.addValue("firstname", person.getFirstName());
         parameters.addValue("lastname", person.getLastName());
-        parameters.addValue("age", person.getAge());
+        parameters.addValue("birthdate", person.getBirthdate());
         return parameters;
-    }
-
-    public static MapSqlParameterSource getMapSqlParameterSource(SearchPerson parameters) {
-        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-
-        mapSqlParameterSource.addValue("firstName", parameters.getFirstName());
-        mapSqlParameterSource.addValue("lastName", parameters.getLastName());
-        mapSqlParameterSource.addValue("exactAge", parameters.getExactAge());
-        mapSqlParameterSource.addValue("rangeAge", parameters.getRangeAge());
-
-        return mapSqlParameterSource;
     }
 
     public static Map<String, Object> getMapParamFromToken(String token) {
         Map<String, Object> params = new HashMap<>();
-        System.out.println(token);
         params.put("token", "%" + token + "%");
         return params;
     }
 
+    private MapSqlParameterSource getMapSqlParameterSource(String firstName, String lastName, Integer exactAge, Integer rangeAgeStart, Integer rangeAgeEnd) {
+        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+
+        mapSqlParameterSource.addValue("firstName", firstName);
+        mapSqlParameterSource.addValue("lastName", lastName);
+        mapSqlParameterSource.addValue("exactAge", exactAge);
+        mapSqlParameterSource.addValue("rangeAgeStart", rangeAgeStart);
+        mapSqlParameterSource.addValue("rangeAgeEnd", rangeAgeEnd);
+
+        return mapSqlParameterSource;
+    }
+
     public PersonDto getById(Long id) {
-        Person person = personRepo.getPersonById(id);
-        if (person != null) {
-            return mapper.convertToDto(person);
-        } else {
-            return null;
-        }
+        return mapper.convertToDto(personRepo.getPersonById(id));
     }
 
     public List<PersonDto> getAll() {
@@ -71,37 +63,52 @@ public class PersonService {
         return getPersonDtos(list);
     }
 
-    public Integer add(PersonDto personDto) {
+    public PersonDto add(PersonDto personDto) {
         Person person = mapper.convertToEntity(personDto);
 
         MapSqlParameterSource parameters = getMapSqlParameterSource(person);
 
-        return personRepo.addPerson(parameters);
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        personRepo.addPerson(parameters, keyHolder);
+
+        return mapper.getDtoFromHolder(keyHolder);
     }
 
-    public Integer update(PersonDto personDto) {
+    public PersonDto update(PersonDto personDto) {
         Person person = mapper.convertToEntity(personDto);
 
         MapSqlParameterSource parameters = getMapSqlParameterSource(person);
 
-        return personRepo.updatePerson(parameters);
+        Person response = personRepo.updatePerson(parameters);
+
+        return mapper.convertToDto(response);
     }
 
-    public Integer delete(Long id) {
-        return personRepo.deletePerson(id);
+    public void delete(Long id) {
+        personRepo.deletePerson(id);
     }
 
-    public Integer deleteGroup(Long id, Long groupId) {
-        return personRepo.deleteGroupFromPerson(id, groupId);
+    public void deleteGroup(Long personId, Long groupId) {
+        Integer answer = personRepo.deleteGroupFromPerson(personId, groupId);
+        if (answer < 1) {
+            throw new ChangesNotAppliedExemption(
+                    String.format("Person id: %d or Group id %d is wrong", personId, groupId));
+        }
     }
 
-    public Integer addGroup(Long id, GroupDto groupDto) {
-        Group group = groupDtoMapper.convertToEntity(groupDto);
-        return personRepo.addGroupToPerson(id, group);
+    public PersonDto addGroup(Long personId, Long groupId) {
+        Person person = personRepo.addGroupToPerson(personId, groupId);
+        return mapper.convertToDto(person);
     }
 
-    public List<PersonDto> search(SearchPerson parameters) {
-        MapSqlParameterSource mapSqlParameterSource = getMapSqlParameterSource(parameters);
+    public List<PersonDto> searchByTokenInName(String token) {
+        List<Person> list = personRepo.searchByTokenInName(getMapParamFromToken(token));
+        return getPersonDtos(list);
+    }
+
+    public List<PersonDto> search(String firstName, String lastName, Integer exactAge, Integer rangeAgeStart, Integer rangeAgeEnd) {
+        MapSqlParameterSource mapSqlParameterSource = getMapSqlParameterSource(firstName, lastName, exactAge, rangeAgeStart, rangeAgeEnd);
         List<Person> list = personRepo.search(mapSqlParameterSource);
         return getPersonDtos(list);
     }
@@ -117,10 +124,5 @@ public class PersonService {
         } else {
             return null;
         }
-    }
-
-    public List<PersonDto> searchByTokenInName(String token) {
-        List<Person> list = personRepo.searchByTokenInName(getMapParamFromToken(token));
-        return getPersonDtos(list);
     }
 }

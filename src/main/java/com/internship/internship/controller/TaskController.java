@@ -27,8 +27,20 @@ public class TaskController {
 
     @Operation(summary = "Get task by id")
     @GetMapping("/task/{id}")
-    public TaskDto getId(@PathVariable @Parameter(description = "Task id") Long id) {
+    public TaskDto getById(@PathVariable @Parameter(description = "Task id") Long id) {
         return taskService.getById(id);
+    }
+
+    @Operation(summary = "Get task by person id")
+    @GetMapping("/task/person/{id}")
+    public List<TaskDto> getByPersonId(@PathVariable @Parameter(description = "Task id") Long id) {
+        return taskService.getByPersonId(id);
+    }
+
+    @Operation(summary = "Get task by group id")
+    @GetMapping("/task/group/{id}")
+    public List<TaskDto> getByGroupId(@PathVariable @Parameter(description = "Task id") Long id) {
+        return taskService.getByGroupId(id);
     }
 
     @Operation(summary = "Get all tasks")
@@ -40,24 +52,37 @@ public class TaskController {
 
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = {@ExampleObject(
-                    value = "{\"id\": 0, \"name\": \"Cooking\", \"start_time\": \"2012-06-09\", \"id_person\": 0}")})
-    )
+                    value = "{\"name\": \"Cooking\", " +
+                            "\"description\": \"cook fish\"," +
+                            "\"estimate\": \"2\"," +
+                            "\"priority\": \"2\"}")}))
     @Operation(summary = "Add new Task")
     @Validated(Transfer.New.class)
     @PostMapping("/task")
-    public Integer add(@Valid @RequestBody TaskDto taskDto) {
+    public TaskDto add(@Valid @RequestBody TaskDto taskDto) {
         return taskService.add(taskDto);
     }
 
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = {@ExampleObject(
-                    value = "{\"id\": 0, \"name\": \"Cooking\", \"start_time\": \"2012-06-09\", \"id_person\": 0, \"id_progress\": 0}")})
-    )
-    @Operation(summary = "update task")
+                    value = "{\"id\": 0, " +
+                            "\"name\": \"Cooking\", " +
+                            "\"description\": \"should something\", " +
+                            "\"priority\": 7, " +
+                            "\"estimate\": \"3\"}"
+            )}))
+    @Operation(summary = "update name, description and estimate")
     @Validated(Transfer.Update.class)
     @PutMapping("/task")
-    public Integer update(@Valid @RequestBody TaskDto taskDto) {
+    public TaskDto update(@Valid @RequestBody TaskDto taskDto) {
         return taskService.update(taskDto);
+    }
+
+    @Operation(summary = "update progress", description = "start time should be not null")
+    @Validated(Transfer.Update.class)
+    @PutMapping("/task/{id}/progress")
+    public TaskDto updateProgress(@RequestBody Integer progress, @PathVariable Long id) {
+        return taskService.updateProgress(id, progress);
     }
 
     @Operation(summary = "Delete task by id")

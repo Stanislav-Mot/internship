@@ -11,9 +11,11 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +23,7 @@ import java.util.Map;
 @Repository
 public class PersonRepo {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PersonRepo.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(PersonRepo.class);
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -30,23 +32,21 @@ public class PersonRepo {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    public Integer addPerson(SqlParameterSource parameters) {
-        String sql = "insert into person (id, firstname, lastname, age) " +
-                "values (:id, :firstname, :lastname, :age);";
+    public Integer addPerson(SqlParameterSource parameters, KeyHolder keyHolder) {
+        String sql = "INSERT INTO person (firstname, lastname, birthdate) VALUES (:firstname, :lastname, :birthdate);";
 
-        return namedParameterJdbcTemplate.update(sql, parameters);
+        return namedParameterJdbcTemplate.update(sql, parameters, keyHolder);
     }
 
-    public Integer updatePerson(SqlParameterSource parameters) {
-        String sql = "update person set firstname = :firstname," +
-                " lastname = :lastname, age = :age where id = :id;";
-
-        return namedParameterJdbcTemplate.update(sql, parameters);
+    public Person updatePerson(SqlParameterSource parameters) {
+        String sql = "UPDATE person SET firstname = :firstname, lastname = :lastname WHERE id = :id;";
+        namedParameterJdbcTemplate.update(sql, parameters);
+        return getPersonById((Long) parameters.getValue("id"));
     }
 
     public Integer deletePerson(Long id) {
         String deletePerson = "delete from person where id = ?;";
-        String deleteConstrains = "update groupOfTasks set id_person = null where id_person = ?;";
+        String deleteConstrains = "update group_of_tasks set id_person = null where id_person = ?;";
 
         jdbcTemplate.update(deleteConstrains, id);
 
@@ -54,7 +54,7 @@ public class PersonRepo {
     }
 
     public Person getPersonById(Long id) {
-        String sql = "select * from person p where p.id = ?";
+        String sql = "SELECT * FROM person p WHERE p.id = ?";
         try {
             return jdbcTemplate.queryForObject(sql, new PersonMapper(), id);
         } catch (EmptyResultDataAccessException exception) {
@@ -65,46 +65,51 @@ public class PersonRepo {
     }
 
     public List<Person> getAllPersons() {
-        String sql = "select * from person";
+        String sql = "SELECT * FROM person";
         List<Person> persons = jdbcTemplate.query(sql, new PersonMapper());
         for (Person person : persons) {
-            person.setGroups(getGroupsById(person.getId()));
+            person.setGroups(new ArrayList<>(getGroupsById(person.getId())));
         }
         return persons;
     }
 
-    public Integer addGroupToPerson(Long id, Group group) {
-        String sql = "update groupOfTasks set id_person = ? where id = ?;";
-        return jdbcTemplate.update(sql, id, group.getId());
+    public Person addGroupToPerson(Long personId, Long groupId) {
+        String sql = "INSERT  INTO person_group (id_person, id_group) VALUES (?, ?)";
+        jdbcTemplate.update(sql, personId, groupId);
+        return getPersonById(personId);
     }
 
     public Integer deleteGroupFromPerson(Long personId, Long groupId) {
-        String sql = "update groupOfTasks set id_person = null  where id_person = ? and id = ?;";
-        return jdbcTemplate.update(sql, personId, groupId);
+        String sql = "DELETE FROM person_group WHERE id_person = ? AND id_group = ?";
 
+        return jdbcTemplate.update(sql, personId, groupId);
     }
 
     public List<Group> getGroupsById(Long id) {
-        String sqlForGroup =
-                "select * from person p join groupOfTasks g on p.id = g.id_person where p.id = ?";
+        String sqlForGroup = "SELECT * FROM  group_of_tasks got LEFT JOIN person_group pg " +
+                "ON got.id = pg.id_group WHERE pg.id_person = ?";
 
         return jdbcTemplate.query(sqlForGroup, new GroupMapper(), id);
     }
 
     public List<Person> search(SqlParameterSource sqlParameterSource) {
         String sql =
-                "select * from person where (cast(:firstName as VARCHAR) is null or person.firstname = :firstName) " +
-                        "and (cast(:lastName as VARCHAR) is null or person.lastname = :lastName) " +
-                        "and (cast(:exactAge as SMALLINT) is null or person.age >= cast(:exactAge as SMALLINT)) " +
-                        "and (cast(:rangeAge as SMALLINT) is null or person.age <= cast(:rangeAge as SMALLINT)) " +
-                        "and (cast(:rangeAge as SMALLINT) is not null or person.age <= cast(:exactAge as SMALLINT)) ";
+                "SELECT * FROM person WHERE (:firstName::VARCHAR IS NULL OR person.firstname = :firstName) " +
+                        "AND (:lastName::VARCHAR IS NULL OR person.lastname = :lastName) " +
+
+                        "AND (:exactAge::INT8 IS NULL OR " +
+                        "extract(YEAR FROM NOW()::date) - extract(YEAR FROM person.birthdate) = :exactAge) " +
+
+                        "AND (:rangeAgeStart::INT8 IS NULL AND :rangeAgeEnd::INT8 IS NULL OR " +
+                        "extract(YEAR FROM NOW()::date) - extract(YEAR FROM person.birthdate) " +
+                        "BETWEEN :rangeAgeStart AND :rangeAgeEnd)";
 
         return namedParameterJdbcTemplate.query(sql, sqlParameterSource, new PersonMapper());
     }
 
-
     public List<Person> searchByTokenInName(Map<String, Object> params) {
-        String sql = "select * from person where CONCAT(firstname, ' ' , lastname) like :token";
+        String sql = "SELECT * FROM person WHERE LOWER(CONCAT(firstname, ' ' , lastname)) LIKE LOWER(:token)";
+
         return namedParameterJdbcTemplate.query(sql, params, new PersonMapper());
     }
 }

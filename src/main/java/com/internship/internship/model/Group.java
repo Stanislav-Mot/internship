@@ -9,15 +9,22 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Group {
+public class Group implements Assignment {
 
     private Long id;
     private String name;
-    private List<Task> tasks;
-    private Person person;
+    private List<Assignment> tasks;
+    private List<Person> persons;
 
     public Group(Long id) {
         this.id = id;
     }
 
+    public void add(Assignment task) {
+        tasks.add(task);
+    }
+
+    public Integer size() {
+        return tasks.size();
+    }
 }

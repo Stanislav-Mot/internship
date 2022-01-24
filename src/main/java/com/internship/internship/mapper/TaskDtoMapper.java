@@ -3,6 +3,7 @@ package com.internship.internship.mapper;
 import com.internship.internship.dto.TaskDto;
 import com.internship.internship.model.Task;
 import org.modelmapper.ModelMapper;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -20,5 +21,9 @@ public class TaskDtoMapper {
 
     public Task convertToEntity(TaskDto taskDto) {
         return modelMapper.map(taskDto, Task.class);
+    }
+
+    public TaskDto getDtoFromHolder(KeyHolder holder) {
+        return modelMapper.map(holder.getKeys(), TaskDto.class);
     }
 }

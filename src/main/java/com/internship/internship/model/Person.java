@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @NoArgsConstructor
@@ -14,8 +15,8 @@ public class Person {
     private Long id;
     private String firstName;
     private String lastName;
-    private Integer age;
-    private List<Group> groups;
+    private LocalDate birthdate;
+    private List<Assignment> groups;
 
     public Person(Long id) {
         this.id = id;

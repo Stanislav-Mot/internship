@@ -23,9 +23,14 @@ public class AdviceExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new ErrorDetails(new Date(), exception.getMessage(), request.getDescription(false)), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(ChangesNotAppliedExemption.class)
+    public ResponseEntity<ErrorDetails> ChangesNotAppliedExemptionHandling(Exception exception, WebRequest request) {
+        return new ResponseEntity<>(new ErrorDetails(new Date(), exception.getMessage(), request.getDescription(false)), HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(PSQLException.class)
     public ResponseEntity<ErrorDetails> pSQLExceptionHandling(Exception exception, WebRequest request) {
-        return new ResponseEntity<>(new ErrorDetails(new Date(), exception.getMessage(), request.getDescription(false)), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new ErrorDetails(new Date(), exception.getMessage(), request.getDescription(false)), HttpStatus.BAD_REQUEST);
     }
 
     @NonNull
@@ -36,8 +41,7 @@ public class AdviceExceptionHandler extends ResponseEntityExceptionHandler {
             @NonNull HttpStatus status,
             @NonNull WebRequest request
     ) {
-        Response response = new Response("wrong JSON format", ex.getMessage());
-        return new ResponseEntity<>(response, status);
+        return new ResponseEntity<>("wrong JSON format", status);
     }
 }
 

@@ -28,7 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Sql("/data-for-group-test.sql")
 class GroupRepoTest {
 
-    private final Long CORRECT_ID = 999L;
     private final Long ID_FOR_GET = 1L;
     private final Long ID_FOR_UPDATE = 3L;
     private final Long ID_FOR_DELETE = 4L;
@@ -54,7 +53,7 @@ class GroupRepoTest {
     void addGroup() {
         MapSqlParameterSource parameters = getMapSqlParameterSource(newGroupForTest());
 
-        groupRepo.addGroup(parameters);
+//        groupRepo.addGroup(parameters);
         Iterable<Group> groups = groupRepo.getAll();
 
         Assertions.assertThat(groups).extracting(Group::getName).contains("Tester");
@@ -66,9 +65,9 @@ class GroupRepoTest {
     void updateGroup() {
         Group groupForUpdate = new Group(ID_FOR_UPDATE, "nameUpdate", null, null);
 
-        Integer answer = groupRepo.updateGroup(groupForUpdate);
-
-        assertEquals(1, answer);
+//        Integer answer = groupRepo.updateGroup(groupForUpdate);
+//
+//        assertEquals(1, answer);
 
         Group group = groupRepo.getGroupById(ID_FOR_UPDATE);
 
@@ -89,9 +88,8 @@ class GroupRepoTest {
         Group group = groupRepo.getGroupById(ID_FOR_GET);
         Task task = new Task(9999L);
 
-        Integer answer = groupRepo.addTaskToGroup(group.getId(), task);
-        assertEquals(1, answer);
-
+//        Integer answer = groupRepo.addTaskToGroup(group.getId(), task.getId());
+//        assertEquals(1, answer);
 
         Iterable<Task> tasks = groupRepo.getTasksById(ID_FOR_GET);
 
@@ -123,7 +121,31 @@ class GroupRepoTest {
 
         parameters.addValue("id", group.getId());
         parameters.addValue("name", group.getName());
-        parameters.addValue("id_person", group.getPerson().getId());
         return parameters;
+    }
+
+
+    @Test
+    void addGroupToGroup() {
+        Group groupIn = new Group(4L);
+
+//        Integer answer = groupRepo.addGroupToGroup(1L, 4L);
+//
+//        assertEquals(1, answer);
+
+        Group group = groupRepo.getGroupById(1L);
+
+        assertEquals(4, group.getTasks().size());
+    }
+
+    @Test
+    void deleteGroupFromGroup() {
+        Integer answer = groupRepo.deleteGroupFromGroup(1L, 3L);
+
+        assertEquals(1, answer);
+
+        Group group = groupRepo.getGroupById(1L);
+
+        assertEquals(2, group.getTasks().size());
     }
 }
