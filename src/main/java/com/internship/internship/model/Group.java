@@ -20,6 +20,10 @@ public class Group implements Assignment {
         this.id = id;
     }
 
+    public Group(String name) {
+        this.name = name;
+    }
+
     public void add(Assignment task) {
         tasks.add(task);
     }

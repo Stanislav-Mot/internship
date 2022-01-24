@@ -7,12 +7,11 @@ import com.internship.internship.model.Group;
 import com.internship.internship.repository.GroupRepo;
 import com.internship.internship.repository.TaskRepo;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class GroupService {
@@ -39,31 +38,21 @@ public class GroupService {
     }
 
     public List<GroupDto> getByPersonId(Long id) {
-        List<Group> groups = groupRepo.getByPersonId(id);
-
-        List<GroupDto> groupsDto = new ArrayList<>();
-        for (Group group : groups) {
-            groupsDto.add(mapper.convertToDto(group));
-        }
-        return groupsDto;
+        return groupRepo.getByPersonId(id)
+                .stream().map(group -> mapper.convertToDto(group))
+                .collect(Collectors.toList());
     }
 
     public List<GroupDto> getAll() {
-        List<Group> groups = groupRepo.getAll();
-
-        List<GroupDto> groupsDto = new ArrayList<>();
-        for (Group group : groups) {
-            groupsDto.add(mapper.convertToDto(group));
-        }
-        return groupsDto;
+        return groupRepo.getAll()
+                .stream().map(group -> mapper.convertToDto(group))
+                .collect(Collectors.toList());
     }
 
     public GroupDto add(GroupDto groupDto) {
         MapSqlParameterSource parameters = getMapSqlParameterSource(groupDto);
 
-        KeyHolder holder = new GeneratedKeyHolder();
-
-        groupRepo.addGroup(parameters, holder);
+        KeyHolder holder = groupRepo.addGroup(parameters);
 
         return mapper.getDtoFromHolder(holder);
     }

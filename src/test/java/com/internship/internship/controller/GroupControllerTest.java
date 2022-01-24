@@ -103,9 +103,9 @@ class GroupControllerTest {
         Mockito.when(groupService.add(any(GroupDto.class))).thenReturn(group);
 
         mockMvc.perform(post("/group")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(group))
-                .characterEncoding("utf-8"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(group))
+                        .characterEncoding("utf-8"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name", containsStringIgnoringCase("Tester")));
 
@@ -119,16 +119,16 @@ class GroupControllerTest {
         when(groupService.update(any(GroupDto.class))).thenReturn(group);
 
         mockMvc.perform(put("/group")
-                .content(asJsonString(group))
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(asJsonString(group))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", containsStringIgnoringCase("Tester")));
 
         mockMvc.perform(put("/group")
-                .content("Wrong JSON")
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content("Wrong JSON")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$", containsStringIgnoringCase("wrong JSON format")));
 
@@ -154,9 +154,9 @@ class GroupControllerTest {
         Mockito.when(groupService.addGroup(anyLong(), anyLong())).thenReturn(group);
 
         mockMvc.perform(put("/group/{id}/addGroup/{groupID}", anyLong(), anyLong())
-                .content(asJsonString(group))
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(asJsonString(group))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", containsStringIgnoringCase("Tester")));
 
@@ -180,9 +180,9 @@ class GroupControllerTest {
         Mockito.when(groupService.addTask(anyLong(), anyLong())).thenReturn(groupDto);
 
         mockMvc.perform(put("/group/{id}/addTask/{taskId}", anyLong(), anyLong())
-                .content(asJsonString(groupDto))
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(asJsonString(groupDto))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", containsStringIgnoringCase("Tester")));
 

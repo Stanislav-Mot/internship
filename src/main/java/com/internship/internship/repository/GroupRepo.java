@@ -12,6 +12,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +24,7 @@ import java.util.List;
 @Repository
 public class GroupRepo {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(GroupRepo.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GroupRepo.class);
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -49,25 +50,23 @@ public class GroupRepo {
     public List<Group> getByPersonId(Long id) {
         String sql = "SELECT * FROM  group_of_tasks got LEFT JOIN person_group pg ON got.id = pg.id_group WHERE pg.id_person = ?";
         List<Group> groups = jdbcTemplate.query(sql, new GroupMapper(), id);
-        for (Group group : groups) {
-            group.setTasks(getComposite(group.getId()));
-        }
+        groups.forEach(group -> group.setTasks(getComposite(group.getId())));
         return groups;
     }
 
     public List<Group> getAll() {
         String sql = "SELECT * FROM group_of_tasks";
         List<Group> groups = jdbcTemplate.query(sql, new GroupMapper());
-        for (Group group : groups) {
-            group.setTasks(getComposite(group.getId()));
-        }
+        groups.forEach(group -> group.setTasks(getComposite(group.getId())));
         return groups;
     }
 
-    public void addGroup(MapSqlParameterSource parameters, KeyHolder holder) {
+    public KeyHolder addGroup(MapSqlParameterSource parameters) {
         String sql = "INSERT INTO group_of_tasks (name) VALUES (:name)";
+        KeyHolder holder = new GeneratedKeyHolder();
 
         namedParameterJdbcTemplate.update(sql, parameters, holder);
+        return holder;
     }
 
     public Group updateGroup(Group group) {
@@ -109,9 +108,7 @@ public class GroupRepo {
 
         List<Group> groupList = getAllGroupInGroup(id);
         if (groupList.size() > 0) {
-            for (Group group : groupList) {
-                group.setTasks(getComposite(group.getId()));
-            }
+            groupList.forEach(group -> group.setTasks(getComposite(group.getId())));
         }
         assignments.addAll(groupList);
 

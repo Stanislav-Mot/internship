@@ -11,6 +11,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +24,7 @@ import java.util.Map;
 @Repository
 public class PersonRepo {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(PersonRepo.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PersonRepo.class);
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -32,10 +33,11 @@ public class PersonRepo {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    public Integer addPerson(SqlParameterSource parameters, KeyHolder keyHolder) {
+    public KeyHolder addPerson(SqlParameterSource parameters) {
         String sql = "INSERT INTO person (firstname, lastname, birthdate) VALUES (:firstname, :lastname, :birthdate);";
-
-        return namedParameterJdbcTemplate.update(sql, parameters, keyHolder);
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        namedParameterJdbcTemplate.update(sql, parameters, keyHolder);
+        return keyHolder;
     }
 
     public Person updatePerson(SqlParameterSource parameters) {
@@ -46,9 +48,6 @@ public class PersonRepo {
 
     public Integer deletePerson(Long id) {
         String deletePerson = "delete from person where id = ?;";
-        String deleteConstrains = "update group_of_tasks set id_person = null where id_person = ?;";
-
-        jdbcTemplate.update(deleteConstrains, id);
 
         return jdbcTemplate.update(deletePerson, id);
     }
@@ -67,9 +66,7 @@ public class PersonRepo {
     public List<Person> getAllPersons() {
         String sql = "SELECT * FROM person";
         List<Person> persons = jdbcTemplate.query(sql, new PersonMapper());
-        for (Person person : persons) {
-            person.setGroups(new ArrayList<>(getGroupsById(person.getId())));
-        }
+        persons.forEach(person -> person.setGroups(new ArrayList<>(getGroupsById(person.getId()))));
         return persons;
     }
 

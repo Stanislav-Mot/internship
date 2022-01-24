@@ -1,6 +1,7 @@
 package com.internship.internship.service;
 
 import com.internship.internship.dto.PersonDto;
+import com.internship.internship.dto.search.SearchPersonDto;
 import com.internship.internship.mapper.PersonDtoMapper;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
@@ -12,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import java.util.ArrayList;
@@ -65,18 +67,19 @@ class PersonServiceTest {
 
     @Test
     void add() {
-        PersonDto personDto = newPersonDtoForTest();
-        Person person = newPersonForTest();
+        PersonDto personDto = new PersonDto(1L);
+        Person person = new Person(1L);
+        KeyHolder keyHolder = new GeneratedKeyHolder();
 
-        when(personRepo.addPerson(any(SqlParameterSource.class), any(KeyHolder.class))).thenReturn(1);
         when(mapper.convertToEntity(personDto)).thenReturn(person);
+        when(personRepo.addPerson(any(SqlParameterSource.class))).thenReturn(keyHolder);
         when(mapper.getDtoFromHolder(any(KeyHolder.class))).thenReturn(personDto);
 
         PersonDto result = personService.add(personDto);
 
         assertEquals(personDto.getId(), result.getId());
 
-        verify(personRepo, times(1)).addPerson(any(MapSqlParameterSource.class), any(KeyHolder.class));
+        verify(personRepo, times(1)).addPerson(any(MapSqlParameterSource.class));
     }
 
     @Test
@@ -136,12 +139,13 @@ class PersonServiceTest {
 
     @Test
     void search() {
+        SearchPersonDto searchPersonDto = new SearchPersonDto("", "", 1, 1, 1);
         Person person = newPersonForTest();
         List<Person> list = Collections.singletonList(person);
 
         when(personRepo.search(any(MapSqlParameterSource.class))).thenReturn(list);
 
-        List<PersonDto> personList = personService.search("", "", 1, 1, 1);
+        List<PersonDto> personList = personService.search(searchPersonDto);
 
         assertEquals(1, personList.size());
         verify(personRepo, times(1)).search(any(MapSqlParameterSource.class));

@@ -19,7 +19,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.internship.internship.util.Helper.*;
+import static com.internship.internship.util.Helper.asJsonString;
+import static com.internship.internship.util.Helper.newTaskDtoForTest;
 import static org.hamcrest.Matchers.containsStringIgnoringCase;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
@@ -86,9 +87,9 @@ class TaskControllerTest {
         when(taskService.add(any(TaskDto.class))).thenReturn(taskDto);
 
         mockMvc.perform(post("/task")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(taskDto))
-                .characterEncoding("utf-8"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(taskDto))
+                        .characterEncoding("utf-8"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..name", Matchers.contains("Tester")));
 
@@ -102,16 +103,16 @@ class TaskControllerTest {
         when(taskService.update(any(TaskDto.class))).thenReturn(taskDto);
 
         mockMvc.perform(put("/task")
-                .content(asJsonString(taskDto))
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(asJsonString(taskDto))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..name", Matchers.contains("Tester")));
 
         mockMvc.perform(put("/task")
-                .content("Wrong JSON")
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content("Wrong JSON")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$", containsStringIgnoringCase("wrong JSON format")));
 
@@ -120,7 +121,7 @@ class TaskControllerTest {
 
     @Test
     void deleteTask() throws Exception {
-        Task task = newTaskForTest();
+        Task task = new Task(1L);
 
         when(taskService.delete(task.getId())).thenReturn(1);
 

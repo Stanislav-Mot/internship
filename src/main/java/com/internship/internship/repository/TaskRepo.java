@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +23,7 @@ import java.util.List;
 @Repository
 public class TaskRepo {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(TaskRepo.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TaskRepo.class);
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -32,7 +33,7 @@ public class TaskRepo {
     }
 
     public Task getTaskById(Long id) {
-        String sql = "SELECT * FROM task t LEFT JOIN person p ON p.id = t.id_person WHERE t.id = ?";
+        String sql = "SELECT * FROM task WHERE id = ?";
         try {
             return jdbcTemplate.queryForObject(sql, new TaskMapper(), id);
         } catch (EmptyResultDataAccessException exception) {
@@ -43,7 +44,7 @@ public class TaskRepo {
     }
 
     public List<Task> getAllTasks() {
-        String sql = "SELECT * FROM task t LEFT JOIN person p on p.id = t.id_person ";
+        String sql = "SELECT * FROM task";
 
         return jdbcTemplate.query(sql, new TaskMapper());
     }
@@ -60,11 +61,13 @@ public class TaskRepo {
         return jdbcTemplate.query(sql, new TaskMapper(), id);
     }
 
-    public Integer addTask(SqlParameterSource parameters, KeyHolder keyHolder) {
+    public KeyHolder addTask(SqlParameterSource parameters) {
         String sql = "INSERT INTO task (name, description, estimate, priority, progress) " +
                 "VALUES (:name, :description, :estimate, :priority, 0);";
 
-        return namedParameterJdbcTemplate.update(sql, parameters, keyHolder);
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        namedParameterJdbcTemplate.update(sql, parameters, keyHolder);
+        return keyHolder;
     }
 
     public Task update(SqlParameterSource parameters) {
