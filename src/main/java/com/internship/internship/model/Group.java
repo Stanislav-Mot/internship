@@ -11,10 +11,6 @@ import java.util.List;
 @Data
 public class Group implements Assignment {
 
-    public Group(Long id) {
-        this.id = id;
-    }
-
     private Long id;
     private String name;
     private List<Assignment> tasks;
