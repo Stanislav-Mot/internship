@@ -27,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
-@TestPropertySource("/application-test.properties")
 @Sql("/schema-for-test.sql")
 @Sql("/data-for-person-test.sql")
 class PersonRepoTest {
