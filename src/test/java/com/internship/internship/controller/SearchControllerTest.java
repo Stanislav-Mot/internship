@@ -2,8 +2,8 @@ package com.internship.internship.controller;
 
 import com.internship.internship.dto.PersonDto;
 import com.internship.internship.dto.TaskDto;
-import com.internship.internship.model.search.SearchPerson;
-import com.internship.internship.model.search.SearchTask;
+import com.internship.internship.dto.search.SearchPersonDto;
+import com.internship.internship.dto.search.SearchTaskDto;
 import com.internship.internship.service.PersonService;
 import com.internship.internship.service.TaskService;
 import org.hamcrest.Matchers;
@@ -14,19 +14,18 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
 import java.util.List;
 
-import static com.internship.internship.util.Helper.*;
-import static org.hamcrest.Matchers.containsStringIgnoringCase;
+import static com.internship.internship.util.Helper.newPersonDtoForTest;
+import static com.internship.internship.util.Helper.newTaskDtoForTest;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -52,69 +51,54 @@ class SearchControllerTest {
     void getPersonsByParameters() throws Exception {
         PersonDto personDto = newPersonDtoForTest();
 
-        SearchPerson parameters = new SearchPerson("Tester", null, null, null);
         List<PersonDto> list = Collections.singletonList(personDto);
 
-        Mockito.when(personService.search(parameters)).thenReturn(list);
+        Mockito.when(personService.search(any(SearchPersonDto.class))).thenReturn(list);
 
-        mockMvc.perform(post("/search/person")
-                        .content(asJsonString(parameters))
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/search/person")
+                .param("firstName", "1")
+                .param("lastName", "1")
+                .param("exactAge", "1")
+                .param("rangeAgeStart", "1")
+                .param("rangeAgeEnd", "1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..firstName", Matchers.contains("Tester")));
 
-        mockMvc.perform(post("/search/person")
-                        .content("Wrong JSON")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message", containsStringIgnoringCase("wrong JSON format")));
-
-
-        verify(personService, times(1)).search(Mockito.any(SearchPerson.class));
+        verify(personService, times(1)).search(any(SearchPersonDto.class));
     }
 
     @Test
     void getTasksByParameters() throws Exception {
         TaskDto taskDto = newTaskDtoForTest();
-
-        SearchTask parameters = new SearchTask("Tester", null, null, null, null);
         List<TaskDto> list = Collections.singletonList(taskDto);
 
-        Mockito.when(taskService.search(parameters)).thenReturn(list);
+        Mockito.when(taskService.search(any(SearchTaskDto.class))).thenReturn(list);
 
-        mockMvc.perform(post("/search/task")
-                        .content(asJsonString(parameters))
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/search/task")
+                .param("name", "1")
+                .param("fromProgress", "1")
+                .param("toProgress", "1")
+                .param("minStartTime", "2012-02-02")
+                .param("maxStartTime", "2012-02-02"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..name", Matchers.contains("Tester")));
 
-        mockMvc.perform(post("/search/person")
-                        .content("Wrong JSON")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message", containsStringIgnoringCase("wrong JSON format")));
-
-        verify(taskService, times(1)).search(Mockito.any(SearchTask.class));
+        verify(taskService, times(1)).search(any(SearchTaskDto.class));
     }
 
     @Test
     void searchPersonByTokenInName() throws Exception {
         String token = "ster";
         PersonDto personDto = newPersonDtoForTest();
-
         List<PersonDto> list = Collections.singletonList(personDto);
 
         Mockito.when(personService.searchByTokenInName(token)).thenReturn(list);
 
         mockMvc.perform(get("/search/personByToken")
-                        .param("token", token))
+                .param("token", token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..firstName", Matchers.contains("Tester")));
 
-        verify(personService, times(1)).searchByTokenInName(Mockito.any(String.class));
+        verify(personService, times(1)).searchByTokenInName(any(String.class));
     }
 }

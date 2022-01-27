@@ -1,6 +1,5 @@
 package com.internship.internship.controller;
 
-import com.internship.internship.dto.GroupDto;
 import com.internship.internship.dto.PersonDto;
 import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.service.PersonService;
@@ -19,7 +18,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Collections;
 import java.util.List;
 
-import static com.internship.internship.util.Helper.*;
+import static com.internship.internship.util.Helper.asJsonString;
+import static com.internship.internship.util.Helper.newPersonDtoForTest;
 import static org.hamcrest.Matchers.containsStringIgnoringCase;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
@@ -48,7 +48,6 @@ class PersonControllerTest {
     @Test
     void getAllPersons() throws Exception {
         PersonDto personDto = newPersonDtoForTest();
-
         List<PersonDto> persons = Collections.singletonList(personDto);
 
         Mockito.when(personService.getAll()).thenReturn(persons);
@@ -61,6 +60,7 @@ class PersonControllerTest {
     @Test
     void getPersonById() throws Exception {
         PersonDto person = newPersonDtoForTest();
+        person.setId(CORRECT_ID);
 
         Mockito.when(personService.getById(CORRECT_ID)).thenReturn(person);
 
@@ -83,14 +83,14 @@ class PersonControllerTest {
     void addPerson() throws Exception {
         PersonDto person = newPersonDtoForTest();
 
-        Mockito.when(personService.add(any(PersonDto.class))).thenReturn(1);
+        Mockito.when(personService.add(any(PersonDto.class))).thenReturn(person);
 
         mockMvc.perform(post("/person")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(person))
-                        .characterEncoding("utf-8"))
+                .content(asJsonString(person))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$", Matchers.is(1)));
+                .andExpect(jsonPath("$..firstName", Matchers.contains("Tester")));
 
         verify(personService, times(1)).add(Mockito.any(PersonDto.class));
     }
@@ -98,66 +98,47 @@ class PersonControllerTest {
     @Test
     void updatePerson() throws Exception {
         PersonDto person = newPersonDtoForTest();
+        person.setId(CORRECT_ID);
 
-        when(personService.update(any(PersonDto.class))).thenReturn(1);
+        when(personService.update(any(PersonDto.class))).thenReturn(person);
 
         mockMvc.perform(put("/person")
-                        .content(asJsonString(person))
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
+                .content(asJsonString(person))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Matchers.is(1)));
+                .andExpect(jsonPath("$..firstName", Matchers.contains("Tester")));
 
         mockMvc.perform(put("/person")
-                        .content("Wrong JSON")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
+                .content("Wrong JSON")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message", containsStringIgnoringCase("wrong JSON format")));
+                .andExpect(jsonPath("$", containsStringIgnoringCase("wrong JSON format")));
 
         verify(personService, times(1)).update(Mockito.any(PersonDto.class));
     }
 
     @Test
-    void deletePerson() throws Exception {
-        PersonDto person = newPersonDtoForTest();
-
-        Mockito.when(personService.delete(person.getId())).thenReturn(1);
-
-        mockMvc.perform(delete("/person/{id}", person.getId()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Matchers.is(1)));
-
-        verify(personService, times(1)).delete(Mockito.any(Long.class));
-    }
-
-    @Test
     void addGroupToPerson() throws Exception {
         PersonDto person = newPersonDtoForTest();
-        GroupDto group = newGroupDtoForTest(person);
-        Mockito.when(personService.addGroup(any(Long.class), any(GroupDto.class))).thenReturn(1);
 
-        mockMvc.perform(post("/person/{id}/group", person.getId())
-                        .content(asJsonString(group))
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$", Matchers.is(1)));
+        Mockito.when(personService.addGroup(anyLong(), anyLong())).thenReturn(person);
 
-        verify(personService, times(1)).addGroup(Mockito.any(Long.class), Mockito.any(GroupDto.class));
+        mockMvc.perform(put("/person/{id}/addGroup/{groupId}", anyLong(), anyLong()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$..firstName", Matchers.contains("Tester")));
+
+        verify(personService, times(1)).addGroup(anyLong(), anyLong());
     }
 
     @Test
     void deleteGroupFromPerson() throws Exception {
-        PersonDto person = newPersonDtoForTest();
-        GroupDto group = newGroupDtoForTest(person);
+        doNothing().when(personService).deleteGroup(anyLong(), anyLong());
 
-        Mockito.when(personService.deleteGroup(person.getId(), group.getId())).thenReturn(1);
+        mockMvc.perform(put("/person/{id}/deleteGroup/{groupId}", anyLong(), anyLong()))
+                .andExpect(status().isOk());
 
-        mockMvc.perform(put("/person/{id}/group/{idGroup}", person.getId(), group.getId()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Matchers.is(1)));
-
-        verify(personService, times(1)).deleteGroup(person.getId(), group.getId());
+        verify(personService, times(1)).deleteGroup(anyLong(), anyLong());
     }
 }

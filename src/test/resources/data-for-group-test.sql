@@ -1,22 +1,24 @@
-INSERT INTO person (id, firstname, lastname, age)
-VALUES (1, 'GetTester', 'Tester', 15),
-       (2, 'UpdateTester', 'Tester', 15),
-       (3, 'DeleteGroupTester', 'Tester', 15),
-       (4, 'DeleteTester', 'Tester', 15);
+INSERT INTO person (firstname, lastname, birthdate)
+VALUES ('GetTester', 'Tester', '1967-11-11'),
+       ('UpdateTester', 'Tester', '1967-11-11'),
+       ('DeleteGroupTester', 'Tester', '1967-11-11'),
+       ('DeleteTester', 'Tester', '1967-11-11');
 
-INSERT INTO groupOfTasks (id, name, id_person)
-VALUES (1, 'testGroup', 1),
-       (3, 'second', 3),
-       (4, 'second', 1);
+INSERT INTO task (name, start_time)
+VALUES ('cleaning', '2021-06-09'),
+       ('to_swim', '2012-06-09'),
+       ('do_something', '2012-05-06'),
+       ('for_delete', '2011-11-11');
 
-INSERT INTO task (id, name, start_time)
-VALUES (2, 'cleaning', '2021-06-09'),
-       (4, 'to_swim', '2012-06-09'),
-       (9999, 'do_something', '2012-05-06'),
-       (8888, 'for_delete', '2011-11-11');
+INSERT INTO group_of_tasks (name)
+VALUES ('forGet'),
+       ('second'),
+       ('forUpdate'),
+       ('forDelete');
 
-INSERT INTO task_group (id_task, id_group)
-VALUES (2, 1),
-       (2, 3),
-       (4, 3),
-       (8888, 1);
+UPDATE task
+set id_group = 1;
+
+update group_of_tasks
+set id_parent = 1
+where id = 3;

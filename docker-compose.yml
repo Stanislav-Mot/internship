@@ -1,0 +1,28 @@
+version: '3'
+services:
+  db:
+    image: postgres:11.4-alpine
+    container_name: postgres
+    ports:
+      - "5000:5432"
+    volumes:
+      - /var/lib/postgresql/data/pgdata
+    environment:
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=internship
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    restart: always
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/internship
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=admin
+    restart: always
+    links:
+      - db

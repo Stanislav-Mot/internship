@@ -6,12 +6,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static com.internship.internship.util.Helper.newPersonDtoForTest;
 import static com.internship.internship.util.Helper.newPersonForTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 class PersonDtoMapperTest {
@@ -27,7 +29,7 @@ class PersonDtoMapperTest {
         assertEquals(person.getId(), personDto.getId());
         assertEquals(person.getFirstName(), personDto.getFirstName());
         assertEquals(person.getLastName(), personDto.getLastName());
-        assertEquals(person.getAge(), personDto.getAge());
+        assertEquals(person.getBirthdate(), personDto.getBirthdate());
         assertEquals(person.getGroups(), personDto.getGroups());
     }
 
@@ -39,7 +41,7 @@ class PersonDtoMapperTest {
         assertEquals(person.getId(), personDto.getId());
         assertEquals(person.getFirstName(), personDto.getFirstName());
         assertEquals(person.getLastName(), personDto.getLastName());
-        assertEquals(person.getAge(), personDto.getAge());
+        assertEquals(person.getBirthdate(), personDto.getBirthdate());
         assertEquals(person.getGroups(), personDto.getGroups());
     }
 }

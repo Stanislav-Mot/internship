@@ -1,12 +1,19 @@
-INSERT INTO person (id, firstname, lastname, age)
-VALUES (1, 'GetTester', 'Tester', 15),
-       (2, 'UpdateTester', 'Tester', 15),
-       (3, 'DeleteGroupTester', 'Tester', 15),
-       (4, 'DeleteTester', 'Tester', 15);
+INSERT INTO person (firstname, lastname, birthdate)
+VALUES ('GetTester', 'Tester', '1984-03-03'),
+       ('UpdateTester', 'Tester', '1984-03-03'),
+       ('DeleteGroupTester', 'Tester', '1984-03-03'),
+       ('DeleteTester', 'Tester', '1984-03-03');
 
-INSERT INTO groupOfTasks (id, name, id_person)
-VALUES (1, 'testGroup', 1),
-       (3, 'second', 3),
-       (4, 'second', 1);
+INSERT INTO group_of_tasks (name)
+VALUES ('testGroup'),
+       ('secondGroup'),
+       ('thirdGroup'),
+       ('fourGroup');
+
+INSERT INTO person_group(id_person, id_group)
+VALUES (1, 1),
+       (3, 3),
+       (1, 3),
+       (1, 4);
 
 

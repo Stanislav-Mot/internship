@@ -1,6 +1,5 @@
 package com.internship.internship.controller;
 
-import com.internship.internship.dto.GroupDto;
 import com.internship.internship.dto.PersonDto;
 import com.internship.internship.service.PersonService;
 import com.internship.internship.transfer.Transfer;
@@ -40,48 +39,38 @@ public class PersonController {
 
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = {@ExampleObject(
-                    value = "{\"id\": 1, \"firstName\": \"Denis\", \"lastName\": \"Denisov\", \"age\": 12}")})
-    )
+                    value = "{\"firstName\": \"Denis\", " +
+                            "\"lastName\": \"Denisov\", " +
+                            "\"birthdate\": \"1967-05-10\"}")}))
     @Operation(summary = "Add new person")
     @Validated(Transfer.New.class)
     @PostMapping("/person")
     @ResponseStatus(HttpStatus.CREATED)
-    public Integer add(@Valid @RequestBody PersonDto personDto) {
+    public PersonDto add(@Valid @RequestBody PersonDto personDto) {
         return personService.add(personDto);
     }
 
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = {@ExampleObject(
-                    value = "{\"id\": 1}")})
-    )
-    @Operation(summary = "Add group to person")
-    @Validated(Transfer.Update.class)
-    @PostMapping("/person/{id}/group")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Integer addGroupToPerson(@PathVariable Long id, @Valid @RequestBody GroupDto groupDto) {
-        return personService.addGroup(id, groupDto);
-    }
-
-    @Operation(summary = "Delete group from person")
-    @PutMapping("/person/{id}/group/{groupId}")
-    public Integer updateConstraints(@PathVariable Long id, @PathVariable Long groupId) {
-        return personService.deleteGroup(id, groupId);
-    }
-
-    @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            content = @Content(examples = {@ExampleObject(
-                    value = "{\"id\": 1, \"firstName\": \"Denis\", \"lastName\": \"Denisov\", \"age\": 12}")})
-    )
+                    value = "{\"id\": 1, " +
+                            "\"firstName\": \"Denis\", " +
+                            "\"lastName\": \"Denisov\"}")}))
     @Operation(summary = "Update person")
     @Validated(Transfer.Update.class)
     @PutMapping("/person")
-    public Integer update(@Valid @RequestBody PersonDto personDto) {
+    public PersonDto update(@Valid @RequestBody PersonDto personDto) {
         return personService.update(personDto);
     }
 
-    @Operation(summary = "Delete person by id")
-    @DeleteMapping("/person/{id}")
-    public Integer delete(@PathVariable Long id) {
-        return personService.delete(id);
+    @Operation(summary = "Add group to person")
+    @PutMapping("/person/{personId}/addGroup/{groupId}")
+    public PersonDto addGroupToPerson(@PathVariable Long personId, @PathVariable Long groupId) {
+        return personService.addGroup(personId, groupId);
+    }
+
+    @Operation(summary = "Delete group from person")
+    @PutMapping("/person/{personId}/deleteGroup/{groupId}")
+    public void deleteGroupFromPerson(@PathVariable Long personId, @PathVariable Long groupId) {
+        personService.deleteGroup(personId, groupId);
     }
 }

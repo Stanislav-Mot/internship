@@ -1,7 +1,6 @@
 package com.internship.internship.controller;
 
 import com.internship.internship.dto.GroupDto;
-import com.internship.internship.dto.TaskDto;
 import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.service.GroupService;
 import org.hamcrest.Matchers;
@@ -19,10 +18,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Collections;
 import java.util.List;
 
-import static com.internship.internship.util.Helper.*;
+import static com.internship.internship.util.Helper.asJsonString;
+import static com.internship.internship.util.Helper.newGroupDtoForTest;
 import static org.hamcrest.Matchers.containsStringIgnoringCase;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -67,9 +67,23 @@ class GroupControllerTest {
     }
 
     @Test
+    void getGroupByPersonIdTest() throws Exception {
+        GroupDto groupDto = newGroupDtoForTest();
+        List<GroupDto> groups = Collections.singletonList(groupDto);
+
+        Mockito.when(groupService.getByPersonId(CORRECT_ID)).thenReturn(groups);
+
+        mockMvc.perform(get("/group/person/{id}", CORRECT_ID))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$..id", Matchers.contains(Math.toIntExact(CORRECT_ID))))
+                .andExpect(jsonPath("$..name", Matchers.contains("Tester")));
+
+        verify(groupService, times(1)).getByPersonId(Mockito.any());
+    }
+
+    @Test
     void getAllGroups() throws Exception {
         GroupDto groupDto = newGroupDtoForTest();
-
         List<GroupDto> groups = Collections.singletonList(groupDto);
 
         Mockito.when(groupService.getAll()).thenReturn(groups);
@@ -82,82 +96,93 @@ class GroupControllerTest {
     @Test
     void addGroup() throws Exception {
         GroupDto group = newGroupDtoForTest();
+        group.setId(null);
 
-        Mockito.when(groupService.add(any(GroupDto.class))).thenReturn(1);
+        Mockito.when(groupService.add(any(GroupDto.class))).thenReturn(group);
 
         mockMvc.perform(post("/group")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(group))
-                        .characterEncoding("utf-8"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(group))
+                .characterEncoding("utf-8"))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$", Matchers.is(1)));
+                .andExpect(jsonPath("$.name", containsStringIgnoringCase("Tester")));
 
         verify(groupService, times(1)).add(Mockito.any(GroupDto.class));
-    }
-
-    @Test
-    void addToTaskGroup() throws Exception {
-        GroupDto group = newGroupDtoForTest();
-        Mockito.when(groupService.addTask(any(Long.class), any(TaskDto.class))).thenReturn(1);
-
-        mockMvc.perform(post("/group/{id}/task", group.getId())
-                        .content(asJsonString(group))
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$", Matchers.is(1)));
-
-        verify(groupService, times(1))
-                .addTask(Mockito.any(Long.class), Mockito.any(TaskDto.class));
-    }
-
-    @Test
-    void deleteTaskFromGroup() throws Exception {
-        GroupDto group = newGroupDtoForTest();
-        TaskDto task = newTaskDtoForTest();
-
-        Mockito.when(groupService.deleteTask(group.getId(), task.getId())).thenReturn(1);
-
-        mockMvc.perform(put("/group/{id}/task/{idTask}", group.getId(), task.getId()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Matchers.is(1)));
-
-        verify(groupService, times(1)).deleteTask(group.getId(), task.getId());
     }
 
     @Test
     void updateGroup() throws Exception {
         GroupDto group = newGroupDtoForTest();
 
-        when(groupService.update(any(GroupDto.class))).thenReturn(1);
+        when(groupService.update(any(GroupDto.class))).thenReturn(group);
 
         mockMvc.perform(put("/group")
-                        .content(asJsonString(group))
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
+                .content(asJsonString(group))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Matchers.is(1)));
+                .andExpect(jsonPath("$.name", containsStringIgnoringCase("Tester")));
 
         mockMvc.perform(put("/group")
-                        .content("Wrong JSON")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
+                .content("Wrong JSON")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message", containsStringIgnoringCase("wrong JSON format")));
+                .andExpect(jsonPath("$", containsStringIgnoringCase("wrong JSON format")));
 
         verify(groupService, times(1)).update(Mockito.any(GroupDto.class));
     }
 
     @Test
-    void deleteGroup() throws Exception {
+    void addGroupToGroup() throws Exception {
         GroupDto group = newGroupDtoForTest();
 
-        Mockito.when(groupService.delete(group.getId())).thenReturn(1);
+        Mockito.when(groupService.addGroup(anyLong(), anyLong())).thenReturn(group);
 
-        mockMvc.perform(delete("/group/{id}", group.getId()))
+        mockMvc.perform(put("/group/{id}/addGroup/{groupID}", anyLong(), anyLong())
+                .content(asJsonString(group))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Matchers.is(1)));
+                .andExpect(jsonPath("$.name", containsStringIgnoringCase("Tester")));
 
-        verify(groupService, times(1)).delete(Mockito.any(Long.class));
+        verify(groupService, times(1)).addGroup(anyLong(), anyLong());
+    }
+
+    @Test
+    void deleteGroupFromGroup() throws Exception {
+        doNothing().when(groupService).deleteGroup(anyLong(), anyLong());
+
+        mockMvc.perform(put("/group/{id}/deleteGroup/{groupId}", anyLong(), anyLong()))
+                .andExpect(status().isOk());
+
+        verify(groupService, times(1)).deleteGroup(anyLong(), anyLong());
+    }
+
+    @Test
+    void addTaskToGroup() throws Exception {
+        GroupDto groupDto = newGroupDtoForTest();
+
+        Mockito.when(groupService.addTask(anyLong(), anyLong())).thenReturn(groupDto);
+
+        mockMvc.perform(put("/group/{id}/addTask/{taskId}", anyLong(), anyLong())
+                .content(asJsonString(groupDto))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", containsStringIgnoringCase("Tester")));
+
+        verify(groupService, times(1))
+                .addTask(anyLong(), anyLong());
+    }
+
+    @Test
+    void deleteTaskFromGroup() throws Exception {
+        doNothing().when(groupService).deleteTask(anyLong(), anyLong());
+
+        mockMvc.perform(put("/group/{id}/deleteTask/{taskId}", any(Long.class), any(Long.class)))
+                .andExpect(status().isOk());
+
+        verify(groupService, times(1)).deleteTask(any(Long.class), any(Long.class));
     }
 }

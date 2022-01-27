@@ -1,5 +1,6 @@
 package com.internship.internship.dto;
 
+import com.internship.internship.model.Assignment;
 import com.internship.internship.transfer.Transfer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -7,14 +8,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
+import javax.validation.constraints.Null;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class TaskDto {
-
+public class TaskDto implements Assignment {
     @Schema(example = "4")
+    @Null(message = "id should be generate be db", groups = {Transfer.New.class})
     @NotNull(message = "id should be not null", groups = {Transfer.Update.class})
     private Long id;
 
@@ -23,16 +25,15 @@ public class TaskDto {
     private String name;
 
     @Schema(example = "2012-06-09")
-    private String startTime;
+    private LocalDateTime startTime;
 
-    private PersonDto person;
-
-    private ProgressDto progress;
-
-    private List<GroupDto> groupsList;
+    private String description;
+    private Integer progress;
+    private Integer priority;
+    private Integer estimate;
+    private Integer spentTime;
 
     public TaskDto(Long id) {
         this.id = id;
     }
-
 }

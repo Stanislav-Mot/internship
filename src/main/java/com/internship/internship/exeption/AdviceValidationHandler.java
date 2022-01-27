@@ -1,15 +1,14 @@
 package com.internship.internship.exeption;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class AdviceValidationHandler {
@@ -20,10 +19,11 @@ public class AdviceValidationHandler {
     ValidationErrorResponse onConstraintValidationException(
             ConstraintViolationException e) {
         ValidationErrorResponse error = new ValidationErrorResponse();
-        for (ConstraintViolation violation : e.getConstraintViolations()) {
-            error.getViolations().add(
-                    new Violation(violation.getPropertyPath().toString(), violation.getMessage()));
-        }
+
+        error.getViolations().addAll(
+                e.getConstraintViolations().stream().map(
+                        violation -> new Violation(violation.getPropertyPath().toString(), violation.getMessage())
+                ).collect(Collectors.toList()));
         return error;
     }
 
@@ -33,12 +33,11 @@ public class AdviceValidationHandler {
     ValidationErrorResponse onMethodArgumentNotValidException(
             MethodArgumentNotValidException e) {
         ValidationErrorResponse error = new ValidationErrorResponse();
-        for (FieldError fieldError : e.getBindingResult().getFieldErrors()) {
-            error.getViolations().add(
-                    new Violation(fieldError.getField(), fieldError.getDefaultMessage()));
-        }
+
+        error.getViolations().addAll(
+                e.getBindingResult().getFieldErrors().stream().map(
+                        fieldError -> new Violation(fieldError.getField(), fieldError.getDefaultMessage())
+                ).collect(Collectors.toList()));
         return error;
     }
-
-
 }

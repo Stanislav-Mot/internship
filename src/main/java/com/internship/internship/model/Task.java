@@ -4,19 +4,21 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Task {
+public class Task implements Assignment {
 
     private Long id;
     private String name;
-    private String startTime;
-    private Person person;
-    private Progress progress;
-    private List<Group> groupsList;
+    private LocalDateTime startTime;
+    private String description;
+    private Integer estimate;
+    private Integer progress;
+    private Integer spentTime;
+    private Integer priority;
 
     public Task(Long id) {
         this.id = id;
