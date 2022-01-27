@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 public class TaskDto implements Assignment {
-
     @Schema(example = "4")
     @Null(message = "id should be generate be db", groups = {Transfer.New.class})
     @NotNull(message = "id should be not null", groups = {Transfer.Update.class})

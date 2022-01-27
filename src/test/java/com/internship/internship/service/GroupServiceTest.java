@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import java.util.ArrayList;
@@ -35,16 +36,14 @@ class GroupServiceTest {
 
     @Test
     void getById() {
-        Group group = newGroupForTest();
-        GroupDto groupDto = newGroupDtoForTest();
+        Group group = new Group(1L);
+        GroupDto groupDto = new GroupDto(1L);
 
         when(groupRepo.getGroupById(groupDto.getId())).thenReturn(group);
         when(mapper.convertToDto(group)).thenReturn(groupDto);
 
         GroupDto groupFromService = groupService.getById(groupDto.getId());
-
         assertEquals(groupFromService, groupDto);
-
         verify(groupRepo, times(1)).getGroupById(group.getId());
     }
 
@@ -58,24 +57,21 @@ class GroupServiceTest {
         when(groupRepo.getAll()).thenReturn(list);
 
         List<GroupDto> groupList = groupService.getAll();
-
         assertEquals(3, groupList.size());
         verify(groupRepo, times(1)).getAll();
     }
 
     @Test
     void add() {
-        GroupDto groupDto = newGroupDtoForTest();
+        GroupDto groupDto = new GroupDto(1L);
+        KeyHolder keyHolder = new GeneratedKeyHolder();
 
-        doNothing().when(groupRepo).addGroup(any(MapSqlParameterSource.class), any(KeyHolder.class));
-
+        when(groupRepo.addGroup(any(MapSqlParameterSource.class))).thenReturn(keyHolder);
         when(mapper.getDtoFromHolder(any(KeyHolder.class))).thenReturn(groupDto);
 
         GroupDto groupDtoReturned = groupService.add(groupDto);
-
         assertEquals(groupDto.getId(), groupDtoReturned.getId());
-
-        verify(groupRepo, times(1)).addGroup(any(MapSqlParameterSource.class), any(KeyHolder.class));
+        verify(groupRepo, times(1)).addGroup(any(MapSqlParameterSource.class));
     }
 
     @Test
@@ -88,29 +84,14 @@ class GroupServiceTest {
         when(mapper.convertToDto(any(Group.class))).thenReturn(groupDto);
 
         GroupDto dto = groupService.update(groupDto);
-
         assertEquals(groupDto.getId(), dto.getId());
-
         verify(groupRepo, times(1)).updateGroup(any(Group.class));
     }
 
     @Test
-    void delete() {
-        Group group = newGroupForTest();
-
-        when(groupRepo.deleteGroup(group.getId())).thenReturn(1);
-
-        Integer result = groupService.delete(group.getId());
-
-        assertEquals(1, result);
-
-        verify(groupRepo, times(1)).deleteGroup(group.getId());
-    }
-
-    @Test
     void addTask() {
-        Group group = newGroupForTest();
-        Task task = newTaskForTest();
+        Group group = new Group(1L);
+        Task task = new Task(1L);
         GroupDto groupDto = newGroupDtoForTest();
 
         when(taskRepo.getTaskById(task.getId())).thenReturn(task);
@@ -119,9 +100,7 @@ class GroupServiceTest {
         when(mapper.convertToDto(group)).thenReturn(groupDto);
 
         GroupDto result = groupService.addTask(group.getId(), task.getId());
-
         assertEquals(groupDto, result);
-
         verify(groupRepo, times(1)).addTaskToGroup(anyLong(), anyLong());
     }
 
@@ -131,9 +110,7 @@ class GroupServiceTest {
         Task task = newTaskForTest();
 
         when(groupRepo.deleteTaskFromGroup(group.getId(), task.getId())).thenReturn(1);
-
         groupService.deleteTask(group.getId(), task.getId());
-
         verify(groupRepo, times(1)).deleteTaskFromGroup(group.getId(), task.getId());
     }
 
@@ -147,7 +124,6 @@ class GroupServiceTest {
         when(mapper.convertToDto(any(Group.class))).thenReturn(any(GroupDto.class));
 
         groupService.addGroup(group.getId(), groupIn.getId());
-
         verify(groupRepo, times(1)).addGroupToGroup(group.getId(), groupIn.getId());
     }
 
@@ -157,9 +133,7 @@ class GroupServiceTest {
         Group groupIn = new Group(1L);
 
         when(groupRepo.deleteGroupFromGroup(group.getId(), groupIn.getId())).thenReturn(1);
-
         groupService.deleteGroup(group.getId(), groupIn.getId());
-
         verify(groupRepo, times(1)).deleteGroupFromGroup(group.getId(), groupIn.getId());
     }
 }

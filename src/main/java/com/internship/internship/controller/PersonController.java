@@ -62,12 +62,6 @@ public class PersonController {
         return personService.update(personDto);
     }
 
-    @Operation(summary = "Delete person by id")
-    @DeleteMapping("/person/{id}")
-    public void delete(@PathVariable Long id) {
-        personService.delete(id);
-    }
-
     @Operation(summary = "Add group to person")
     @PutMapping("/person/{personId}/addGroup/{groupId}")
     public PersonDto addGroupToPerson(@PathVariable Long personId, @PathVariable Long groupId) {

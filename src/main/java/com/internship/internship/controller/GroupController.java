@@ -64,12 +64,6 @@ public class GroupController {
         return groupService.update(groupDto);
     }
 
-    @Operation(summary = "Delete group by id")
-    @DeleteMapping("/group/{id}")
-    public void delete(@PathVariable Long id) {
-        groupService.delete(id);
-    }
-
     @Operation(summary = "Add group to group")
     @PutMapping("/group/{id}/addGroup/{groupId}")
     public GroupDto addGroupToGroup(@PathVariable Long id, @PathVariable Long groupId) {

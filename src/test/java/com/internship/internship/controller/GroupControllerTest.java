@@ -78,14 +78,12 @@ class GroupControllerTest {
                 .andExpect(jsonPath("$..id", Matchers.contains(Math.toIntExact(CORRECT_ID))))
                 .andExpect(jsonPath("$..name", Matchers.contains("Tester")));
 
-
         verify(groupService, times(1)).getByPersonId(Mockito.any());
     }
 
     @Test
     void getAllGroups() throws Exception {
         GroupDto groupDto = newGroupDtoForTest();
-
         List<GroupDto> groups = Collections.singletonList(groupDto);
 
         Mockito.when(groupService.getAll()).thenReturn(groups);
@@ -133,18 +131,6 @@ class GroupControllerTest {
                 .andExpect(jsonPath("$", containsStringIgnoringCase("wrong JSON format")));
 
         verify(groupService, times(1)).update(Mockito.any(GroupDto.class));
-    }
-
-    @Test
-    void deleteGroup() throws Exception {
-        GroupDto group = newGroupDtoForTest();
-
-        when(groupService.delete(group.getId())).thenReturn(1);
-
-        mockMvc.perform(delete("/group/{id}", group.getId()))
-                .andExpect(status().isOk());
-
-        verify(groupService, times(1)).delete(Mockito.any(Long.class));
     }
 
     @Test

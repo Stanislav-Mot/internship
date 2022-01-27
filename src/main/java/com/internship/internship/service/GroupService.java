@@ -7,12 +7,11 @@ import com.internship.internship.model.Group;
 import com.internship.internship.repository.GroupRepo;
 import com.internship.internship.repository.TaskRepo;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class GroupService {
@@ -39,52 +38,32 @@ public class GroupService {
     }
 
     public List<GroupDto> getByPersonId(Long id) {
-        List<Group> groups = groupRepo.getByPersonId(id);
-
-        List<GroupDto> groupsDto = new ArrayList<>();
-        for (Group group : groups) {
-            groupsDto.add(mapper.convertToDto(group));
-        }
-        return groupsDto;
+        return groupRepo.getByPersonId(id)
+                .stream().map(mapper::convertToDto)
+                .collect(Collectors.toList());
     }
 
     public List<GroupDto> getAll() {
-        List<Group> groups = groupRepo.getAll();
-
-        List<GroupDto> groupsDto = new ArrayList<>();
-        for (Group group : groups) {
-            groupsDto.add(mapper.convertToDto(group));
-        }
-        return groupsDto;
+        return groupRepo.getAll()
+                .stream().map(mapper::convertToDto)
+                .collect(Collectors.toList());
     }
 
     public GroupDto add(GroupDto groupDto) {
         MapSqlParameterSource parameters = getMapSqlParameterSource(groupDto);
-
-        KeyHolder holder = new GeneratedKeyHolder();
-
-        groupRepo.addGroup(parameters, holder);
-
+        KeyHolder holder = groupRepo.addGroup(parameters);
         return mapper.getDtoFromHolder(holder);
     }
 
     public GroupDto update(GroupDto groupDto) {
         Group group = mapper.convertToEntity(groupDto);
         Group response = groupRepo.updateGroup(group);
-
         return mapper.convertToDto(response);
     }
 
-    public Integer delete(Long id) {
-        return groupRepo.deleteGroup(id);
-    }
-
     public GroupDto addTask(Long id, Long taskId) {
-        if (taskRepo.getTaskById(taskId) == null) {
-            throw new ChangesNotAppliedExemption(String.format("Task with id: %d is not found", taskId));
-        }
-        if (groupRepo.getGroupById(id) == null) {
-            throw new ChangesNotAppliedExemption(String.format("Group with id: %d is not found", id));
+        if (taskRepo.getTaskById(taskId) == null || groupRepo.getGroupById(id) == null) {
+            throw new ChangesNotAppliedExemption(String.format("id: %d or %d is not found", id, taskId));
         }
         Group group = groupRepo.addTaskToGroup(id, taskId);
         if (group != null) {
@@ -101,14 +80,40 @@ public class GroupService {
     }
 
     public GroupDto addGroup(Long id, Long groupId) {
-        if (groupRepo.getGroupById(groupId) == null) {
-            throw new ChangesNotAppliedExemption(String.format("Group with id: %d is not found", groupId));
+        if (id == groupId) {
+            throw new ChangesNotAppliedExemption("group cannot refer to itself");
         }
-        if (groupRepo.getGroupById(id) == null) {
-            throw new ChangesNotAppliedExemption(String.format("Group with id: %d is not found", id));
+
+        Group inGroup = groupRepo.getGroupById(id);
+        Group fromGroup = groupRepo.getGroupById(groupId);
+
+        if (inGroup == null || fromGroup == null) {
+            throw new ChangesNotAppliedExemption(String.format("Group with id: %d or %d is not found", id, groupId));
         }
+
+        if (checkCyclicDependency(id, groupId)) {
+            throw new ChangesNotAppliedExemption("cyclic dependency");
+        }
+
         Group group = groupRepo.addGroupToGroup(id, groupId);
         return mapper.convertToDto(group);
+    }
+
+    private boolean checkCyclicDependency(Long id, Long groupId) {
+        List<Group> groupList = groupRepo.getAllGroupInGroup(groupId);
+        if (groupList.isEmpty()) {
+            return false;
+        }
+        for (Group group : groupList) {
+            if (group.getId() == id) {
+                return true;
+            } else {
+                if (checkCyclicDependency(id, group.getId())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public void deleteGroup(Long id, Long groupId) {

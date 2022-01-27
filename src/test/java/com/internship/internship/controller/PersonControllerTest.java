@@ -48,7 +48,6 @@ class PersonControllerTest {
     @Test
     void getAllPersons() throws Exception {
         PersonDto personDto = newPersonDtoForTest();
-
         List<PersonDto> persons = Collections.singletonList(personDto);
 
         Mockito.when(personService.getAll()).thenReturn(persons);
@@ -100,6 +99,7 @@ class PersonControllerTest {
     void updatePerson() throws Exception {
         PersonDto person = newPersonDtoForTest();
         person.setId(CORRECT_ID);
+
         when(personService.update(any(PersonDto.class))).thenReturn(person);
 
         mockMvc.perform(put("/person")
@@ -117,19 +117,6 @@ class PersonControllerTest {
                 .andExpect(jsonPath("$", containsStringIgnoringCase("wrong JSON format")));
 
         verify(personService, times(1)).update(Mockito.any(PersonDto.class));
-    }
-
-    @Test
-    void deletePerson() throws Exception {
-        PersonDto person = newPersonDtoForTest();
-        person.setId(CORRECT_ID);
-
-        doNothing().when(personService).delete(person.getId());
-
-        mockMvc.perform(delete("/person/{id}", person.getId()))
-                .andExpect(status().isOk());
-
-        verify(personService, times(1)).delete(person.getId());
     }
 
     @Test

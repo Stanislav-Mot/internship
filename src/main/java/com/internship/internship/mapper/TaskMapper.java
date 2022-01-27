@@ -26,7 +26,6 @@ public class TaskMapper implements RowMapper<Task> {
         if (timestamp != null) {
             task.setStartTime(timestamp.toLocalDateTime());
         }
-
         return task;
     }
 }

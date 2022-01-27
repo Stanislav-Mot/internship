@@ -1,16 +1,17 @@
 package com.internship.internship.service;
 
 import com.internship.internship.dto.TaskDto;
+import com.internship.internship.dto.search.SearchTaskDto;
 import com.internship.internship.mapper.TaskDtoMapper;
 import com.internship.internship.model.Task;
 import com.internship.internship.repository.TaskRepo;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskService {
@@ -23,29 +24,34 @@ public class TaskService {
         this.mapper = mapper;
     }
 
-    public static MapSqlParameterSource getMapSqlParameterSource(Task task) {
+    private MapSqlParameterSource getMapSqlParameterSource(Task task) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("id", task.getId());
         parameters.addValue("name", task.getName());
         parameters.addValue("description", task.getDescription());
         parameters.addValue("estimate", task.getEstimate());
         parameters.addValue("priority", task.getPriority());
-
         return parameters;
     }
 
-    public static MapSqlParameterSource getMapSqlParameterSource(String name,
-                                                                 Integer fromProgress,
-                                                                 Integer toProgress,
-                                                                 String minStartTime,
-                                                                 String maxStartTime) {
+    private MapSqlParameterSource getMapSqlParameterSource(SearchTaskDto searchTaskDto) {
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+        mapSqlParameterSource.addValue("name", searchTaskDto.getName());
+        mapSqlParameterSource.addValue("fromProgress", searchTaskDto.getFromProgress());
+        mapSqlParameterSource.addValue("toProgress", searchTaskDto.getToProgress());
 
-        mapSqlParameterSource.addValue("name", name);
-        mapSqlParameterSource.addValue("fromProgress", fromProgress);
-        mapSqlParameterSource.addValue("toProgress", toProgress);
-        mapSqlParameterSource.addValue("fromStartTime", minStartTime);
-        mapSqlParameterSource.addValue("toStartTime", maxStartTime);
+        LocalDateTime localDateTime = null;
+        if (searchTaskDto.getMinStartTime() != null) {
+            localDateTime = LocalDateTime.parse(searchTaskDto.getMinStartTime());
+        }
+        mapSqlParameterSource.addValue("fromStartTime", localDateTime);
+
+        localDateTime = null;
+        if (searchTaskDto.getMaxStartTime() != null) {
+            localDateTime = LocalDateTime.parse(searchTaskDto.getMaxStartTime());
+        }
+        mapSqlParameterSource.addValue("toStartTime", localDateTime);
+
         return mapSqlParameterSource;
     }
 
@@ -67,58 +73,30 @@ public class TaskService {
 
     public TaskDto add(TaskDto taskDto) {
         Task task = mapper.convertToEntity(taskDto);
-
         MapSqlParameterSource parameters = getMapSqlParameterSource(task);
-
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-
-        taskRepo.addTask(parameters, keyHolder);
-
+        KeyHolder keyHolder = taskRepo.addTask(parameters);
         return mapper.getDtoFromHolder(keyHolder);
     }
 
     public TaskDto update(TaskDto taskDto) {
         Task task = mapper.convertToEntity(taskDto);
-
         MapSqlParameterSource parameters = getMapSqlParameterSource(task);
-
         Task response = taskRepo.update(parameters);
-
         return mapper.convertToDto(response);
     }
 
-    public Integer delete(Long id) {
-        return taskRepo.deleteTask(id);
-    }
-
-    public List<TaskDto> search(String name,
-                                Integer fromProgress,
-                                Integer toProgress,
-                                String minStartTime,
-                                String maxStartTime) {
-        MapSqlParameterSource mapSqlParameterSource = getMapSqlParameterSource(name, fromProgress, toProgress, minStartTime, maxStartTime);
-
+    public List<TaskDto> search(SearchTaskDto searchTaskDto) {
+        MapSqlParameterSource mapSqlParameterSource = getMapSqlParameterSource(searchTaskDto);
         List<Task> tasks = taskRepo.search(mapSqlParameterSource);
-
         return getTaskDtos(tasks);
     }
 
     private List<TaskDto> getTaskDtos(List<Task> tasks) {
-        if (tasks != null) {
-            List<TaskDto> dtoList = new ArrayList<>();
-
-            for (Task task : tasks) {
-                dtoList.add(mapper.convertToDto(task));
-            }
-            return dtoList;
-        } else {
-            return null;
-        }
+        return tasks.stream().map(x -> mapper.convertToDto(x)).collect(Collectors.toList());
     }
 
     public TaskDto updateProgress(Long id, Integer progress) {
         Task task = taskRepo.updateProgress(id, progress);
-
         return mapper.convertToDto(task);
     }
 }

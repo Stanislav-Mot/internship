@@ -11,6 +11,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +24,7 @@ import java.util.Map;
 @Repository
 public class PersonRepo {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(PersonRepo.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PersonRepo.class);
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -32,10 +33,11 @@ public class PersonRepo {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    public Integer addPerson(SqlParameterSource parameters, KeyHolder keyHolder) {
+    public KeyHolder addPerson(SqlParameterSource parameters) {
         String sql = "INSERT INTO person (firstname, lastname, birthdate) VALUES (:firstname, :lastname, :birthdate);";
-
-        return namedParameterJdbcTemplate.update(sql, parameters, keyHolder);
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        namedParameterJdbcTemplate.update(sql, parameters, keyHolder);
+        return keyHolder;
     }
 
     public Person updatePerson(SqlParameterSource parameters) {
@@ -44,19 +46,12 @@ public class PersonRepo {
         return getPersonById((Long) parameters.getValue("id"));
     }
 
-    public Integer deletePerson(Long id) {
-        String deletePerson = "delete from person where id = ?;";
-        String deleteConstrains = "update group_of_tasks set id_person = null where id_person = ?;";
-
-        jdbcTemplate.update(deleteConstrains, id);
-
-        return jdbcTemplate.update(deletePerson, id);
-    }
-
     public Person getPersonById(Long id) {
         String sql = "SELECT * FROM person p WHERE p.id = ?";
         try {
-            return jdbcTemplate.queryForObject(sql, new PersonMapper(), id);
+            Person person = jdbcTemplate.queryForObject(sql, new PersonMapper(), id);
+            person.setGroups(new ArrayList<>(getGroupsById(person.getId())));
+            return person;
         } catch (EmptyResultDataAccessException exception) {
             LOGGER.warn("handling 404 error on getPersonById method");
 
@@ -67,28 +62,26 @@ public class PersonRepo {
     public List<Person> getAllPersons() {
         String sql = "SELECT * FROM person";
         List<Person> persons = jdbcTemplate.query(sql, new PersonMapper());
-        for (Person person : persons) {
-            person.setGroups(new ArrayList<>(getGroupsById(person.getId())));
-        }
+        persons.forEach(person -> person.setGroups(new ArrayList<>(getGroupsById(person.getId()))));
         return persons;
     }
 
     public Person addGroupToPerson(Long personId, Long groupId) {
-        String sql = "INSERT  INTO person_group (id_person, id_group) VALUES (?, ?)";
+        String sql = "INSERT INTO person_group (id_person, id_group) VALUES (?, ?) ON CONFLICT DO NOTHING";
         jdbcTemplate.update(sql, personId, groupId);
-        return getPersonById(personId);
+        Person person = getPersonById(personId);
+        person.setGroups(new ArrayList<>(getGroupsById(person.getId())));
+        return person;
     }
 
     public Integer deleteGroupFromPerson(Long personId, Long groupId) {
         String sql = "DELETE FROM person_group WHERE id_person = ? AND id_group = ?";
-
         return jdbcTemplate.update(sql, personId, groupId);
     }
 
     public List<Group> getGroupsById(Long id) {
         String sqlForGroup = "SELECT * FROM  group_of_tasks got LEFT JOIN person_group pg " +
                 "ON got.id = pg.id_group WHERE pg.id_person = ?";
-
         return jdbcTemplate.query(sqlForGroup, new GroupMapper(), id);
     }
 
@@ -103,13 +96,11 @@ public class PersonRepo {
                         "AND (:rangeAgeStart::INT8 IS NULL AND :rangeAgeEnd::INT8 IS NULL OR " +
                         "extract(YEAR FROM NOW()::date) - extract(YEAR FROM person.birthdate) " +
                         "BETWEEN :rangeAgeStart AND :rangeAgeEnd)";
-
         return namedParameterJdbcTemplate.query(sql, sqlParameterSource, new PersonMapper());
     }
 
     public List<Person> searchByTokenInName(Map<String, Object> params) {
         String sql = "SELECT * FROM person WHERE LOWER(CONCAT(firstname, ' ' , lastname)) LIKE LOWER(:token)";
-
         return namedParameterJdbcTemplate.query(sql, params, new PersonMapper());
     }
 }

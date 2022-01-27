@@ -1,19 +1,19 @@
 package com.internship.internship.service;
 
 import com.internship.internship.dto.PersonDto;
+import com.internship.internship.dto.search.SearchPersonDto;
 import com.internship.internship.exeption.ChangesNotAppliedExemption;
 import com.internship.internship.mapper.PersonDtoMapper;
 import com.internship.internship.model.Person;
 import com.internship.internship.repository.PersonRepo;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class PersonService {
@@ -26,7 +26,7 @@ public class PersonService {
         this.mapper = mapper;
     }
 
-    public static MapSqlParameterSource getMapSqlParameterSource(Person person) {
+    private MapSqlParameterSource getMapSqlParameterSource(Person person) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
 
         parameters.addValue("id", person.getId());
@@ -36,21 +36,20 @@ public class PersonService {
         return parameters;
     }
 
-    public static Map<String, Object> getMapParamFromToken(String token) {
+    private Map<String, Object> getMapParamFromToken(String token) {
         Map<String, Object> params = new HashMap<>();
         params.put("token", "%" + token + "%");
         return params;
     }
 
-    private MapSqlParameterSource getMapSqlParameterSource(String firstName, String lastName, Integer exactAge, Integer rangeAgeStart, Integer rangeAgeEnd) {
+    private MapSqlParameterSource getMapSqlParameterSource(SearchPersonDto searchPersonDto) {
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 
-        mapSqlParameterSource.addValue("firstName", firstName);
-        mapSqlParameterSource.addValue("lastName", lastName);
-        mapSqlParameterSource.addValue("exactAge", exactAge);
-        mapSqlParameterSource.addValue("rangeAgeStart", rangeAgeStart);
-        mapSqlParameterSource.addValue("rangeAgeEnd", rangeAgeEnd);
-
+        mapSqlParameterSource.addValue("firstName", searchPersonDto.getFirstName());
+        mapSqlParameterSource.addValue("lastName", searchPersonDto.getLastName());
+        mapSqlParameterSource.addValue("exactAge", searchPersonDto.getExactAge());
+        mapSqlParameterSource.addValue("rangeAgeStart", searchPersonDto.getRangeAgeStart());
+        mapSqlParameterSource.addValue("rangeAgeEnd", searchPersonDto.getRangeAgeEnd());
         return mapSqlParameterSource;
     }
 
@@ -59,41 +58,27 @@ public class PersonService {
     }
 
     public List<PersonDto> getAll() {
-        List<Person> list = personRepo.getAllPersons();
-        return getPersonDtos(list);
+        return getPersonDtos(personRepo.getAllPersons());
     }
 
     public PersonDto add(PersonDto personDto) {
         Person person = mapper.convertToEntity(personDto);
-
         MapSqlParameterSource parameters = getMapSqlParameterSource(person);
-
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-
-        personRepo.addPerson(parameters, keyHolder);
-
+        KeyHolder keyHolder = personRepo.addPerson(parameters);
         return mapper.getDtoFromHolder(keyHolder);
     }
 
     public PersonDto update(PersonDto personDto) {
         Person person = mapper.convertToEntity(personDto);
-
         MapSqlParameterSource parameters = getMapSqlParameterSource(person);
-
         Person response = personRepo.updatePerson(parameters);
-
         return mapper.convertToDto(response);
-    }
-
-    public void delete(Long id) {
-        personRepo.deletePerson(id);
     }
 
     public void deleteGroup(Long personId, Long groupId) {
         Integer answer = personRepo.deleteGroupFromPerson(personId, groupId);
         if (answer < 1) {
-            throw new ChangesNotAppliedExemption(
-                    String.format("Person id: %d or Group id %d is wrong", personId, groupId));
+            throw new ChangesNotAppliedExemption(String.format("Person id: %d or Group id %d is wrong", personId, groupId));
         }
     }
 
@@ -107,22 +92,13 @@ public class PersonService {
         return getPersonDtos(list);
     }
 
-    public List<PersonDto> search(String firstName, String lastName, Integer exactAge, Integer rangeAgeStart, Integer rangeAgeEnd) {
-        MapSqlParameterSource mapSqlParameterSource = getMapSqlParameterSource(firstName, lastName, exactAge, rangeAgeStart, rangeAgeEnd);
+    public List<PersonDto> search(SearchPersonDto searchPersonDto) {
+        MapSqlParameterSource mapSqlParameterSource = getMapSqlParameterSource(searchPersonDto);
         List<Person> list = personRepo.search(mapSqlParameterSource);
         return getPersonDtos(list);
     }
 
     private List<PersonDto> getPersonDtos(List<Person> list) {
-        if (list != null) {
-            List<PersonDto> dtoList = new ArrayList<>();
-
-            for (Person person : list) {
-                dtoList.add(mapper.convertToDto(person));
-            }
-            return dtoList;
-        } else {
-            return null;
-        }
+        return list.stream().map(x -> mapper.convertToDto(x)).collect(Collectors.toList());
     }
 }

@@ -2,6 +2,8 @@ package com.internship.internship.controller;
 
 import com.internship.internship.dto.PersonDto;
 import com.internship.internship.dto.TaskDto;
+import com.internship.internship.dto.search.SearchPersonDto;
+import com.internship.internship.dto.search.SearchTaskDto;
 import com.internship.internship.service.PersonService;
 import com.internship.internship.service.TaskService;
 import org.hamcrest.Matchers;
@@ -20,8 +22,7 @@ import java.util.List;
 
 import static com.internship.internship.util.Helper.newPersonDtoForTest;
 import static com.internship.internship.util.Helper.newTaskDtoForTest;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -52,7 +53,7 @@ class SearchControllerTest {
 
         List<PersonDto> list = Collections.singletonList(personDto);
 
-        Mockito.when(personService.search(anyString(), anyString(), anyInt(), anyInt(), anyInt())).thenReturn(list);
+        Mockito.when(personService.search(any(SearchPersonDto.class))).thenReturn(list);
 
         mockMvc.perform(get("/search/person")
                 .param("firstName", "1")
@@ -63,34 +64,32 @@ class SearchControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..firstName", Matchers.contains("Tester")));
 
-        verify(personService, times(1)).search(anyString(), anyString(), anyInt(), anyInt(), anyInt());
+        verify(personService, times(1)).search(any(SearchPersonDto.class));
     }
 
     @Test
     void getTasksByParameters() throws Exception {
         TaskDto taskDto = newTaskDtoForTest();
-
         List<TaskDto> list = Collections.singletonList(taskDto);
 
-        Mockito.when(taskService.search(anyString(), anyInt(), anyInt(), anyString(), anyString())).thenReturn(list);
+        Mockito.when(taskService.search(any(SearchTaskDto.class))).thenReturn(list);
 
         mockMvc.perform(get("/search/task")
                 .param("name", "1")
                 .param("fromProgress", "1")
                 .param("toProgress", "1")
-                .param("minStartTime", "1")
-                .param("maxStartTime", "1"))
+                .param("minStartTime", "2012-02-02")
+                .param("maxStartTime", "2012-02-02"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..name", Matchers.contains("Tester")));
 
-        verify(taskService, times(1)).search(anyString(), anyInt(), anyInt(), anyString(), anyString());
+        verify(taskService, times(1)).search(any(SearchTaskDto.class));
     }
 
     @Test
     void searchPersonByTokenInName() throws Exception {
         String token = "ster";
         PersonDto personDto = newPersonDtoForTest();
-
         List<PersonDto> list = Collections.singletonList(personDto);
 
         Mockito.when(personService.searchByTokenInName(token)).thenReturn(list);
@@ -100,6 +99,6 @@ class SearchControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..firstName", Matchers.contains("Tester")));
 
-        verify(personService, times(1)).searchByTokenInName(Mockito.any(String.class));
+        verify(personService, times(1)).searchByTokenInName(any(String.class));
     }
 }

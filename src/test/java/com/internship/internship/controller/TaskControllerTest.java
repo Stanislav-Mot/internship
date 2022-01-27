@@ -2,7 +2,6 @@ package com.internship.internship.controller;
 
 import com.internship.internship.dto.TaskDto;
 import com.internship.internship.exeption.DataNotFoundException;
-import com.internship.internship.model.Task;
 import com.internship.internship.service.TaskService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
@@ -19,7 +18,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.internship.internship.util.Helper.*;
+import static com.internship.internship.util.Helper.asJsonString;
+import static com.internship.internship.util.Helper.newTaskDtoForTest;
 import static org.hamcrest.Matchers.containsStringIgnoringCase;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
@@ -68,7 +68,6 @@ class TaskControllerTest {
     @Test
     void getAllTasks() throws Exception {
         TaskDto taskDto = newTaskDtoForTest();
-
         List<TaskDto> tasks = Arrays.asList(taskDto);
 
         when(taskService.getAll()).thenReturn(tasks);
@@ -116,18 +115,5 @@ class TaskControllerTest {
                 .andExpect(jsonPath("$", containsStringIgnoringCase("wrong JSON format")));
 
         verify(taskService, times(1)).update(Mockito.any(TaskDto.class));
-    }
-
-    @Test
-    void deleteTask() throws Exception {
-        Task task = newTaskForTest();
-
-        when(taskService.delete(task.getId())).thenReturn(1);
-
-        mockMvc.perform(delete("/task/{id}", task.getId()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Matchers.is(1)));
-
-        verify(taskService, times(1)).delete(Mockito.any(Long.class));
     }
 }

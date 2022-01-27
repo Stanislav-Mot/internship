@@ -84,10 +84,4 @@ public class TaskController {
     public TaskDto updateProgress(@RequestBody Integer progress, @PathVariable Long id) {
         return taskService.updateProgress(id, progress);
     }
-
-    @Operation(summary = "Delete task by id")
-    @DeleteMapping("/task/{id}")
-    public Integer delete(@PathVariable Long id) {
-        return taskService.delete(id);
-    }
 }

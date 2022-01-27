@@ -1,6 +1,23 @@
 # REST CRUD API with Spring and Postgres For 'task tracker'
 
-## Steps to Setup
+## Steps to Setup with Docker Compose
+
+**1. Clone the application**
+
+```bash
+https://github.com/DeniskaButkevich/internship
+```
+
+**2. Build and run the app using maven**
+
+```bash
+mvn package
+docker-compose up
+```
+
+The app will start running at <http://localhost:3000>.
+
+## Steps to Setup without Docker
 
 **1. Clone the application**
 

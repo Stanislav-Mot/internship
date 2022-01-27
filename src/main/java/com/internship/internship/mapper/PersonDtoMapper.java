@@ -10,7 +10,6 @@ import java.time.LocalDate;
 
 @Component
 public class PersonDtoMapper {
-
     private final ModelMapper modelMapper;
 
     public PersonDtoMapper(ModelMapper modelMapper) {
