@@ -92,17 +92,6 @@ class TaskServiceTest {
     }
 
     @Test
-    void delete() {
-        Task task = newTaskForTest();
-
-        when(taskRepo.deleteTask(task.getId())).thenReturn(1);
-
-        Integer result = taskService.delete(task.getId());
-        assertEquals(1, result);
-        verify(taskRepo, times(1)).deleteTask(task.getId());
-    }
-
-    @Test
     void search() {
         Task task = newTaskForTest();
         List<Task> list = Collections.singletonList(task);

@@ -23,4 +23,5 @@ public class Task implements Assignment {
     public Task(Long id) {
         this.id = id;
     }
+
 }

@@ -89,17 +89,6 @@ class GroupServiceTest {
     }
 
     @Test
-    void delete() {
-        Group group = newGroupForTest();
-
-        when(groupRepo.deleteGroup(group.getId())).thenReturn(1);
-
-        Integer result = groupService.delete(group.getId());
-        assertEquals(1, result);
-        verify(groupRepo, times(1)).deleteGroup(group.getId());
-    }
-
-    @Test
     void addTask() {
         Group group = new Group(1L);
         Task task = new Task(1L);

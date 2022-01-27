@@ -25,7 +25,6 @@ class TrustListTest {
         assertEquals(true, list.isEmpty());
         list.add(1);
         assertEquals(false, list.isEmpty());
-        list.stream().forEach(System.out::println);
     }
 
     @Test

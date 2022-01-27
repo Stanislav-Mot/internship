@@ -1,6 +1,5 @@
 package com.internship.internship.repository;
 
-import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Task;
 import org.assertj.core.api.Assertions;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -60,14 +58,6 @@ class GroupRepoTest {
         Group groupForUpdate = new Group(ID_FOR_UPDATE, "nameUpdate", null, null);
         Group group = groupRepo.updateGroup(groupForUpdate);
         Assertions.assertThat(group).returns("nameUpdate", from(Group::getName));
-    }
-
-    @Test
-    void deleteGroup() {
-        Group group = groupRepo.getGroupById(ID_FOR_DELETE);
-        assertEquals(ID_FOR_DELETE, group.getId());
-        groupRepo.deleteGroup(ID_FOR_DELETE);
-        Assertions.assertThatThrownBy(() -> groupRepo.getGroupById(ID_FOR_DELETE)).isInstanceOf(DataNotFoundException.class);
     }
 
     @Test

@@ -1,7 +1,6 @@
 package com.internship.internship.repository;
 
 import com.internship.internship.dto.search.SearchTaskDto;
-import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Task;
 import org.assertj.core.api.Assertions;
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -67,13 +65,6 @@ class TaskRepoTest {
         Assertions.assertThat(task).returns(2, from(Task::getEstimate));
         Assertions.assertThat(task).returns("123", from(Task::getDescription));
         Assertions.assertThat(task).returns(22, from(Task::getPriority));
-    }
-
-    @Test
-    void deleteTask() {
-        Integer answer = taskRepo.deleteTask(ID_FOR_DELETE);
-        assertEquals(1, answer);
-        Assertions.assertThatThrownBy(() -> taskRepo.getTaskById(ID_FOR_DELETE)).isInstanceOf(DataNotFoundException.class);
     }
 
     @Test

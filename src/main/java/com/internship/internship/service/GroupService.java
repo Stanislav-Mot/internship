@@ -61,10 +61,6 @@ public class GroupService {
         return mapper.convertToDto(response);
     }
 
-    public Integer delete(Long id) {
-        return groupRepo.deleteGroup(id);
-    }
-
     public GroupDto addTask(Long id, Long taskId) {
         if (taskRepo.getTaskById(taskId) == null || groupRepo.getGroupById(id) == null) {
             throw new ChangesNotAppliedExemption(String.format("id: %d or %d is not found", id, taskId));
@@ -84,11 +80,40 @@ public class GroupService {
     }
 
     public GroupDto addGroup(Long id, Long groupId) {
-        if (groupRepo.getGroupById(groupId) == null || groupRepo.getGroupById(id) == null) {
+        if (id == groupId) {
+            throw new ChangesNotAppliedExemption("group cannot refer to itself");
+        }
+
+        Group inGroup = groupRepo.getGroupById(id);
+        Group fromGroup = groupRepo.getGroupById(groupId);
+
+        if (inGroup == null || fromGroup == null) {
             throw new ChangesNotAppliedExemption(String.format("Group with id: %d or %d is not found", id, groupId));
         }
+
+        if (checkCyclicDependency(id, groupId)) {
+            throw new ChangesNotAppliedExemption("cyclic dependency");
+        }
+
         Group group = groupRepo.addGroupToGroup(id, groupId);
         return mapper.convertToDto(group);
+    }
+
+    private boolean checkCyclicDependency(Long id, Long groupId) {
+        List<Group> groupList = groupRepo.getAllGroupInGroup(groupId);
+        if (groupList.isEmpty()) {
+            return false;
+        }
+        for (Group group : groupList) {
+            if (group.getId() == id) {
+                return true;
+            } else {
+                if (checkCyclicDependency(id, group.getId())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public void deleteGroup(Long id, Long groupId) {

@@ -5,12 +5,11 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class TrustSetTest {
-    private final Set<Integer> set = new TreeSet<>();
+    private final Set<Integer> set = new TrustSet<>();
 
     @Test
     void size() {

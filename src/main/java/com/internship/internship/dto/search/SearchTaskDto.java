@@ -26,11 +26,11 @@ public class SearchTaskDto {
     @Max(value = 100, message = "toProgress should be between 0 and 100")
     private Integer toProgress;
 
-    @DateTimeFormat(pattern = "dd-MMM-yyyy")
-    @Schema(description = "Search from min start time", example = "2012-12-12")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @Schema(description = "Search from min start time", example = "2012-12-12T01:02:03")
     private String minStartTime;
 
-    @DateTimeFormat(pattern = "dd-MMM-yyyy")
-    @Schema(description = "Search from to start time", example = "2022-12-12")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @Schema(description = "Search from to start time", example = "2022-12-12T01:02:03")
     private String maxStartTime;
 }

@@ -1,7 +1,6 @@
 package com.internship.internship.repository;
 
 import com.internship.internship.dto.search.SearchPersonDto;
-import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
 import org.assertj.core.api.Assertions;
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -72,21 +70,6 @@ class PersonRepoTest {
 
         Assertions.assertThat(person).returns("firstNameUpdate", from(Person::getFirstName));
         Assertions.assertThat(person).returns("lastNameUpdate", from(Person::getLastName));
-    }
-
-    @Test
-    void deletePerson() {
-        Integer answer = personRepo.deletePerson(ID_FOR_DELETE);
-        assertEquals(1, answer);
-        Assertions.assertThatThrownBy(() -> personRepo.getPersonById(ID_FOR_DELETE))
-                .isInstanceOf(DataNotFoundException.class);
-    }
-
-    @Test
-    void addGroupToPerson() {
-        personRepo.addGroupToPerson(ID_FOR_GET, ID_GROUP_FOR_ADD);
-        Iterable<Group> groups = personRepo.getGroupsById(ID_FOR_GET);
-        Assertions.assertThat(groups).extracting(Group::getName).contains("secondGroup");
     }
 
     @Test

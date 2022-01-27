@@ -46,15 +46,12 @@ public class PersonRepo {
         return getPersonById((Long) parameters.getValue("id"));
     }
 
-    public Integer deletePerson(Long id) {
-        String deletePerson = "delete from person where id = ?;";
-        return jdbcTemplate.update(deletePerson, id);
-    }
-
     public Person getPersonById(Long id) {
         String sql = "SELECT * FROM person p WHERE p.id = ?";
         try {
-            return jdbcTemplate.queryForObject(sql, new PersonMapper(), id);
+            Person person = jdbcTemplate.queryForObject(sql, new PersonMapper(), id);
+            person.setGroups(new ArrayList<>(getGroupsById(person.getId())));
+            return person;
         } catch (EmptyResultDataAccessException exception) {
             LOGGER.warn("handling 404 error on getPersonById method");
 
@@ -70,9 +67,11 @@ public class PersonRepo {
     }
 
     public Person addGroupToPerson(Long personId, Long groupId) {
-        String sql = "INSERT  INTO person_group (id_person, id_group) VALUES (?, ?)";
+        String sql = "INSERT INTO person_group (id_person, id_group) VALUES (?, ?) ON CONFLICT DO NOTHING";
         jdbcTemplate.update(sql, personId, groupId);
-        return getPersonById(personId);
+        Person person = getPersonById(personId);
+        person.setGroups(new ArrayList<>(getGroupsById(person.getId())));
+        return person;
     }
 
     public Integer deleteGroupFromPerson(Long personId, Long groupId) {

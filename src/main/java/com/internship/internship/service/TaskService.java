@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,17 +40,17 @@ public class TaskService {
         mapSqlParameterSource.addValue("fromProgress", searchTaskDto.getFromProgress());
         mapSqlParameterSource.addValue("toProgress", searchTaskDto.getToProgress());
 
-        LocalDate localDate = null;
+        LocalDateTime localDateTime = null;
         if (searchTaskDto.getMinStartTime() != null) {
-            localDate = LocalDate.parse(searchTaskDto.getMinStartTime());
+            localDateTime = LocalDateTime.parse(searchTaskDto.getMinStartTime());
         }
-        mapSqlParameterSource.addValue("fromStartTime", localDate);
+        mapSqlParameterSource.addValue("fromStartTime", localDateTime);
 
-        localDate = null;
+        localDateTime = null;
         if (searchTaskDto.getMaxStartTime() != null) {
-            localDate = LocalDate.parse(searchTaskDto.getMaxStartTime());
+            localDateTime = LocalDateTime.parse(searchTaskDto.getMaxStartTime());
         }
-        mapSqlParameterSource.addValue("toStartTime", localDate);
+        mapSqlParameterSource.addValue("toStartTime", localDateTime);
 
         return mapSqlParameterSource;
     }
@@ -83,10 +83,6 @@ public class TaskService {
         MapSqlParameterSource parameters = getMapSqlParameterSource(task);
         Task response = taskRepo.update(parameters);
         return mapper.convertToDto(response);
-    }
-
-    public Integer delete(Long id) {
-        return taskRepo.deleteTask(id);
     }
 
     public List<TaskDto> search(SearchTaskDto searchTaskDto) {

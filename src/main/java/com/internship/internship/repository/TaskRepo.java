@@ -79,11 +79,6 @@ public class TaskRepo {
         return getTaskById(id);
     }
 
-    public Integer deleteTask(Long id) {
-        String sql = "DELETE FROM task WHERE id = ?;";
-        return jdbcTemplate.update(sql, id);
-    }
-
     public List<Group> getGroupsById(Long id) {
         String sqlForGroup = "SELECT * FROM group_of_tasks got JOIN task t ON got.id = t.id_group  WHERE t.id = ?";
         return jdbcTemplate.query(sqlForGroup, new GroupMapper(), id);
@@ -91,17 +86,18 @@ public class TaskRepo {
 
     public List<Task> search(MapSqlParameterSource mapSqlParameterSource) {
         String sql =
-                "SELECT * FROM task WHERE " +
-                        "cast(:name AS VARCHAR) IS NULL OR task.name = :name " +
-                        "AND (cast(:fromStartTime AS TIMESTAMP) IS NULL OR cast(:toStartTime AS TIMESTAMP) IS NULL) " +
-                        "OR task.start_time BETWEEN :fromStartTime::TIMESTAMP and :toStartTime::TIMESTAMP " +
-                        "AND (cast(:fromProgress AS INT8) IS NULL OR :toProgress IS NULL) " +
-                        "OR progress BETWEEN :fromProgress AND :toProgress;";
+                "SELECT * FROM task WHERE (cast(:name AS VARCHAR) IS NULL OR task.name = :name) " +
+
+                        "AND (cast(:fromStartTime AS TIMESTAMP(0)) IS NULL AND cast(:toStartTime AS TIMESTAMP(0)) IS NULL " +
+                        "OR task.start_time BETWEEN :fromStartTime::TIMESTAMP and :toStartTime::TIMESTAMP) " +
+
+                        "AND (cast(:fromProgress AS INT8) IS NULL AND cast(:toProgress AS INT8) IS NULL " +
+                        "OR progress BETWEEN :fromProgress AND :toProgress);";
         return namedParameterJdbcTemplate.query(sql, mapSqlParameterSource, new TaskMapper());
     }
 
     public Integer setStartTime(Long taskId) {
-        String sql = "UPDATE task SET start_time = NOW()::timestamp WHERE id = ?";
+        String sql = "UPDATE task SET start_time = NOW()::timestamp(0) WHERE id = ?";
         return jdbcTemplate.update(sql, taskId);
     }
 

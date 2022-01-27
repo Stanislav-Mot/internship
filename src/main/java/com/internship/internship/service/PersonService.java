@@ -75,10 +75,6 @@ public class PersonService {
         return mapper.convertToDto(response);
     }
 
-    public void delete(Long id) {
-        personRepo.deletePerson(id);
-    }
-
     public void deleteGroup(Long personId, Long groupId) {
         Integer answer = personRepo.deleteGroupFromPerson(personId, groupId);
         if (answer < 1) {

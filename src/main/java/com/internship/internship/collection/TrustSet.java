@@ -140,12 +140,29 @@ public class TrustSet<T> implements java.util.Set<T> {
     public boolean remove(Object o) {
         for (int i = 0; i < size; i++) {
             if (o.equals(elementData[i])) {
-                size -= 1;
-                elementData[size] = null;
+                removeId(i);
                 return true;
             }
         }
         return false;
+    }
+
+    public T removeId(int index) {
+        Objects.checkIndex(index, size);
+        final Object[] es = elementData;
+
+        @SuppressWarnings("unchecked") T oldValue = (T) es[index];
+        fastRemove(es, index);
+
+        return oldValue;
+    }
+
+
+    private void fastRemove(Object[] es, int i) {
+        final int newSize;
+        if ((newSize = size - 1) > i)
+            System.arraycopy(es, i + 1, es, i, newSize - i);
+        es[size = newSize] = null;
     }
 
     @Override
@@ -185,8 +202,11 @@ public class TrustSet<T> implements java.util.Set<T> {
         if (c.size() == 0) {
             return false;
         }
-        for (Object o : c) {
-            if (!contains(o)) {
+        final Object[] obj = new Object[size];
+        System.arraycopy(elementData, 0, obj, 0, size);
+
+        for (Object o : obj) {
+            if (!c.contains(o)) {
                 remove(o);
             }
         }

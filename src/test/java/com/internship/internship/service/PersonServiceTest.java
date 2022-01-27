@@ -92,16 +92,6 @@ class PersonServiceTest {
     }
 
     @Test
-    void delete() {
-        Person person = newPersonForTest();
-
-        when(personRepo.deletePerson(person.getId())).thenReturn(1);
-
-        personService.delete(person.getId());
-        verify(personRepo, times(1)).deletePerson(person.getId());
-    }
-
-    @Test
     void deleteGroup() {
         Person person = newPersonForTest();
         Group group = newGroupForTest();

@@ -2,7 +2,6 @@ package com.internship.internship.controller;
 
 import com.internship.internship.dto.TaskDto;
 import com.internship.internship.exeption.DataNotFoundException;
-import com.internship.internship.model.Task;
 import com.internship.internship.service.TaskService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
@@ -86,9 +85,9 @@ class TaskControllerTest {
         when(taskService.add(any(TaskDto.class))).thenReturn(taskDto);
 
         mockMvc.perform(post("/task")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(taskDto))
-                        .characterEncoding("utf-8"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(taskDto))
+                .characterEncoding("utf-8"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..name", Matchers.contains("Tester")));
 
@@ -102,32 +101,19 @@ class TaskControllerTest {
         when(taskService.update(any(TaskDto.class))).thenReturn(taskDto);
 
         mockMvc.perform(put("/task")
-                        .content(asJsonString(taskDto))
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
+                .content(asJsonString(taskDto))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..name", Matchers.contains("Tester")));
 
         mockMvc.perform(put("/task")
-                        .content("Wrong JSON")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
+                .content("Wrong JSON")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$", containsStringIgnoringCase("wrong JSON format")));
 
         verify(taskService, times(1)).update(Mockito.any(TaskDto.class));
-    }
-
-    @Test
-    void deleteTask() throws Exception {
-        Task task = new Task(1L);
-
-        when(taskService.delete(task.getId())).thenReturn(1);
-
-        mockMvc.perform(delete("/task/{id}", task.getId()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Matchers.is(1)));
-
-        verify(taskService, times(1)).delete(Mockito.any(Long.class));
     }
 }

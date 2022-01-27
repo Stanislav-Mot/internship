@@ -86,9 +86,9 @@ class PersonControllerTest {
         Mockito.when(personService.add(any(PersonDto.class))).thenReturn(person);
 
         mockMvc.perform(post("/person")
-                        .content(asJsonString(person))
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
+                .content(asJsonString(person))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$..firstName", Matchers.contains("Tester")));
 
@@ -103,33 +103,20 @@ class PersonControllerTest {
         when(personService.update(any(PersonDto.class))).thenReturn(person);
 
         mockMvc.perform(put("/person")
-                        .content(asJsonString(person))
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
+                .content(asJsonString(person))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..firstName", Matchers.contains("Tester")));
 
         mockMvc.perform(put("/person")
-                        .content("Wrong JSON")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
+                .content("Wrong JSON")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$", containsStringIgnoringCase("wrong JSON format")));
 
         verify(personService, times(1)).update(Mockito.any(PersonDto.class));
-    }
-
-    @Test
-    void deletePerson() throws Exception {
-        PersonDto person = newPersonDtoForTest();
-        person.setId(CORRECT_ID);
-
-        doNothing().when(personService).delete(person.getId());
-
-        mockMvc.perform(delete("/person/{id}", person.getId()))
-                .andExpect(status().isOk());
-
-        verify(personService, times(1)).delete(person.getId());
     }
 
     @Test

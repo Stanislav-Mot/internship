@@ -16,7 +16,7 @@ CREATE TABLE group_of_tasks
     id        SERIAL PRIMARY KEY,
     name      VARCHAR(256) NOT NULL,
     id_parent INT8,
-    FOREIGN KEY (id_parent) REFERENCES group_of_tasks (id) ON DELETE CASCADE
+    FOREIGN KEY (id_parent) REFERENCES group_of_tasks (id)
 );
 
 CREATE TABLE task
