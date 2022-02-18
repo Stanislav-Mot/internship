@@ -66,7 +66,6 @@ public class UserService implements UserDetailsService {
         if (userRepo.getUserByEmail(user.getEmail()) != null) {
             throw new Exception("User already exists with this email");
         }
-
         user.setRoles(Collections.singleton(Role.ROLE_USER));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
@@ -77,11 +76,27 @@ public class UserService implements UserDetailsService {
         return response;
     }
 
-    public UserDto update(UserDto userDto) {
+    public UserDto updateRole(UserDto userDto) throws Exception {
+        if (userRepo.getUserByEmail(userDto.getEmail()) == null) {
+            throw new Exception("User not exists with this email");
+        }
+        User user = mapper.convertToEntity(userDto);
+        MapSqlParameterSource parameters = getMapSqlParameterSource(user);
+        User response = userRepo.updateRole(parameters);
+        return mapper.convertToDto(response);
+    }
+
+    public UserDto updatePassword(UserDto userDto, String passwordConfirmation) throws Exception {
+        if (userRepo.getUserByEmail(userDto.getEmail()) == null) {
+            throw new Exception("User not exists with this email");
+        }
+        if (!userDto.getPassword().equals(passwordConfirmation)) {
+            throw new Exception("passwords is different");
+        }
         User user = mapper.convertToEntity(userDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         MapSqlParameterSource parameters = getMapSqlParameterSource(user);
-        User response = userRepo.updatePerson(parameters);
+        User response = userRepo.updatePassword(parameters);
         return mapper.convertToDto(response);
     }
 }

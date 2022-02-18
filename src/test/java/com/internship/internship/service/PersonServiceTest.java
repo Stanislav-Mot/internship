@@ -63,21 +63,6 @@ class PersonServiceTest {
     }
 
     @Test
-    void add() {
-        PersonDto personDto = new PersonDto(1L);
-        Person person = new Person(1L);
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-
-        when(mapper.convertToEntity(personDto)).thenReturn(person);
-        when(personRepo.addPerson(any(SqlParameterSource.class))).thenReturn(keyHolder);
-        when(mapper.getDtoFromHolder(any(KeyHolder.class))).thenReturn(personDto);
-
-        PersonDto result = personService.add(personDto);
-        assertEquals(personDto.getId(), result.getId());
-        verify(personRepo, times(1)).addPerson(any(MapSqlParameterSource.class));
-    }
-
-    @Test
     void update() {
         PersonDto personDto = newPersonDtoForTest();
         Person person = newPersonForTest();

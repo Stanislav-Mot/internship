@@ -52,15 +52,6 @@ class PersonRepoTest {
     }
 
     @Test
-    void addPerson() {
-        MapSqlParameterSource parameters = getMapSqlParameterSource(newPersonForTest());
-        personRepo.addPerson(parameters);
-        Iterable<Person> persons = personRepo.getAllPersons();
-        Assertions.assertThat(persons).extracting(Person::getFirstName).contains("Tester");
-        COUNT_PERSONS += 1;
-    }
-
-    @Test
     void updatePerson() {
         LocalDate localDate = LocalDate.of(2012, 12, 12);
         Person personForUpdate = new Person(ID_FOR_UPDATE, "firstNameUpdate", "lastNameUpdate", localDate, null);
@@ -86,30 +77,30 @@ class PersonRepoTest {
     }
 
     @Test
-    void search() {
-        Person person_one = new Person(null, "SearchTest", "SearchTest", LocalDate.MIN, null);
-        Person person_two = new Person(null, "TestSearch", "SearchTest", LocalDate.MIN, null);
-        Person person_three = new Person(null, "TestSearch", "SearchTest", LocalDate.MAX, null);
+//    void search() {
+//        Person person_one = new Person(null, "SearchTest", "SearchTest", LocalDate.MIN, null);
+//        Person person_two = new Person(null, "TestSearch", "SearchTest", LocalDate.MIN, null);
+//        Person person_three = new Person(null, "TestSearch", "SearchTest", LocalDate.MAX, null);
+//
+//        personRepo.addPerson(getMapSqlParameterSource(person_one));
+//        personRepo.addPerson(getMapSqlParameterSource(person_two));
+//        personRepo.addPerson(getMapSqlParameterSource(person_three));
+//
+//        List<Person> personList = personRepo.search(getMapSqlParameterSource(new SearchPersonDto("SearchTest", null, null, null, null)));
+//        assertEquals(1, personList.size());
+//        personList = personRepo.search(getMapSqlParameterSource(new SearchPersonDto(null, null, null, 29, 39)));
+//        assertEquals(4, personList.size());
+//    }
 
-        personRepo.addPerson(getMapSqlParameterSource(person_one));
-        personRepo.addPerson(getMapSqlParameterSource(person_two));
-        personRepo.addPerson(getMapSqlParameterSource(person_three));
-
-        List<Person> personList = personRepo.search(getMapSqlParameterSource(new SearchPersonDto("SearchTest", null, null, null, null)));
-        assertEquals(1, personList.size());
-        personList = personRepo.search(getMapSqlParameterSource(new SearchPersonDto(null, null, null, 29, 39)));
-        assertEquals(4, personList.size());
-    }
-
-    @Test
-    void searchByTokenInName() {
-        Person personForSearchByToken = newPersonForTest();
-        personForSearchByToken.setFirstName("VladIsLove");
-
-        personRepo.addPerson(getMapSqlParameterSource(personForSearchByToken));
-        List<Person> personList = personRepo.searchByTokenInName(getMapParamFromToken("IsLo"));
-        assertEquals(1, personList.size());
-    }
+//    @Test
+//    void searchByTokenInName() {
+//        Person personForSearchByToken = newPersonForTest();
+//        personForSearchByToken.setFirstName("VladIsLove");
+//
+//        personRepo.addPerson(getMapSqlParameterSource(personForSearchByToken));
+//        List<Person> personList = personRepo.searchByTokenInName(getMapParamFromToken("IsLo"));
+//        assertEquals(1, personList.size());
+//    }
 
     private MapSqlParameterSource getMapSqlParameterSource(Person person) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();

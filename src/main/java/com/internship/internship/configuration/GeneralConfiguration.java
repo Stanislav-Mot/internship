@@ -1,22 +1,16 @@
 package com.internship.internship.configuration;
 
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
-import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@SecurityScheme(
-        name = "bearerAuth",
-        type = SecuritySchemeType.HTTP,
-        bearerFormat = "JWT",
-        scheme = "bearer"
-)
 @Configuration
 public class GeneralConfiguration {
 
@@ -36,16 +30,21 @@ public class GeneralConfiguration {
     public OpenAPI customOpenApi(@Value("${application-description}") String appDescription,
                                  @Value("${application-version}") String appVersion) {
         return new OpenAPI()
+                .components(
+                        new Components().addSecuritySchemes("bearerAuth",
+                                new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT"))
+                )
+//                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .info(new Info().title("Application API")
-                .version(appVersion)
-                .description(appDescription)
-                .title("Task Tracker")
-                .license(new License().name("Apache 3.0")
-                        .url("http://springdoc.org"))
-                .contact(
-                        new Contact()
-                                .email(email)
-                                .url(url)
-                                .name(author)));
+                        .version(appVersion)
+                        .description(appDescription)
+                        .title("Task Tracker")
+                        .license(new License().name("Apache 3.0")
+                                .url("http://springdoc.org"))
+                        .contact(
+                                new Contact()
+                                        .email(email)
+                                        .url(url)
+                                        .name(author)));
     }
 }

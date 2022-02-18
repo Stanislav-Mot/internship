@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,22 +38,10 @@ public class PersonController {
 
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = {@ExampleObject(
-                    value = "{\"firstName\": \"Denis\", " +
-                            "\"lastName\": \"Denisov\", " +
-                            "\"birthdate\": \"1967-05-10\"}")}))
-    @Operation(summary = "Add new person")
-    @Validated(Transfer.New.class)
-    @PostMapping("/person")
-    @ResponseStatus(HttpStatus.CREATED)
-    public PersonDto add(@Valid @RequestBody PersonDto personDto) {
-        return personService.add(personDto);
-    }
-
-    @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            content = @Content(examples = {@ExampleObject(
                     value = "{\"id\": 1, " +
                             "\"firstName\": \"Denis\", " +
-                            "\"lastName\": \"Denisov\"}")}))
+                            "\"lastName\": \"Denisov\", " +
+                            "\"birthdate\": \"1967-05-10\"}")}))
     @Operation(summary = "Update person")
     @Validated(Transfer.Update.class)
     @PutMapping("/person")

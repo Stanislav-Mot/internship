@@ -11,8 +11,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,15 +31,8 @@ public class PersonRepo {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    public KeyHolder addPerson(SqlParameterSource parameters) {
-        String sql = "INSERT INTO person (firstname, lastname, birthdate) VALUES (:firstname, :lastname, :birthdate);";
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        namedParameterJdbcTemplate.update(sql, parameters, keyHolder);
-        return keyHolder;
-    }
-
     public Person updatePerson(SqlParameterSource parameters) {
-        String sql = "UPDATE person SET firstname = :firstname, lastname = :lastname WHERE id = :id;";
+        String sql = "UPDATE person SET firstname = :firstname, lastname = :lastname, birthdate = :birthdate WHERE id = :id;";
         namedParameterJdbcTemplate.update(sql, parameters);
         return getPersonById((Long) parameters.getValue("id"));
     }

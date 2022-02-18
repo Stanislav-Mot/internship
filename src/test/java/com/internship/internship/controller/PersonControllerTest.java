@@ -80,22 +80,6 @@ class PersonControllerTest {
     }
 
     @Test
-    void addPerson() throws Exception {
-        PersonDto person = newPersonDtoForTest();
-
-        Mockito.when(personService.add(any(PersonDto.class))).thenReturn(person);
-
-        mockMvc.perform(post("/person")
-                .content(asJsonString(person))
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$..firstName", Matchers.contains("Tester")));
-
-        verify(personService, times(1)).add(Mockito.any(PersonDto.class));
-    }
-
-    @Test
     void updatePerson() throws Exception {
         PersonDto person = newPersonDtoForTest();
         person.setId(CORRECT_ID);

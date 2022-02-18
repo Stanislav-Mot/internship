@@ -7,7 +7,6 @@ import com.internship.internship.mapper.PersonDtoMapper;
 import com.internship.internship.model.Person;
 import com.internship.internship.repository.PersonRepo;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -59,13 +58,6 @@ public class PersonService {
 
     public List<PersonDto> getAll() {
         return getPersonDtos(personRepo.getAllPersons());
-    }
-
-    public PersonDto add(PersonDto personDto) {
-        Person person = mapper.convertToEntity(personDto);
-        MapSqlParameterSource parameters = getMapSqlParameterSource(person);
-        KeyHolder keyHolder = personRepo.addPerson(parameters);
-        return mapper.getDtoFromHolder(keyHolder);
     }
 
     public PersonDto update(PersonDto personDto) {

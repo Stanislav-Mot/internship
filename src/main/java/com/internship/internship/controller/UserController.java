@@ -6,6 +6,7 @@ import com.internship.internship.transfer.Transfer;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
@@ -32,7 +33,8 @@ public class UserController {
         return userService.getById(id);
     }
 
-    @Secured("ROLE_USER")
+    @SecurityRequirement(name = "bearerAuth")
+    @Secured("ADMIN")
     @Operation(summary = "Get all users")
     @GetMapping("/user")
     public List<UserDto> getAll() {
@@ -52,11 +54,20 @@ public class UserController {
     }
 
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            content = @Content(examples = {@ExampleObject(value = "{\"id\": 7, \"password\": \"12345678\"}")}))
+            content = @Content(examples = {@ExampleObject(value = "{\"email\": \"test@test.com\", \"password\": \"12345678\", \"passwordConfirmation\": \"12345678\"}")}))
+    @Operation(summary = "Update user's password")
+    @Validated(Transfer.Update.class)
+    @PutMapping("/user/password")
+    public UserDto updatePassword(@Valid @RequestBody UserDto userDto, String passwordConfirmation) throws Exception {
+        return userService.updatePassword(userDto, passwordConfirmation);
+    }
+
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            content = @Content(examples = {@ExampleObject(value = "{\"email\": \"test@test.com\", \"roles\": \"ROLE_USER\"}")}))
     @Operation(summary = "Update user")
     @Validated(Transfer.Update.class)
-    @PutMapping("/user")
-    public UserDto update(@Valid @RequestBody UserDto userDto) {
-        return userService.update(userDto);
+    @PutMapping("/user/role")
+    public UserDto updateRole(@Valid @RequestBody UserDto userDto) throws Exception {
+        return userService.updateRole(userDto);
     }
 }

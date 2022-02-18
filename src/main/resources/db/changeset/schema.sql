@@ -1,9 +1,9 @@
 CREATE TABLE person
 (
     id        SERIAL PRIMARY KEY,
-    firstname VARCHAR(256) NOT NULL,
-    lastname  VARCHAR(256) NOT NULL,
-    birthdate DATE         NOT NULL
+    firstname VARCHAR(256),
+    lastname  VARCHAR(256),
+    birthdate DATE
 );
 
 CREATE TABLE group_of_tasks

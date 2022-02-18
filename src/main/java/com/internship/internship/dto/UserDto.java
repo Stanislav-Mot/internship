@@ -23,8 +23,4 @@ public class UserDto {
     private String password;
 
     private Set<Role> roles;
-
-    public UserDto(Long id) {
-        this.id = id;
-    }
 }
