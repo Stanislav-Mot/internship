@@ -27,8 +27,8 @@ public class GeneralConfiguration {
     }
 
     @Bean
-    public ACache<Long, Assignment> aCache(){
-        return new ACache<>();
+    public ACache aCache(){
+        return new ACache();
     }
 
     @Bean

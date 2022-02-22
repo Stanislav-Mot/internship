@@ -1,6 +1,6 @@
 package com.internship.internship.cache;
 
-import org.springframework.beans.factory.annotation.Value;
+import com.internship.internship.model.Assignment;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -9,29 +9,25 @@ import java.util.Iterator;
 import java.util.Map;
 
 @Component
-public class ACache<K,T> {
-    @Value("${application-cache-timeInterval}")
-    private long timeInterval;
-    @Value("${application-cache-timeToLive}")
-    private long timeToLive;
-    @Value("${application-cache-max}")
-    private int max;
+public class ACache {
+    //The interval is specified in seconds
+    private final long timeInterval = 5;
+    private final long timeToLive = 10;
+    private final int max = 10;
 
-    private HashMap<K, T> cacheMap;
+    private HashMap<Long, ACacheObject> cacheMap;
 
     protected class ACacheObject {
         public long lastAccessed = System.currentTimeMillis();
-        public String value;
+        public Assignment value;
 
-        protected ACacheObject(String value) {
+        protected ACacheObject(Assignment value) {
             this.value = value;
         }
     }
 
     public ACache() {
-        this.timeToLive = timeToLive * 2000;
-
-        cacheMap = new HashMap<K, T>(max);
+        cacheMap = new HashMap<>(max);
 
         if (timeToLive > 0 && timeInterval > 0) {
 
@@ -41,77 +37,72 @@ public class ACache<K,T> {
                         Thread.sleep(timeInterval * 1000);
                     } catch (InterruptedException ex) {
                     }
-
+                    cleanup();
                 }
             });
-
             t.setDaemon(true);
             t.start();
         }
     }
 
-    // PUT method
-    public void put(K key, T value) {
+    public void put(Long key, Assignment value) {
         synchronized (cacheMap) {
-            cacheMap.put(key, value);
+            cacheMap.put(key, new ACacheObject(value));
         }
     }
 
-    // GET method
     @SuppressWarnings("unchecked")
-    public T get(K key) {
+    public Assignment get(Long key) {
         synchronized (cacheMap) {
-            ACacheObject c = (ACacheObject) cacheMap.get(key);
-
+            ACacheObject c;
+            c =  cacheMap.get(key);
             if (c == null)
                 return null;
             else {
                 c.lastAccessed = System.currentTimeMillis();
-                return (T) c.value;
+                return c.value;
             }
         }
     }
 
-    // REMOVE method
     public void remove(String key) {
         synchronized (cacheMap) {
             cacheMap.remove(key);
         }
     }
 
-    // Get Cache Objects Size()
     public int size() {
         synchronized (cacheMap) {
             return cacheMap.size();
         }
     }
 
-    // CLEANUP method
     public void cleanup() {
 
         long now = System.currentTimeMillis();
-        ArrayList<String> deleteKey = null;
+        ArrayList<Long> deleteKey;
 
         synchronized (cacheMap) {
-            Iterator<?> itr = cacheMap.entrySet().iterator();
+            Iterator<Map.Entry<Long, ACacheObject>> itr = cacheMap.entrySet().iterator();
+            deleteKey = new ArrayList<>((cacheMap.size() / 2) + 1);
 
-            deleteKey = new ArrayList<String>((cacheMap.size() / 2) + 1);
-            ACacheObject c = null;
+            Long key;
+            ACacheObject c;
 
             while (itr.hasNext()) {
-                String key = (String) itr.next();
-                c = (ACacheObject) ((Map.Entry<?, ?>) itr).getValue();
-                if (c != null && (now > (timeToLive + c.lastAccessed))) {
+                Map.Entry<Long, ACacheObject> next = itr.next();
+                key = next.getKey();
+                c = next.getValue();
+                if (c != null && (now > ((timeToLive * 1000) + c.lastAccessed))) {
                     deleteKey.add(key);
                 }
             }
         }
 
-        for (String key : deleteKey) {
+        for (Long key : deleteKey) {
             synchronized (cacheMap) {
                 cacheMap.remove(key);
             }
-
             Thread.yield();
         }
     }
