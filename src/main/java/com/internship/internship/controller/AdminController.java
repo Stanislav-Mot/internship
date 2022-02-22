@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class LoginController {
+public class AdminController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtTokenUtil;
     private final UserService userDetailsService;
 
-    public LoginController(AuthenticationManager authenticationManager, JwtService jwtTokenUtil, UserService userDetailsService) {
+    public AdminController(AuthenticationManager authenticationManager, JwtService jwtTokenUtil, UserService userDetailsService) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
         this.userDetailsService = userDetailsService;
@@ -40,5 +40,7 @@ public class LoginController {
 
         return ResponseEntity.ok(new AuthenticationResponse(jwt, userDetails));
     }
+
+
 }
 
