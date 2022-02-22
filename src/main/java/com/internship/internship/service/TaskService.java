@@ -1,8 +1,10 @@
 package com.internship.internship.service;
 
+import com.internship.internship.cache.ACache;
 import com.internship.internship.dto.TaskDto;
 import com.internship.internship.dto.search.SearchTaskDto;
 import com.internship.internship.mapper.TaskDtoMapper;
+import com.internship.internship.model.Assignment;
 import com.internship.internship.model.Task;
 import com.internship.internship.repository.TaskRepo;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -18,10 +20,12 @@ public class TaskService {
 
     private final TaskRepo taskRepo;
     private final TaskDtoMapper mapper;
+    private final ACache aCache;
 
-    public TaskService(TaskRepo taskRepo, TaskDtoMapper mapper) {
+    public TaskService(TaskRepo taskRepo, TaskDtoMapper mapper, ACache aCache) {
         this.taskRepo = taskRepo;
         this.mapper = mapper;
+        this.aCache = aCache;
     }
 
     private MapSqlParameterSource getMapSqlParameterSource(Task task) {
@@ -56,7 +60,15 @@ public class TaskService {
     }
 
     public TaskDto getById(Long id) {
-        return mapper.convertToDto(taskRepo.getTaskById(id));
+        TaskDto taskDto;
+        if((taskDto = (TaskDto) aCache.get(id)) != null){
+            System.out.println("Caches");
+        }else {
+            taskDto = mapper.convertToDto(taskRepo.getTaskById(id));
+            aCache.put(taskDto.getId(), taskDto);
+            System.out.println("BD without");
+        }
+        return taskDto;
     }
 
     public List<TaskDto> getAll() {

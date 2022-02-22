@@ -1,6 +1,7 @@
 package com.internship.internship.configuration;
 
 import io.swagger.v3.oas.models.Components;
+import com.internship.internship.cache.ACache;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
@@ -24,6 +25,11 @@ public class GeneralConfiguration {
     @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();
+    }
+
+    @Bean
+    public ACache aCache(){
+        return new ACache();
     }
 
     @Bean
