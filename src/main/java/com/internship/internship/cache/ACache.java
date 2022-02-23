@@ -15,16 +15,7 @@ public class ACache {
     private final long timeToLive = 10;
     private final int max = 10;
 
-    private HashMap<Long, ACacheObject> cacheMap;
-
-    protected class ACacheObject {
-        public long lastAccessed = System.currentTimeMillis();
-        public Assignment value;
-
-        protected ACacheObject(Assignment value) {
-            this.value = value;
-        }
-    }
+    private final HashMap<Long, ACacheObject> cacheMap;
 
     public ACache() {
         cacheMap = new HashMap<>(max);
@@ -55,7 +46,7 @@ public class ACache {
     public Assignment get(Long key) {
         synchronized (cacheMap) {
             ACacheObject c;
-            c =  cacheMap.get(key);
+            c = cacheMap.get(key);
             if (c == null)
                 return null;
             else {
@@ -104,6 +95,15 @@ public class ACache {
                 cacheMap.remove(key);
             }
             Thread.yield();
+        }
+    }
+
+    protected class ACacheObject {
+        public long lastAccessed = System.currentTimeMillis();
+        public Assignment value;
+
+        protected ACacheObject(Assignment value) {
+            this.value = value;
         }
     }
 }

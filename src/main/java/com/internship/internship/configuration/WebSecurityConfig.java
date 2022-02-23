@@ -4,7 +4,6 @@ import com.internship.internship.filter.JwtRequestFilter;
 import com.internship.internship.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Role;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -58,7 +57,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
         http
                 .authorizeRequests()
                 .antMatchers().permitAll()
-                .antMatchers("/user").authenticated()
+                .anyRequest().permitAll()
                 .and()
                 .exceptionHandling().and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);

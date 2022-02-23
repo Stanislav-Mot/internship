@@ -7,7 +7,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -83,5 +85,12 @@ public class TaskController {
     @PutMapping("/task/{id}/progress")
     public TaskDto updateProgress(@RequestBody Integer progress, @PathVariable Long id) {
         return taskService.updateProgress(id, progress);
+    }
+
+    @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("/task/{id}")
+    public TaskDto delete(@PathVariable Long id) {
+        return taskService.delete(id);
     }
 }

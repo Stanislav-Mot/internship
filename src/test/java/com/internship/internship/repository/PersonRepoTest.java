@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.internship.internship.util.Helper.newPersonForTest;
 import static org.assertj.core.api.Assertions.from;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -34,10 +33,9 @@ class PersonRepoTest {
     private final Long ID_FOR_DELETE = 4L;
     private final Long ID_GROUP_FOR_ADD = 2L;
     private final Long ID_GROUP_FOR_DELETE = 3L;
+    private final Integer COUNT_PERSONS = 4;
     @Autowired
     private PersonRepo personRepo;
-
-    private Integer COUNT_PERSONS = 4;
 
     @Test
     void getPersonById() {

@@ -93,4 +93,11 @@ public class PersonService {
     private List<PersonDto> getPersonDtos(List<Person> list) {
         return list.stream().map(x -> mapper.convertToDto(x)).collect(Collectors.toList());
     }
+
+    public void delete(Long id) {
+        Integer answer = personRepo.delete(id);
+        if (answer < 1) {
+            throw new ChangesNotAppliedExemption(String.format("Person id: %d is not found", id));
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package com.internship.internship.service;
 
 import com.internship.internship.dto.UserDto;
+import com.internship.internship.exeption.ChangesNotAppliedExemption;
 import com.internship.internship.mapper.UserDtoMapper;
 import com.internship.internship.model.Role;
 import com.internship.internship.model.User;
@@ -37,7 +38,7 @@ public class UserService implements UserDetailsService {
         parameters.addValue("id", user.getId());
         parameters.addValue("email", user.getEmail());
         parameters.addValue("password", user.getPassword());
-        parameters.addValue("roles", user.getRoles());
+        parameters.addValue("role", user.getRoles().stream().findFirst().get().name());
         return parameters;
     }
 
@@ -58,27 +59,36 @@ public class UserService implements UserDetailsService {
     }
 
     public List<UserDto> getAll() {
-        return userRepo.getAll().stream().map(x -> mapper.convertToDto(x)).collect(Collectors.toList());
+        List<User> all = userRepo.getAll();
+        for (User user : all) {
+            user.setRoles(userRepo.getRoles(user.getId()));
+            user.setPassword("hidden");
+        }
+        return all.stream().map(x -> mapper.convertToDto(x)).collect(Collectors.toList());
     }
 
-    public UserDto add(UserDto userDto) throws Exception {
+    @Transactional
+    public UserDto add(UserDto userDto) {
         User user = mapper.convertToEntity(userDto);
         if (userRepo.getUserByEmail(user.getEmail()) != null) {
-            throw new Exception("User already exists with this email");
+            throw new ChangesNotAppliedExemption("User already exists with this email");
         }
-        user.setRoles(Collections.singleton(Role.ROLE_USER));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         MapSqlParameterSource parameters = getMapSqlParameterSource(user);
         KeyHolder keyHolder = userRepo.addUser(parameters);
         UserDto response = mapper.convertToDto(keyHolder);
-        response.setPassword(null);
+
+        response.setRoles(Collections.singleton(Role.ROLE_USER));
+        userRepo.setRole(response.getId(), Role.ROLE_USER);
+
+        response.setPassword("hidden");
         return response;
     }
 
-    public UserDto updateRole(UserDto userDto) throws Exception {
+    public UserDto updateRole(UserDto userDto) {
         if (userRepo.getUserByEmail(userDto.getEmail()) == null) {
-            throw new Exception("User not exists with this email");
+            throw new ChangesNotAppliedExemption("User not exists with this email");
         }
         User user = mapper.convertToEntity(userDto);
         MapSqlParameterSource parameters = getMapSqlParameterSource(user);
@@ -86,12 +96,14 @@ public class UserService implements UserDetailsService {
         return mapper.convertToDto(response);
     }
 
-    public UserDto updatePassword(UserDto userDto, String passwordConfirmation) throws Exception {
+    public UserDto updatePassword(UserDto userDto) {
         if (userRepo.getUserByEmail(userDto.getEmail()) == null) {
-            throw new Exception("User not exists with this email");
+            throw new ChangesNotAppliedExemption("User not exists with this email");
+
         }
-        if (!userDto.getPassword().equals(passwordConfirmation)) {
-            throw new Exception("passwords is different");
+        if (!userDto.getPassword().equals(userDto.getPasswordConfirmation())) {
+            throw new ChangesNotAppliedExemption("passwords is different");
+
         }
         User user = mapper.convertToEntity(userDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));

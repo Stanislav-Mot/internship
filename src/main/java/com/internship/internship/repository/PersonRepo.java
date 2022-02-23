@@ -94,4 +94,15 @@ public class PersonRepo {
         String sql = "SELECT * FROM person WHERE LOWER(CONCAT(firstname, ' ' , lastname)) LIKE LOWER(:token)";
         return namedParameterJdbcTemplate.query(sql, params, new PersonMapper());
     }
+
+    public Integer unbindGroupFromUser(Long id) {
+        String sql = "DELETE FROM person_group WHERE id_group = ?";
+        return jdbcTemplate.update(sql, id);
+    }
+
+    public Integer delete(Long id) {
+        unbindGroupFromUser(id);
+        String sql = "DELETE FROM person WHERE id = ?";
+        return jdbcTemplate.update(sql, id);
+    }
 }

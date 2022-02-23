@@ -130,4 +130,9 @@ public class GroupRepo {
         String sql = "UPDATE group_of_tasks SET id_parent = NULL WHERE id_parent = ? AND id = ?";
         return jdbcTemplate.update(sql, id, idGroup);
     }
+
+    public Integer delete(Long id) {
+        String sql = "DELETE FROM group_of_tasks WHERE id = ?";
+        return jdbcTemplate.update(sql, id);
+    }
 }

@@ -1,5 +1,6 @@
 package com.internship.internship.service;
 
+import com.internship.internship.cache.ACache;
 import com.internship.internship.dto.GroupDto;
 import com.internship.internship.exeption.ChangesNotAppliedExemption;
 import com.internship.internship.mapper.GroupDtoMapper;
@@ -19,11 +20,13 @@ public class GroupService {
     private final GroupRepo groupRepo;
     private final TaskRepo taskRepo;
     private final GroupDtoMapper mapper;
+    private final ACache aCache;
 
-    public GroupService(GroupRepo groupRepo, GroupDtoMapper mapper, TaskRepo taskRepo) {
+    public GroupService(GroupRepo groupRepo, GroupDtoMapper mapper, TaskRepo taskRepo, ACache aCache) {
         this.groupRepo = groupRepo;
         this.mapper = mapper;
         this.taskRepo = taskRepo;
+        this.aCache = aCache;
     }
 
     private MapSqlParameterSource getMapSqlParameterSource(GroupDto groupDto) {
@@ -121,5 +124,17 @@ public class GroupService {
         if (answer < 1) {
             throw new ChangesNotAppliedExemption(String.format("Group Id %d or %d is not found", id, groupId));
         }
+    }
+
+    public GroupDto delete(Long id) {
+        GroupDto groupDto;
+
+        Integer answer = groupRepo.delete(id);
+        if (answer < 1) {
+            throw new ChangesNotAppliedExemption(String.format("Task id: %d is not found", id));
+        } else {
+            groupDto = (GroupDto) aCache.get(id);
+        }
+        return groupDto;
     }
 }

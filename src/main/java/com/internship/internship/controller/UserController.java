@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +27,8 @@ public class UserController {
         this.userService = userService;
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Get user by id")
     @GetMapping("/user/{id}")
     public UserDto getId(@PathVariable Long id) {
@@ -34,7 +36,7 @@ public class UserController {
     }
 
     @SecurityRequirement(name = "bearerAuth")
-    @Secured("ADMIN")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Get all users")
     @GetMapping("/user")
     public List<UserDto> getAll() {
@@ -42,14 +44,15 @@ public class UserController {
     }
 
 
-    @Secured("ROLE_ADMIN")
+    @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = {@ExampleObject(value = "{\"email\": \"user@user.com\", \"password\": \"12345678\"}")}))
     @Operation(summary = "Add new user")
     @Validated(Transfer.New.class)
     @PostMapping("/user")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto add(@Valid @RequestBody UserDto userDto) throws Exception {
+    public UserDto add(@Valid @RequestBody UserDto userDto) {
         return userService.add(userDto);
     }
 
@@ -58,16 +61,15 @@ public class UserController {
     @Operation(summary = "Update user's password")
     @Validated(Transfer.Update.class)
     @PutMapping("/user/password")
-    public UserDto updatePassword(@Valid @RequestBody UserDto userDto, String passwordConfirmation) throws Exception {
-        return userService.updatePassword(userDto, passwordConfirmation);
+    public UserDto updatePassword(@Valid @RequestBody UserDto userDto) throws Exception {
+        return userService.updatePassword(userDto);
     }
 
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            content = @Content(examples = {@ExampleObject(value = "{\"email\": \"test@test.com\", \"roles\": \"ROLE_USER\"}")}))
+            content = @Content(examples = {@ExampleObject(value = "{\"email\": \"test@test.com\", \"roles\": [ \"ROLE_USER\" ]}")}))
     @Operation(summary = "Update user")
-    @Validated(Transfer.Update.class)
     @PutMapping("/user/role")
-    public UserDto updateRole(@Valid @RequestBody UserDto userDto) throws Exception {
+    public UserDto updateRole(@Valid @RequestBody UserDto userDto) {
         return userService.updateRole(userDto);
     }
 }

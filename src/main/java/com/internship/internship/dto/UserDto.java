@@ -1,6 +1,7 @@
 package com.internship.internship.dto;
 
 import com.internship.internship.model.Role;
+import com.internship.internship.transfer.Transfer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,11 +17,14 @@ public class UserDto {
     private Long id;
 
     @Email(message = "Incorrect email")
-    @NotBlank(message = "Email is required")
+    @NotBlank(message = "Email is required", groups = {Transfer.New.class, Transfer.Update.class})
     private String email;
 
-    @NotBlank(message = "Password is required")
+    @NotBlank(message = "Password is required", groups = {Transfer.New.class})
     private String password;
+
+    @NotBlank(message = "passwordConfirmation is required", groups = {Transfer.Update.class})
+    private String passwordConfirmation;
 
     private Set<Role> roles;
 }

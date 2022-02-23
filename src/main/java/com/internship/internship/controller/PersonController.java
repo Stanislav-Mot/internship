@@ -6,7 +6,9 @@ import com.internship.internship.transfer.Transfer;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,5 +61,12 @@ public class PersonController {
     @PutMapping("/person/{personId}/deleteGroup/{groupId}")
     public void deleteGroupFromPerson(@PathVariable Long personId, @PathVariable Long groupId) {
         personService.deleteGroup(personId, groupId);
+    }
+
+    @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("/person/{id}")
+    public void delete(@PathVariable Long id) {
+        personService.delete(id);
     }
 }

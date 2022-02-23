@@ -52,6 +52,7 @@ public class UserRepo {
         try {
             User user = jdbcTemplate.queryForObject(sql, new UserMapper(), id);
             user.setRoles(getRoles(user.getId()));
+            user.setPassword("hidden");
             return user;
         } catch (EmptyResultDataAccessException exception) {
             LOGGER.warn("handling 404 error on getUserById method");
@@ -59,7 +60,7 @@ public class UserRepo {
         }
     }
 
-    private Set<Role> getRoles(Long id) {
+    public Set<Role> getRoles(Long id) {
         String sql = "SELECT role FROM user_role where user_id = ?";
         Map<String, Object> maps = jdbcTemplate.queryForMap(sql, id);
 
@@ -73,6 +74,7 @@ public class UserRepo {
         try {
             User user = jdbcTemplate.queryForObject(sql, new UserMapper(), email);
             user.setRoles(getRoles(user.getId()));
+            user.setPassword("hidden");
             return user;
         } catch (EmptyResultDataAccessException exception) {
             return null;
@@ -81,13 +83,17 @@ public class UserRepo {
 
     public List<User> getAll() {
         String sql = "SELECT * FROM person";
-        List<User> users = jdbcTemplate.query(sql, new UserMapper());
-        return users;
+        return jdbcTemplate.query(sql, new UserMapper());
     }
 
     public User updateRole(MapSqlParameterSource parameters) {
-        String sql = "INSERT INTO user_role (user_id, role) VALUES ((Select id from person where email = :email),:roles)";
+        String sql = "UPDATE user_role set role =:role where user_id = (Select id from person where email = :email)";
         namedParameterJdbcTemplate.update(sql, parameters);
         return getUserByEmail((String) parameters.getValue("email"));
+    }
+
+    public void setRole(Long id, Role roles) {
+        String sql = "INSERT INTO user_role(user_id, role) VALUES (?, ?);";
+        jdbcTemplate.update(sql, id, roles.name());
     }
 }

@@ -3,8 +3,8 @@ package com.internship.internship.service;
 import com.internship.internship.cache.ACache;
 import com.internship.internship.dto.TaskDto;
 import com.internship.internship.dto.search.SearchTaskDto;
+import com.internship.internship.exeption.ChangesNotAppliedExemption;
 import com.internship.internship.mapper.TaskDtoMapper;
-import com.internship.internship.model.Assignment;
 import com.internship.internship.model.Task;
 import com.internship.internship.repository.TaskRepo;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -61,9 +61,9 @@ public class TaskService {
 
     public TaskDto getById(Long id) {
         TaskDto taskDto;
-        if((taskDto = (TaskDto) aCache.get(id)) != null){
+        if ((taskDto = (TaskDto) aCache.get(id)) != null) {
             System.out.println("Caches");
-        }else {
+        } else {
             taskDto = mapper.convertToDto(taskRepo.getTaskById(id));
             aCache.put(taskDto.getId(), taskDto);
             System.out.println("BD without");
@@ -110,5 +110,17 @@ public class TaskService {
     public TaskDto updateProgress(Long id, Integer progress) {
         Task task = taskRepo.updateProgress(id, progress);
         return mapper.convertToDto(task);
+    }
+
+    public TaskDto delete(Long id) {
+        TaskDto taskDto;
+
+        Integer answer = taskRepo.delete(id);
+        if (answer < 1) {
+            throw new ChangesNotAppliedExemption(String.format("Task id: %d is not found", id));
+        } else {
+            taskDto = (TaskDto) aCache.get(id);
+        }
+        return taskDto;
     }
 }

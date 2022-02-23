@@ -1,3 +1,5 @@
+CREATE SEQUENCE serial START 101;
+
 CREATE TABLE person
 (
     id        SERIAL PRIMARY KEY,
@@ -8,7 +10,7 @@ CREATE TABLE person
 
 CREATE TABLE group_of_tasks
 (
-    id        SERIAL PRIMARY KEY,
+    id        INT8 PRIMARY KEY DEFAULT nextval('serial'),
     name      VARCHAR(256) NOT NULL,
     id_parent INT8,
     FOREIGN KEY (id_parent) REFERENCES group_of_tasks (id)
@@ -16,7 +18,7 @@ CREATE TABLE group_of_tasks
 
 CREATE TABLE task
 (
-    id          SERIAL PRIMARY KEY,
+    id          INT8 PRIMARY KEY DEFAULT nextval('serial'),
     name        VARCHAR(256) NOT NULL,
     start_time  TIMESTAMP,
     description VARCHAR(256),

@@ -106,4 +106,9 @@ public class TaskRepo {
         return jdbcTemplate.update(sql, id);
 
     }
+
+    public Integer delete(Long id) {
+        String sql = "DELETE FROM task WHERE id = ?";
+        return jdbcTemplate.update(sql, id);
+    }
 }
