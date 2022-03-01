@@ -46,6 +46,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
         http = http.csrf().disable();
         http = http.cors().disable();
 
+        // .
         // Set unauthorized requests exception handler
         http = http
                 .exceptionHandling()
