@@ -1,8 +1,7 @@
 package com.internship.internship.service;
 
-import com.internship.internship.cache.ACache;
 import com.internship.internship.dto.GroupDto;
-import com.internship.internship.exeption.ChangesNotAppliedExemption;
+import com.internship.internship.exeption.ChangesNotAppliedException;
 import com.internship.internship.mapper.GroupDtoMapper;
 import com.internship.internship.model.Group;
 import com.internship.internship.repository.GroupRepo;
@@ -20,13 +19,13 @@ public class GroupService {
     private final GroupRepo groupRepo;
     private final TaskRepo taskRepo;
     private final GroupDtoMapper mapper;
-    private final ACache aCache;
+    private final CacheService cacheService;
 
-    public GroupService(GroupRepo groupRepo, GroupDtoMapper mapper, TaskRepo taskRepo, ACache aCache) {
+    public GroupService(GroupRepo groupRepo, GroupDtoMapper mapper, TaskRepo taskRepo, CacheService cacheService) {
         this.groupRepo = groupRepo;
         this.mapper = mapper;
         this.taskRepo = taskRepo;
-        this.aCache = aCache;
+        this.cacheService = cacheService;
     }
 
     private MapSqlParameterSource getMapSqlParameterSource(GroupDto groupDto) {
@@ -66,7 +65,7 @@ public class GroupService {
 
     public GroupDto addTask(Long id, Long taskId) {
         if (taskRepo.getTaskById(taskId) == null || groupRepo.getGroupById(id) == null) {
-            throw new ChangesNotAppliedExemption(String.format("id: %d or %d is not found", id, taskId));
+            throw new ChangesNotAppliedException(String.format("id: %d or %d is not found", id, taskId));
         }
         Group group = groupRepo.addTaskToGroup(id, taskId);
         if (group != null) {
@@ -78,24 +77,24 @@ public class GroupService {
     public void deleteTask(Long id, Long taskId) {
         Integer answer = groupRepo.deleteTaskFromGroup(id, taskId);
         if (answer < 1) {
-            throw new ChangesNotAppliedExemption(String.format("Group Id %d or Task id %d is not found", id, taskId));
+            throw new ChangesNotAppliedException(String.format("Group Id %d or Task id %d is not found", id, taskId));
         }
     }
 
     public GroupDto addGroup(Long id, Long groupId) {
         if (id == groupId) {
-            throw new ChangesNotAppliedExemption("group cannot refer to itself");
+            throw new ChangesNotAppliedException("group cannot refer to itself");
         }
 
         Group inGroup = groupRepo.getGroupById(id);
         Group fromGroup = groupRepo.getGroupById(groupId);
 
         if (inGroup == null || fromGroup == null) {
-            throw new ChangesNotAppliedExemption(String.format("Group with id: %d or %d is not found", id, groupId));
+            throw new ChangesNotAppliedException(String.format("Group with id: %d or %d is not found", id, groupId));
         }
 
         if (checkCyclicDependency(id, groupId)) {
-            throw new ChangesNotAppliedExemption("cyclic dependency");
+            throw new ChangesNotAppliedException("cyclic dependency");
         }
 
         Group group = groupRepo.addGroupToGroup(id, groupId);
@@ -122,7 +121,7 @@ public class GroupService {
     public void deleteGroup(Long id, Long groupId) {
         Integer answer = groupRepo.deleteGroupFromGroup(id, groupId);
         if (answer < 1) {
-            throw new ChangesNotAppliedExemption(String.format("Group Id %d or %d is not found", id, groupId));
+            throw new ChangesNotAppliedException(String.format("Group Id %d or %d is not found", id, groupId));
         }
     }
 
@@ -131,9 +130,9 @@ public class GroupService {
 
         Integer answer = groupRepo.delete(id);
         if (answer < 1) {
-            throw new ChangesNotAppliedExemption(String.format("Task id: %d is not found", id));
+            throw new ChangesNotAppliedException(String.format("Task id: %d is not found", id));
         } else {
-            groupDto = (GroupDto) aCache.get(id);
+            groupDto = (GroupDto) cacheService.get(id);
         }
         return groupDto;
     }

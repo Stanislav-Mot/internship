@@ -1,7 +1,7 @@
 package com.internship.internship.service;
 
 import com.internship.internship.dto.UserDto;
-import com.internship.internship.exeption.ChangesNotAppliedExemption;
+import com.internship.internship.exeption.ChangesNotAppliedException;
 import com.internship.internship.mapper.UserDtoMapper;
 import com.internship.internship.model.Role;
 import com.internship.internship.model.User;
@@ -71,7 +71,7 @@ public class UserService implements UserDetailsService {
     public UserDto add(UserDto userDto) {
         User user = mapper.convertToEntity(userDto);
         if (userRepo.getUserByEmail(user.getEmail()) != null) {
-            throw new ChangesNotAppliedExemption("User already exists with this email");
+            throw new ChangesNotAppliedException("User already exists with this email");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
@@ -88,7 +88,7 @@ public class UserService implements UserDetailsService {
 
     public UserDto updateRole(UserDto userDto) {
         if (userRepo.getUserByEmail(userDto.getEmail()) == null) {
-            throw new ChangesNotAppliedExemption("User not exists with this email");
+            throw new ChangesNotAppliedException("User not exists with this email");
         }
         User user = mapper.convertToEntity(userDto);
         MapSqlParameterSource parameters = getMapSqlParameterSource(user);
@@ -98,11 +98,11 @@ public class UserService implements UserDetailsService {
 
     public UserDto updatePassword(UserDto userDto) {
         if (userRepo.getUserByEmail(userDto.getEmail()) == null) {
-            throw new ChangesNotAppliedExemption("User not exists with this email");
+            throw new ChangesNotAppliedException("User not exists with this email");
 
         }
         if (!userDto.getPassword().equals(userDto.getPasswordConfirmation())) {
-            throw new ChangesNotAppliedExemption("passwords is different");
+            throw new ChangesNotAppliedException("passwords is different");
 
         }
         User user = mapper.convertToEntity(userDto);

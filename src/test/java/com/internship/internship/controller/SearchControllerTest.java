@@ -56,11 +56,11 @@ class SearchControllerTest {
         Mockito.when(personService.search(any(SearchPersonDto.class))).thenReturn(list);
 
         mockMvc.perform(get("/search/person")
-                .param("firstName", "1")
-                .param("lastName", "1")
-                .param("exactAge", "1")
-                .param("rangeAgeStart", "1")
-                .param("rangeAgeEnd", "1"))
+                        .param("firstName", "1")
+                        .param("lastName", "1")
+                        .param("exactAge", "1")
+                        .param("rangeAgeStart", "1")
+                        .param("rangeAgeEnd", "1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..firstName", Matchers.contains("Tester")));
 
@@ -75,11 +75,11 @@ class SearchControllerTest {
         Mockito.when(taskService.search(any(SearchTaskDto.class))).thenReturn(list);
 
         mockMvc.perform(get("/search/task")
-                .param("name", "1")
-                .param("fromProgress", "1")
-                .param("toProgress", "1")
-                .param("minStartTime", "2012-02-02")
-                .param("maxStartTime", "2012-02-02"))
+                        .param("name", "1")
+                        .param("fromProgress", "1")
+                        .param("toProgress", "1")
+                        .param("minStartTime", "2012-02-02")
+                        .param("maxStartTime", "2012-02-02"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..name", Matchers.contains("Tester")));
 
@@ -95,7 +95,7 @@ class SearchControllerTest {
         Mockito.when(personService.searchByTokenInName(token)).thenReturn(list);
 
         mockMvc.perform(get("/search/personByToken")
-                .param("token", token))
+                        .param("token", token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$..firstName", Matchers.contains("Tester")));
 

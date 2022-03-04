@@ -2,7 +2,7 @@ package com.internship.internship.service;
 
 import com.internship.internship.dto.PersonDto;
 import com.internship.internship.dto.search.SearchPersonDto;
-import com.internship.internship.exeption.ChangesNotAppliedExemption;
+import com.internship.internship.exeption.ChangesNotAppliedException;
 import com.internship.internship.mapper.PersonDtoMapper;
 import com.internship.internship.model.Person;
 import com.internship.internship.repository.PersonRepo;
@@ -70,7 +70,7 @@ public class PersonService {
     public void deleteGroup(Long personId, Long groupId) {
         Integer answer = personRepo.deleteGroupFromPerson(personId, groupId);
         if (answer < 1) {
-            throw new ChangesNotAppliedExemption(String.format("Person id: %d or Group id %d is wrong", personId, groupId));
+            throw new ChangesNotAppliedException(String.format("Person id: %d or Group id %d is wrong", personId, groupId));
         }
     }
 
@@ -97,7 +97,7 @@ public class PersonService {
     public void delete(Long id) {
         Integer answer = personRepo.delete(id);
         if (answer < 1) {
-            throw new ChangesNotAppliedExemption(String.format("Person id: %d is not found", id));
+            throw new ChangesNotAppliedException(String.format("Person id: %d is not found", id));
         }
     }
 }

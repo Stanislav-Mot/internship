@@ -1,6 +1,6 @@
 package com.internship.internship.configuration;
 
-import com.internship.internship.cache.ACache;
+import com.internship.internship.service.CacheService;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
@@ -28,8 +28,8 @@ public class GeneralConfiguration {
     }
 
     @Bean
-    public ACache aCache() {
-        return new ACache();
+    public CacheService aCache() {
+        return new CacheService();
     }
 
     @Bean

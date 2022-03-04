@@ -30,8 +30,6 @@ class PersonRepoTest {
 
     private final Long ID_FOR_GET = 1L;
     private final Long ID_FOR_UPDATE = 2L;
-    private final Long ID_FOR_DELETE = 4L;
-    private final Long ID_GROUP_FOR_ADD = 2L;
     private final Long ID_GROUP_FOR_DELETE = 3L;
     private final Integer COUNT_PERSONS = 4;
     @Autowired
@@ -73,32 +71,6 @@ class PersonRepoTest {
         List<Group> groups = personRepo.getGroupsById(ID_FOR_GET);
         Assertions.assertThat(groups).extracting(Group::getName).contains("testGroup");
     }
-
-    @Test
-//    void search() {
-//        Person person_one = new Person(null, "SearchTest", "SearchTest", LocalDate.MIN, null);
-//        Person person_two = new Person(null, "TestSearch", "SearchTest", LocalDate.MIN, null);
-//        Person person_three = new Person(null, "TestSearch", "SearchTest", LocalDate.MAX, null);
-//
-//        personRepo.addPerson(getMapSqlParameterSource(person_one));
-//        personRepo.addPerson(getMapSqlParameterSource(person_two));
-//        personRepo.addPerson(getMapSqlParameterSource(person_three));
-//
-//        List<Person> personList = personRepo.search(getMapSqlParameterSource(new SearchPersonDto("SearchTest", null, null, null, null)));
-//        assertEquals(1, personList.size());
-//        personList = personRepo.search(getMapSqlParameterSource(new SearchPersonDto(null, null, null, 29, 39)));
-//        assertEquals(4, personList.size());
-//    }
-
-//    @Test
-//    void searchByTokenInName() {
-//        Person personForSearchByToken = newPersonForTest();
-//        personForSearchByToken.setFirstName("VladIsLove");
-//
-//        personRepo.addPerson(getMapSqlParameterSource(personForSearchByToken));
-//        List<Person> personList = personRepo.searchByTokenInName(getMapParamFromToken("IsLo"));
-//        assertEquals(1, personList.size());
-//    }
 
     private MapSqlParameterSource getMapSqlParameterSource(Person person) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();

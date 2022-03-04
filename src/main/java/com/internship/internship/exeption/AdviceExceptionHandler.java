@@ -23,7 +23,7 @@ public class AdviceExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new ErrorDetails(new Date(), exception.getMessage(), request.getDescription(false)), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(ChangesNotAppliedExemption.class)
+    @ExceptionHandler(ChangesNotAppliedException.class)
     public ResponseEntity<ErrorDetails> changeNotAppliedExemptionHandling(Exception exception, WebRequest request) {
         return new ResponseEntity<>(new ErrorDetails(new Date(), exception.getMessage(), request.getDescription(false)), HttpStatus.NOT_FOUND);
     }

@@ -1,9 +1,8 @@
 package com.internship.internship.service;
 
-import com.internship.internship.cache.ACache;
 import com.internship.internship.dto.TaskDto;
 import com.internship.internship.dto.search.SearchTaskDto;
-import com.internship.internship.exeption.ChangesNotAppliedExemption;
+import com.internship.internship.exeption.ChangesNotAppliedException;
 import com.internship.internship.mapper.TaskDtoMapper;
 import com.internship.internship.model.Task;
 import com.internship.internship.repository.TaskRepo;
@@ -20,12 +19,12 @@ public class TaskService {
 
     private final TaskRepo taskRepo;
     private final TaskDtoMapper mapper;
-    private final ACache aCache;
+    private final CacheService cacheService;
 
-    public TaskService(TaskRepo taskRepo, TaskDtoMapper mapper, ACache aCache) {
+    public TaskService(TaskRepo taskRepo, TaskDtoMapper mapper, CacheService cacheService) {
         this.taskRepo = taskRepo;
         this.mapper = mapper;
-        this.aCache = aCache;
+        this.cacheService = cacheService;
     }
 
     private MapSqlParameterSource getMapSqlParameterSource(Task task) {
@@ -61,11 +60,11 @@ public class TaskService {
 
     public TaskDto getById(Long id) {
         TaskDto taskDto;
-        if ((taskDto = (TaskDto) aCache.get(id)) != null) {
+        if ((taskDto = (TaskDto) cacheService.get(id)) != null) {
             System.out.println("Caches");
         } else {
             taskDto = mapper.convertToDto(taskRepo.getTaskById(id));
-            aCache.put(taskDto.getId(), taskDto);
+            cacheService.put(taskDto.getId(), taskDto);
             System.out.println("BD without");
         }
         return taskDto;
@@ -117,9 +116,9 @@ public class TaskService {
 
         Integer answer = taskRepo.delete(id);
         if (answer < 1) {
-            throw new ChangesNotAppliedExemption(String.format("Task id: %d is not found", id));
+            throw new ChangesNotAppliedException(String.format("Task id: %d is not found", id));
         } else {
-            taskDto = (TaskDto) aCache.get(id);
+            taskDto = (TaskDto) cacheService.get(id);
         }
         return taskDto;
     }
