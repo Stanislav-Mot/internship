@@ -38,11 +38,10 @@ public class AdminService {
         List<Person> personList = adminRepo.getAllPerson();
 
         for (Person person : personList) {
-            List<Assignment> assignments = new ArrayList<>();
-            assignments.addAll(taskRepo.getByPersonId(person.getId()));
+            List<Assignment> assignments = new ArrayList<>(taskRepo.getByPersonId(person.getId()));
             person.setGroups(assignments);
         }
-        return personList.stream().map(x -> mapper.convertToDto(x)).collect(Collectors.toList());
+        return personList.stream().map(mapper::convertToDto).collect(Collectors.toList());
     }
 
     public PersonDto clearTaskByClientIdOrProgress(Long clientId, Long taskProgress) {
@@ -59,6 +58,6 @@ public class AdminService {
 
     public List<TaskDto> resetProgressOfAllTasks(Long clientId) {
         adminRepo.resetProgress(clientId);
-        return taskRepo.getByPersonId(clientId).stream().map(x -> taskDtoMapper.convertToDto(x)).collect(Collectors.toList());
+        return taskRepo.getByPersonId(clientId).stream().map(taskDtoMapper::convertToDto).collect(Collectors.toList());
     }
 }

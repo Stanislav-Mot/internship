@@ -1,6 +1,5 @@
 package com.internship.internship.configuration;
 
-import com.internship.internship.service.CacheService;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
@@ -28,11 +27,6 @@ public class GeneralConfiguration {
     }
 
     @Bean
-    public CacheService aCache() {
-        return new CacheService();
-    }
-
-    @Bean
     public OpenAPI customOpenApi(@Value("${application-description}") String appDescription,
                                  @Value("${application-version}") String appVersion) {
         return new OpenAPI()
@@ -40,7 +34,6 @@ public class GeneralConfiguration {
                         new Components().addSecuritySchemes("bearerAuth",
                                 new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT"))
                 )
-//                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .info(new Info().title("Application API")
                         .version(appVersion)
                         .description(appDescription)

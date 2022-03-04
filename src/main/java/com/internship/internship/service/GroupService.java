@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class GroupService {
-
     private final GroupRepo groupRepo;
     private final TaskRepo taskRepo;
     private final GroupDtoMapper mapper;
@@ -36,7 +35,10 @@ public class GroupService {
     }
 
     public GroupDto getById(Long id) {
-        return mapper.convertToDto(groupRepo.getGroupById(id));
+//        GroupDto groupDto;
+//        groupDto = mapper.convertToDto(groupRepo.getGroupById(id));
+//        cacheService.put(groupDto.getId(), "group", groupDto);
+        return (GroupDto) cacheService.getGroup(id);
     }
 
     public List<GroupDto> getByPersonId(Long id) {
@@ -46,9 +48,10 @@ public class GroupService {
     }
 
     public List<GroupDto> getAll() {
-        return groupRepo.getAll()
-                .stream().map(mapper::convertToDto)
-                .collect(Collectors.toList());
+        return cacheService.getAllGroup();
+//        return groupRepo.getAll()
+//                .stream().map(mapper::convertToDto)
+//                .collect(Collectors.toList());
     }
 
     public GroupDto add(GroupDto groupDto) {

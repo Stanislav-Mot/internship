@@ -6,6 +6,7 @@ import com.internship.internship.exeption.ChangesNotAppliedException;
 import com.internship.internship.mapper.TaskDtoMapper;
 import com.internship.internship.model.Task;
 import com.internship.internship.repository.TaskRepo;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
@@ -59,19 +60,18 @@ public class TaskService {
     }
 
     public TaskDto getById(Long id) {
-        TaskDto taskDto;
-        if ((taskDto = (TaskDto) cacheService.get(id)) != null) {
-            System.out.println("Caches");
-        } else {
-            taskDto = mapper.convertToDto(taskRepo.getTaskById(id));
-            cacheService.put(taskDto.getId(), taskDto);
-            System.out.println("BD without");
-        }
-        return taskDto;
+//        TaskDto taskDto;
+//        if ((taskDto = (TaskDto) cacheService.getTask(id)) == null) {
+//            taskDto = mapper.convertToDto(taskRepo.getTaskById(id));
+//            cacheService.put(taskDto.getId(), "task", taskDto);
+//        }
+        return (TaskDto) cacheService.getTask(id);
     }
 
+
     public List<TaskDto> getAll() {
-        return getTaskDtos(taskRepo.getAllTasks());
+        return cacheService.getAllTask();
+//        return getTaskDtos(taskRepo.getAllTasks());
     }
 
     public List<TaskDto> getByGroupId(Long id) {
@@ -103,7 +103,7 @@ public class TaskService {
     }
 
     private List<TaskDto> getTaskDtos(List<Task> tasks) {
-        return tasks.stream().map(x -> mapper.convertToDto(x)).collect(Collectors.toList());
+        return tasks.stream().map(mapper::convertToDto).collect(Collectors.toList());
     }
 
     public TaskDto updateProgress(Long id, Integer progress) {
