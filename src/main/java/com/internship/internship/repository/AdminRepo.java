@@ -1,5 +1,6 @@
 package com.internship.internship.repository;
 
+import com.internship.internship.dto.PersonDto;
 import com.internship.internship.mapper.PersonMapper;
 import com.internship.internship.model.Person;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -23,7 +24,7 @@ public class AdminRepo {
     }
 
     public List<Person> getAllPerson() {
-        String sql = "SELECT * FROM person";
+        String sql = "SELECT id FROM person";
         return jdbcTemplate.query(sql, new PersonMapper());
     }
 

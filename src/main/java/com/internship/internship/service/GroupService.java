@@ -35,12 +35,14 @@ public class GroupService {
     }
 
     public GroupDto getById(Long id) {
-//        GroupDto groupDto;
-//        groupDto = mapper.convertToDto(groupRepo.getGroupById(id));
-//        cacheService.put(groupDto.getId(), "group", groupDto);
-        return (GroupDto) cacheService.getGroup(id);
+        if (cacheService.isValid()) {
+            return (GroupDto) cacheService.getGroup(id);
+        } else {
+            return mapper.convertToDto(groupRepo.getGroupById(id));
+        }
     }
 
+    //
     public List<GroupDto> getByPersonId(Long id) {
         return groupRepo.getByPersonId(id)
                 .stream().map(mapper::convertToDto)
@@ -48,21 +50,27 @@ public class GroupService {
     }
 
     public List<GroupDto> getAll() {
-        return cacheService.getAllGroup();
-//        return groupRepo.getAll()
-//                .stream().map(mapper::convertToDto)
-//                .collect(Collectors.toList());
+        if (cacheService.isValid()) {
+            return cacheService.getAllGroup();
+        } else {
+            return groupRepo.getAll()
+                    .stream().map(mapper::convertToDto)
+                    .collect(Collectors.toList());
+        }
     }
 
     public GroupDto add(GroupDto groupDto) {
         MapSqlParameterSource parameters = getMapSqlParameterSource(groupDto);
         KeyHolder holder = groupRepo.addGroup(parameters);
-        return mapper.getDtoFromHolder(holder);
+        GroupDto dtoFromHolder = mapper.getDtoFromHolder(holder);
+        cacheService.put(dtoFromHolder.getId(), "group", dtoFromHolder);
+        return dtoFromHolder;
     }
 
     public GroupDto update(GroupDto groupDto) {
         Group group = mapper.convertToEntity(groupDto);
         Group response = groupRepo.updateGroup(group);
+        cacheService.setValid(false);
         return mapper.convertToDto(response);
     }
 
@@ -74,6 +82,7 @@ public class GroupService {
         if (group != null) {
             taskRepo.setStartTime(taskId);
         }
+        cacheService.setValid(false);
         return mapper.convertToDto(group);
     }
 
@@ -82,6 +91,7 @@ public class GroupService {
         if (answer < 1) {
             throw new ChangesNotAppliedException(String.format("Group Id %d or Task id %d is not found", id, taskId));
         }
+        cacheService.setValid(false);
     }
 
     public GroupDto addGroup(Long id, Long groupId) {
@@ -99,8 +109,8 @@ public class GroupService {
         if (checkCyclicDependency(id, groupId)) {
             throw new ChangesNotAppliedException("cyclic dependency");
         }
-
         Group group = groupRepo.addGroupToGroup(id, groupId);
+        cacheService.setValid(false);
         return mapper.convertToDto(group);
     }
 
@@ -126,6 +136,7 @@ public class GroupService {
         if (answer < 1) {
             throw new ChangesNotAppliedException(String.format("Group Id %d or %d is not found", id, groupId));
         }
+        cacheService.setValid(false);
     }
 
     public GroupDto delete(Long id) {
@@ -136,6 +147,7 @@ public class GroupService {
             throw new ChangesNotAppliedException(String.format("Task id: %d is not found", id));
         } else {
             groupDto = (GroupDto) cacheService.get(id);
+            cacheService.remove(id, "group");
         }
         return groupDto;
     }

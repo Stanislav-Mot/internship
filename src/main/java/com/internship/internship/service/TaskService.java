@@ -6,7 +6,6 @@ import com.internship.internship.exeption.ChangesNotAppliedException;
 import com.internship.internship.mapper.TaskDtoMapper;
 import com.internship.internship.model.Task;
 import com.internship.internship.repository.TaskRepo;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
@@ -60,18 +59,19 @@ public class TaskService {
     }
 
     public TaskDto getById(Long id) {
-//        TaskDto taskDto;
-//        if ((taskDto = (TaskDto) cacheService.getTask(id)) == null) {
-//            taskDto = mapper.convertToDto(taskRepo.getTaskById(id));
-//            cacheService.put(taskDto.getId(), "task", taskDto);
-//        }
-        return (TaskDto) cacheService.getTask(id);
+        if (cacheService.isValid()) {
+            return (TaskDto) cacheService.getTask(id);
+        } else {
+            return mapper.convertToDto(taskRepo.getTaskById(id));
+        }
     }
 
-
     public List<TaskDto> getAll() {
-        return cacheService.getAllTask();
-//        return getTaskDtos(taskRepo.getAllTasks());
+        if (cacheService.isValid()) {
+            return cacheService.getAllTask();
+        } else {
+            return getTaskDtos(taskRepo.getAllTasks());
+        }
     }
 
     public List<TaskDto> getByGroupId(Long id) {
@@ -86,13 +86,16 @@ public class TaskService {
         Task task = mapper.convertToEntity(taskDto);
         MapSqlParameterSource parameters = getMapSqlParameterSource(task);
         KeyHolder keyHolder = taskRepo.addTask(parameters);
-        return mapper.getDtoFromHolder(keyHolder);
+        TaskDto dtoFromHolder = mapper.getDtoFromHolder(keyHolder);
+        cacheService.put(dtoFromHolder.getId(), "task", dtoFromHolder);
+        return dtoFromHolder;
     }
 
     public TaskDto update(TaskDto taskDto) {
         Task task = mapper.convertToEntity(taskDto);
         MapSqlParameterSource parameters = getMapSqlParameterSource(task);
         Task response = taskRepo.update(parameters);
+        cacheService.setValid(false);
         return mapper.convertToDto(response);
     }
 
@@ -108,6 +111,7 @@ public class TaskService {
 
     public TaskDto updateProgress(Long id, Integer progress) {
         Task task = taskRepo.updateProgress(id, progress);
+        cacheService.setValid(false);
         return mapper.convertToDto(task);
     }
 
@@ -119,6 +123,7 @@ public class TaskService {
             throw new ChangesNotAppliedException(String.format("Task id: %d is not found", id));
         } else {
             taskDto = (TaskDto) cacheService.get(id);
+            cacheService.remove(id, "task");
         }
         return taskDto;
     }

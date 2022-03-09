@@ -25,23 +25,25 @@ public class AdminService {
     private final PersonRepo personRepo;
     private final PersonDtoMapper mapper;
     private final TaskDtoMapper taskDtoMapper;
+    private final CacheService cacheService;
 
-    public AdminService(AdminRepo adminRepo, TaskRepo taskRepo, PersonRepo personRepo, PersonDtoMapper mapper, TaskDtoMapper taskDtoMapper) {
+    public AdminService(AdminRepo adminRepo, TaskRepo taskRepo, PersonRepo personRepo, PersonDtoMapper mapper, TaskDtoMapper taskDtoMapper, CacheService cacheService) {
         this.adminRepo = adminRepo;
         this.taskRepo = taskRepo;
         this.personRepo = personRepo;
         this.mapper = mapper;
         this.taskDtoMapper = taskDtoMapper;
+        this.cacheService = cacheService;
     }
 
     public List<PersonDto> retrievingAllTasks() {
-        List<Person> personList = adminRepo.getAllPerson();
+        List<PersonDto> personList = adminRepo.getAllPerson().stream().map(mapper::convertToDto).collect(Collectors.toList());
 
-        for (Person person : personList) {
+        for (PersonDto person : personList) {
             List<Assignment> assignments = new ArrayList<>(taskRepo.getByPersonId(person.getId()));
             person.setGroups(assignments);
         }
-        return personList.stream().map(mapper::convertToDto).collect(Collectors.toList());
+        return personList;
     }
 
     public PersonDto clearTaskByClientIdOrProgress(Long clientId, Long taskProgress) {
