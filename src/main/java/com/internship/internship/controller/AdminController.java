@@ -2,6 +2,7 @@ package com.internship.internship.controller;
 
 import com.internship.internship.dto.PersonDto;
 import com.internship.internship.dto.TaskDto;
+import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.model.AuthenticationRequest;
 import com.internship.internship.model.AuthenticationResponse;
 import com.internship.internship.service.AdminService;
@@ -33,13 +34,13 @@ public class AdminController {
         this.adminService = adminService;
     }
 
-    @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
+    @PostMapping(value = "/authenticate")
+    public ResponseEntity<AuthenticationResponse> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword()));
         } catch (BadCredentialsException e) {
-            throw new Exception("Wrong password or email", e);
+            throw new DataNotFoundException("Wrong password or email");
         }
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
         final String jwt = jwtTokenUtil.generateToken(userDetails);
@@ -49,14 +50,14 @@ public class AdminController {
 
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/retrieving", method = RequestMethod.GET)
+    @GetMapping(value = "/retrieving")
     public List<PersonDto> retrievingAllTasks() {
         return adminService.retrievingAllTasks();
     }
 
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/clear/task", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "/clear/task")
     public PersonDto clearTaskByClientIdOrProgress(
             @RequestParam(name = "clientId") Long clientId,
             @RequestParam(name = "taskProgress", required = false) Long taskProgress) {
@@ -65,10 +66,9 @@ public class AdminController {
 
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/reset/progress", method = RequestMethod.PUT)
+    @PutMapping(value = "/reset/progress")
     public List<TaskDto> resetProgressOfAllTasks(@RequestParam Long clientId) {
         return adminService.resetProgressOfAllTasks(clientId);
     }
-
 }
 

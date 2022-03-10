@@ -61,7 +61,7 @@ public class UserController {
     @Operation(summary = "Update user's password")
     @Validated(Transfer.Update.class)
     @PutMapping("/user/password")
-    public UserDto updatePassword(@Valid @RequestBody UserDto userDto) throws Exception {
+    public UserDto updatePassword(@Valid @RequestBody UserDto userDto) {
         return userService.updatePassword(userDto);
     }
 

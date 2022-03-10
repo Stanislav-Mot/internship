@@ -25,15 +25,13 @@ public class AdminService {
     private final PersonRepo personRepo;
     private final PersonDtoMapper mapper;
     private final TaskDtoMapper taskDtoMapper;
-    private final CacheService cacheService;
 
-    public AdminService(AdminRepo adminRepo, TaskRepo taskRepo, PersonRepo personRepo, PersonDtoMapper mapper, TaskDtoMapper taskDtoMapper, CacheService cacheService) {
+    public AdminService(AdminRepo adminRepo, TaskRepo taskRepo, PersonRepo personRepo, PersonDtoMapper mapper, TaskDtoMapper taskDtoMapper) {
         this.adminRepo = adminRepo;
         this.taskRepo = taskRepo;
         this.personRepo = personRepo;
         this.mapper = mapper;
         this.taskDtoMapper = taskDtoMapper;
-        this.cacheService = cacheService;
     }
 
     public List<PersonDto> retrievingAllTasks() {

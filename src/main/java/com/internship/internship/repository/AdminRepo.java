@@ -1,6 +1,5 @@
 package com.internship.internship.repository;
 
-import com.internship.internship.dto.PersonDto;
 import com.internship.internship.mapper.PersonMapper;
 import com.internship.internship.model.Person;
 import org.springframework.jdbc.core.JdbcTemplate;

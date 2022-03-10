@@ -39,7 +39,7 @@ public class GeneralConfiguration {
                         .description(appDescription)
                         .title("Task Tracker")
                         .license(new License().name("Apache 3.0")
-                                .url("http://springdoc.org"))
+                                .url("https://springdoc.org"))
                         .contact(
                                 new Contact()
                                         .email(email)

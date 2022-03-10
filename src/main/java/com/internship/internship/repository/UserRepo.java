@@ -74,7 +74,6 @@ public class UserRepo {
         try {
             User user = jdbcTemplate.queryForObject(sql, new UserMapper(), email);
             user.setRoles(getRoles(user.getId()));
-            user.setPassword("hidden");
             return user;
         } catch (EmptyResultDataAccessException exception) {
             return null;

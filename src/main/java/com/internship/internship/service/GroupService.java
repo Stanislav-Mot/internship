@@ -63,7 +63,7 @@ public class GroupService {
         MapSqlParameterSource parameters = getMapSqlParameterSource(groupDto);
         KeyHolder holder = groupRepo.addGroup(parameters);
         GroupDto dtoFromHolder = mapper.getDtoFromHolder(holder);
-        cacheService.put(dtoFromHolder.getId(), "group", dtoFromHolder);
+        cacheService.put(dtoFromHolder.getId(), Group.class, dtoFromHolder);
         return dtoFromHolder;
     }
 
@@ -146,8 +146,8 @@ public class GroupService {
         if (answer < 1) {
             throw new ChangesNotAppliedException(String.format("Task id: %d is not found", id));
         } else {
-            groupDto = (GroupDto) cacheService.get(id);
-            cacheService.remove(id, "group");
+            groupDto = (GroupDto) cacheService.getGroup(id);
+            cacheService.remove(id, Group.class);
         }
         return groupDto;
     }

@@ -19,7 +19,6 @@ import java.io.IOException;
 public class JwtRequestFilter extends OncePerRequestFilter {
 
     private final UserService userDetailsService;
-
     private final JwtService jwtUtil;
 
     public JwtRequestFilter(JwtService jwtUtil, UserService userDetailsService) {
@@ -46,7 +45,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-            if (jwtUtil.validateToken(jwt, userDetails)) {
+            if (Boolean.TRUE.equals(jwtUtil.validateToken(jwt, userDetails))) {
 
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());

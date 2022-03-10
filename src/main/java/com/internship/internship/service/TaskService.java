@@ -87,7 +87,7 @@ public class TaskService {
         MapSqlParameterSource parameters = getMapSqlParameterSource(task);
         KeyHolder keyHolder = taskRepo.addTask(parameters);
         TaskDto dtoFromHolder = mapper.getDtoFromHolder(keyHolder);
-        cacheService.put(dtoFromHolder.getId(), "task", dtoFromHolder);
+        cacheService.put(dtoFromHolder.getId(), Task.class, dtoFromHolder);
         return dtoFromHolder;
     }
 
@@ -122,8 +122,8 @@ public class TaskService {
         if (answer < 1) {
             throw new ChangesNotAppliedException(String.format("Task id: %d is not found", id));
         } else {
-            taskDto = (TaskDto) cacheService.get(id);
-            cacheService.remove(id, "task");
+            taskDto = (TaskDto) cacheService.getTask(id);
+            cacheService.remove(id, Task.class);
         }
         return taskDto;
     }

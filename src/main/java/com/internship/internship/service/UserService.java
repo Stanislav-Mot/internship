@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,7 +40,11 @@ public class UserService implements UserDetailsService {
         parameters.addValue("id", user.getId());
         parameters.addValue("email", user.getEmail());
         parameters.addValue("password", user.getPassword());
-        parameters.addValue("role", user.getRoles().stream().findFirst().get().name());
+        Set<Role> roles = user.getRoles();
+        if (roles != null) {
+            Optional<Role> first = roles.stream().findFirst();
+            first.ifPresent(role -> parameters.addValue("role", role.name()));
+        }
         return parameters;
     }
 
@@ -64,7 +70,7 @@ public class UserService implements UserDetailsService {
             user.setRoles(userRepo.getRoles(user.getId()));
             user.setPassword("hidden");
         }
-        return all.stream().map(x -> mapper.convertToDto(x)).collect(Collectors.toList());
+        return all.stream().map(mapper::convertToDto).collect(Collectors.toList());
     }
 
     @Transactional

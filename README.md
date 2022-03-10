@@ -1,6 +1,6 @@
 # REST CRUD API with Spring and Postgres For 'task tracker'
 
-## Steps to Setup with Docker Compose
+## Steps to Set up with Docker Compose
 
 **1. Clone the application**
 
@@ -17,7 +17,7 @@ docker-compose up
 
 The app will start running at <http://localhost:3000>.
 
-## Steps to Setup without Docker
+## Steps to Set up without Docker
 
 **1. Clone the application**
 
