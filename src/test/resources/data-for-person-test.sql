@@ -1,10 +1,10 @@
-INSERT INTO person (firstname, lastname, birthdate)
+INSERT INTO person (first_name, last_name, birthdate)
 VALUES ('GetTester', 'Tester', '1984-03-03'),
        ('UpdateTester', 'Tester', '1984-03-03'),
        ('DeleteGroupTester', 'Tester', '1984-03-03'),
        ('DeleteTester', 'Tester', '1984-03-03');
 
-INSERT INTO group_of_tasks (name)
+INSERT INTO groups (name)
 VALUES ('testGroup'),
        ('secondGroup'),
        ('thirdGroup'),

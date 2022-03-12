@@ -15,8 +15,8 @@ public class PersonMapper implements RowMapper<Person> {
         Person person = new Person();
 
         person.setId(rs.getLong("id"));
-        person.setFirstName(rs.getString("firstname"));
-        person.setLastName(rs.getString("lastname"));
+        person.setFirstName(rs.getString("first_name"));
+        person.setLastName(rs.getString("last_name"));
 
         Date birthdate = rs.getDate("birthdate");
         if (birthdate != null) {

@@ -4,7 +4,10 @@ import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.mapper.GroupMapper;
 import com.internship.internship.mapper.PersonMapper;
 import com.internship.internship.mapper.TaskMapper;
-import com.internship.internship.model.*;
+import com.internship.internship.model.Assignment;
+import com.internship.internship.model.Group;
+import com.internship.internship.model.Person;
+import com.internship.internship.model.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -33,7 +36,7 @@ public class GroupRepo {
     }
 
     public Group getGroupById(Long id) {
-        String sql = "SELECT * FROM group_of_tasks WHERE id = ?";
+        String sql = "SELECT * FROM groups WHERE id = ?";
         try {
             Group group = jdbcTemplate.queryForObject(sql, new GroupMapper(), id);
             group.setTasks(getComposite(id));
@@ -52,14 +55,14 @@ public class GroupRepo {
     }
 
     public List<Group> getByPersonId(Long id) {
-        String sql = "SELECT * FROM  group_of_tasks got LEFT JOIN person_group pg ON got.id = pg.id_group WHERE pg.id_person = ?";
+        String sql = "SELECT * FROM  groups got LEFT JOIN person_group pg ON got.id = pg.id_group WHERE pg.id_person = ?";
         List<Group> groups = jdbcTemplate.query(sql, new GroupMapper(), id);
         groups.forEach(group -> group.setTasks(getComposite(group.getId())));
         return groups;
     }
 
     public List<Group> getAll() {
-        String sql = "SELECT * FROM group_of_tasks";
+        String sql = "SELECT * FROM groups";
         List<Group> groups = jdbcTemplate.query(sql, new GroupMapper());
         groups.forEach(group -> {
             group.setTasks(getComposite(group.getId()));
@@ -69,14 +72,14 @@ public class GroupRepo {
     }
 
     public KeyHolder addGroup(MapSqlParameterSource parameters) {
-        String sql = "INSERT INTO group_of_tasks (name) VALUES (:name)";
+        String sql = "INSERT INTO groups (name) VALUES (:name)";
         KeyHolder holder = new GeneratedKeyHolder();
         namedParameterJdbcTemplate.update(sql, parameters, holder);
         return holder;
     }
 
     public Group updateGroup(Group group) {
-        String sql = "UPDATE group_of_tasks SET name = ? WHERE id = ?;";
+        String sql = "UPDATE groups SET name = ? WHERE id = ?;";
         jdbcTemplate.update(sql, group.getName(), group.getId());
         return getGroupById(group.getId());
     }
@@ -84,7 +87,7 @@ public class GroupRepo {
     public Group addTaskToGroup(Long id, Long taskId) {
         String sql = "UPDATE task SET id_group = ? WHERE id = ?";
         jdbcTemplate.update(sql, id, taskId);
-        String sqlForGet = "SELECT * FROM group_of_tasks WHERE id = ?";
+        String sqlForGet = "SELECT * FROM groups WHERE id = ?";
         return jdbcTemplate.queryForObject(sqlForGet, new GroupMapper(), id);
     }
 
@@ -113,23 +116,23 @@ public class GroupRepo {
     }
 
     public List<Group> getAllGroupInGroup(Long id) {
-        String sql = "SELECT * FROM group_of_tasks WHERE id_parent = ?;";
+        String sql = "SELECT * FROM groups WHERE id_parent = ?;";
         return jdbcTemplate.query(sql, new GroupMapper(), id);
     }
 
     public Group addGroupToGroup(Long id, Long idGroup) {
-        String sql = "UPDATE group_of_tasks SET id_parent = ? WHERE id = ?;";
+        String sql = "UPDATE groups SET id_parent = ? WHERE id = ?;";
         jdbcTemplate.update(sql, id, idGroup);
         return getGroupById(id);
     }
 
     public Integer deleteGroupFromGroup(Long id, Long idGroup) {
-        String sql = "UPDATE group_of_tasks SET id_parent = NULL WHERE id_parent = ? AND id = ?";
+        String sql = "UPDATE groups SET id_parent = NULL WHERE id_parent = ? AND id = ?";
         return jdbcTemplate.update(sql, id, idGroup);
     }
 
     public Integer delete(Long id) {
-        String sql = "DELETE FROM group_of_tasks WHERE id = ?";
+        String sql = "DELETE FROM groups WHERE id = ?";
         return jdbcTemplate.update(sql, id);
     }
 }

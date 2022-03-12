@@ -11,11 +11,13 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Entity(name = "group_of_tasks")
-public class Group implements Assignment{
+@Entity(name = "groups")
+public class Group implements Assignment {
 
     @Id
     private Long id;
+
+    @Column(nullable = false)
     private String name;
 
     @ManyToMany(targetEntity = Task.class)
@@ -26,6 +28,7 @@ public class Group implements Assignment{
     private List<Assignment> tasks = new ArrayList<>();
 
     @ManyToOne
+    @JoinColumn(name = "id_parent")
     private Group group;
 
     @ManyToMany()
@@ -34,7 +37,6 @@ public class Group implements Assignment{
             joinColumns = @JoinColumn(name = "id_group"),
             inverseJoinColumns = @JoinColumn(name = "id_person"))
     private List<Person> persons;
-
 
     public Group(String name) {
         this.name = name;

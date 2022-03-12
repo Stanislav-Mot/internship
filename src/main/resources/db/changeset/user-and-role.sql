@@ -9,7 +9,7 @@ CREATE TABLE user_role
     FOREIGN KEY (user_id) REFERENCES person (id)
 );
 
-INSERT INTO person (email, password, firstname, lastname, birthdate)
+INSERT INTO person (email, password, first_name, last_name, birthdate)
 VALUES ('admin@admin.com', 'admin', 'Admin', 'Adminov', '1967-05-10');
 
 INSERT INTO user_role(user_id, role)

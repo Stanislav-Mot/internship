@@ -29,8 +29,8 @@ public class PersonService {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
 
         parameters.addValue("id", person.getId());
-        parameters.addValue("firstname", person.getFirstName());
-        parameters.addValue("lastname", person.getLastName());
+        parameters.addValue("first_name", person.getFirstName());
+        parameters.addValue("last_name", person.getLastName());
         parameters.addValue("birthdate", person.getBirthdate());
         return parameters;
     }
@@ -44,7 +44,7 @@ public class PersonService {
     private MapSqlParameterSource getMapSqlParameterSource(SearchPersonDto searchPersonDto) {
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 
-        mapSqlParameterSource.addValue("firstName", searchPersonDto.getFirstName());
+        mapSqlParameterSource.addValue("first_name", searchPersonDto.getFirstName());
         mapSqlParameterSource.addValue("lastName", searchPersonDto.getLastName());
         mapSqlParameterSource.addValue("exactAge", searchPersonDto.getExactAge());
         mapSqlParameterSource.addValue("rangeAgeStart", searchPersonDto.getRangeAgeStart());

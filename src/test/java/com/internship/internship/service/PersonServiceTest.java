@@ -1,9 +1,7 @@
 package com.internship.internship.service;
 
 import com.internship.internship.dto.PersonDto;
-import com.internship.internship.dto.search.SearchPersonDto;
 import com.internship.internship.mapper.PersonDtoMapper;
-import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
 import com.internship.internship.repository.PersonRepo;
 import org.junit.jupiter.api.Test;
@@ -11,14 +9,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-import static com.internship.internship.util.Helper.*;
+import static com.internship.internship.util.Helper.newPersonDtoForTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -37,12 +32,12 @@ class PersonServiceTest {
         //Person person = newPersonForTest();
         PersonDto personDto = newPersonDtoForTest();
 
-       //// when(personRepo.getPersonById(person.getId())).thenReturn(person);
-       // when(mapper.convertToDto(person)).thenReturn(personDto);
+        //// when(personRepo.getPersonById(person.getId())).thenReturn(person);
+        // when(mapper.convertToDto(person)).thenReturn(personDto);
 
-      //  PersonDto personFromService = personService.getById(person.getId());
-       // assertEquals(personFromService, personDto);
-       // verify(personRepo, times(1)).getPersonById(person.getId());
+        //  PersonDto personFromService = personService.getById(person.getId());
+        // assertEquals(personFromService, personDto);
+        // verify(personRepo, times(1)).getPersonById(person.getId());
     }
 
     @Test

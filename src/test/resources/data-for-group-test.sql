@@ -1,4 +1,4 @@
-INSERT INTO person (firstname, lastname, birthdate)
+INSERT INTO person (first_name, last_name, birthdate)
 VALUES ('GetTester', 'Tester', '1967-11-11'),
        ('UpdateTester', 'Tester', '1967-11-11'),
        ('DeleteGroupTester', 'Tester', '1967-11-11'),
@@ -10,7 +10,7 @@ VALUES ('cleaning', '2021-06-09'),
        ('do_something', '2012-05-06'),
        ('for_delete', '2011-11-11');
 
-INSERT INTO group_of_tasks (name)
+INSERT INTO groups (name)
 VALUES ('forGet'),
        ('second'),
        ('forUpdate'),
@@ -19,6 +19,6 @@ VALUES ('forGet'),
 UPDATE task
 set id_group = 1;
 
-update group_of_tasks
+update groups
 set id_parent = 1
 where id = 3;

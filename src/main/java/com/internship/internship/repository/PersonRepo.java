@@ -32,7 +32,7 @@ public class PersonRepo {
     }
 
     public Person updatePerson(SqlParameterSource parameters) {
-        String sql = "UPDATE person SET firstname = :firstname, lastname = :lastname, birthdate = :birthdate WHERE id = :id;";
+        String sql = "UPDATE person SET first_name = :first_name, last_name = :last_name, birthdate = :birthdate WHERE id = :id;";
         namedParameterJdbcTemplate.update(sql, parameters);
         return getPersonById((Long) parameters.getValue("id"));
     }
@@ -71,15 +71,15 @@ public class PersonRepo {
     }
 
     public List<Group> getGroupsById(Long id) {
-        String sqlForGroup = "SELECT * FROM  group_of_tasks got LEFT JOIN person_group pg " +
+        String sqlForGroup = "SELECT * FROM  groups got LEFT JOIN person_group pg " +
                 "ON got.id = pg.id_group WHERE pg.id_person = ?";
         return jdbcTemplate.query(sqlForGroup, new GroupMapper(), id);
     }
 
     public List<Person> search(SqlParameterSource sqlParameterSource) {
         String sql =
-                "SELECT * FROM person WHERE (:firstName::VARCHAR IS NULL OR person.firstname = :firstName) " +
-                        "AND (:lastName::VARCHAR IS NULL OR person.lastname = :lastName) " +
+                "SELECT * FROM person WHERE (:first_name::VARCHAR IS NULL OR person.first_name = :first_name) " +
+                        "AND (:lastName::VARCHAR IS NULL OR person.last_name = :lastName) " +
 
                         "AND (:exactAge::INT8 IS NULL OR " +
                         "extract(YEAR FROM NOW()::date) - extract(YEAR FROM person.birthdate) = :exactAge) " +
@@ -91,7 +91,7 @@ public class PersonRepo {
     }
 
     public List<Person> searchByTokenInName(Map<String, Object> params) {
-        String sql = "SELECT * FROM person WHERE LOWER(CONCAT(firstname, ' ' , lastname)) LIKE LOWER(:token)";
+        String sql = "SELECT * FROM person WHERE LOWER(CONCAT(first_name, ' ' , last_name)) LIKE LOWER(:token)";
         return namedParameterJdbcTemplate.query(sql, params, new PersonMapper());
     }
 

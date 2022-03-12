@@ -24,14 +24,17 @@ public class User implements UserDetails {
 
     @Email(message = "Incorrect email")
     @NotBlank(message = "Email is required")
+    @Column(nullable = false)
     private String email;
 
     @NotBlank(message = "Password is required")
+    @Column(nullable = false)
     private String password;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id", nullable = false))
     @Enumerated(EnumType.STRING)
+    @Column(name = "role")
     private Set<Role> roles;
 
     @Override

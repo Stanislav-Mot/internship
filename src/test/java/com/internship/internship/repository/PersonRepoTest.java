@@ -75,8 +75,8 @@ class PersonRepoTest {
     private MapSqlParameterSource getMapSqlParameterSource(Person person) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("id", person.getId());
-        parameters.addValue("firstname", person.getFirstName());
-        parameters.addValue("lastname", person.getLastName());
+        parameters.addValue("first_name", person.getFirstName());
+        parameters.addValue("last_name", person.getLastName());
         parameters.addValue("birthdate", person.getBirthdate());
         return parameters;
     }

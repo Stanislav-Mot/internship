@@ -1,22 +1,22 @@
 DROP TABLE IF EXISTS person CASCADE;
-DROP TABLE IF EXISTS group_of_tasks CASCADE;
+DROP TABLE IF EXISTS groups CASCADE;
 DROP TABLE IF EXISTS task CASCADE;
 DROP TABLE IF EXISTS person_group CASCADE;
 
 CREATE TABLE person
 (
-    id        SERIAL PRIMARY KEY,
-    firstname VARCHAR(256) NOT NULL,
-    lastname  VARCHAR(256) NOT NULL,
-    birthdate DATE         NOT NULL
+    id         SERIAL PRIMARY KEY,
+    first_name VARCHAR(256) NOT NULL,
+    last_name  VARCHAR(256) NOT NULL,
+    birthdate  DATE         NOT NULL
 );
 
-CREATE TABLE group_of_tasks
+CREATE TABLE groups
 (
     id        SERIAL PRIMARY KEY,
     name      VARCHAR(256) NOT NULL,
     id_parent INT8,
-    FOREIGN KEY (id_parent) REFERENCES group_of_tasks (id)
+    FOREIGN KEY (id_parent) REFERENCES groups (id)
 );
 
 CREATE TABLE task
@@ -30,7 +30,7 @@ CREATE TABLE task
     priority    INT8,
     progress    INT8,
     id_group    INT8,
-    FOREIGN KEY (id_group) REFERENCES group_of_tasks (id)
+    FOREIGN KEY (id_group) REFERENCES groups (id)
 );
 
 CREATE TABLE person_group
@@ -39,5 +39,5 @@ CREATE TABLE person_group
     id_group  INT8,
     PRIMARY KEY (id_person, id_group),
     FOREIGN KEY (id_person) REFERENCES person (id),
-    FOREIGN KEY (id_group) REFERENCES group_of_tasks (id)
+    FOREIGN KEY (id_group) REFERENCES groups (id)
 )

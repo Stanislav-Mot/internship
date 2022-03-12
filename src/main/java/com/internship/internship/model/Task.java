@@ -13,10 +13,11 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Entity
-public class Task implements Assignment{
+public class Task implements Assignment {
 
     @Id
     private Long id;
+    @Column(nullable = false)
     private String name;
     private LocalDateTime startTime;
     private String description;
