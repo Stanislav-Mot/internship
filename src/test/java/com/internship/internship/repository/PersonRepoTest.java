@@ -50,7 +50,7 @@ class PersonRepoTest {
     @Test
     void updatePerson() {
         LocalDate localDate = LocalDate.of(2012, 12, 12);
-        Person personForUpdate = new Person(ID_FOR_UPDATE, "firstNameUpdate", "lastNameUpdate", localDate, null);
+        Person personForUpdate = new Person(ID_FOR_UPDATE, "firstNameUpdate", "lastNameUpdate", localDate, null, null);
 
         MapSqlParameterSource parameters = getMapSqlParameterSource(personForUpdate);
         Person person = personRepo.updatePerson(parameters);

@@ -50,9 +50,9 @@ class TaskServiceTest {
     @Test
     void getAll() {
         List<Task> list = new ArrayList<Task>();
-        list.add(new Task(33L));
-        list.add(new Task(44L));
-        list.add(new Task(55L));
+        list.add(new Task());
+        list.add(new Task());
+        list.add(new Task());
 
         when(taskRepo.getAllTasks()).thenReturn(list);
 
@@ -65,7 +65,7 @@ class TaskServiceTest {
     @Test
     void add() {
         TaskDto taskDto = new TaskDto(1L);
-        Task task = new Task(1L);
+        Task task = new Task();
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         when(mapper.convertToEntity(any(TaskDto.class))).thenReturn(task);

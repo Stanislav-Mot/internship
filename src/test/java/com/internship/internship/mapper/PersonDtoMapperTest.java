@@ -10,7 +10,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static com.internship.internship.util.Helper.newPersonDtoForTest;
-import static com.internship.internship.util.Helper.newPersonForTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ActiveProfiles("test")
@@ -21,17 +20,17 @@ class PersonDtoMapperTest {
     @Autowired
     private PersonDtoMapper personDtoMapper;
 
-    @Test
-    void convertToDto() {
-        Person person = newPersonForTest();
-        PersonDto personDto = personDtoMapper.convertToDto(person);
-
-        assertEquals(person.getId(), personDto.getId());
-        assertEquals(person.getFirstName(), personDto.getFirstName());
-        assertEquals(person.getLastName(), personDto.getLastName());
-        assertEquals(person.getBirthdate(), personDto.getBirthdate());
-        assertEquals(person.getGroups(), personDto.getGroups());
-    }
+//    @Test
+//    void convertToDto() {
+//        Person person = newPersonForTest();
+//        PersonDto personDto = personDtoMapper.convertToDto(person);
+//
+//        assertEquals(person.getId(), personDto.getId());
+//        assertEquals(person.getFirstName(), personDto.getFirstName());
+//        assertEquals(person.getLastName(), personDto.getLastName());
+//        assertEquals(person.getBirthdate(), personDto.getBirthdate());
+//        assertEquals(person.getGroups(), personDto.getGroups());
+//    }
 
     @Test
     void convertToEntity() {

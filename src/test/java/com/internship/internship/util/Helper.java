@@ -27,15 +27,15 @@ public class Helper {
     }
 
     public static Group newGroupForTest() {
-        return new Group(null, "Tester", null, null);
+        return new Group(/*"Tester", null, null, null*/);
     }
 
     public static Person newPersonForTest() {
-        return new Person(null, "Tester", "Rochester", LocalDate.of(2012, 12, 12), null);
+        return new Person(null, "Tester", "Rochester", LocalDate.of(2012, 12, 12), null, null);
     }
 
     public static Task newTaskForTest() {
-        return new Task(null, "Tester", null, null, null, null, null, null);
+        return new Task(/*"Tester", null, null, null, null, null, null*/);
     }
 
     public static GroupDto newGroupDtoForTest() {

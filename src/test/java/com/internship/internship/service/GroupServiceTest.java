@@ -36,7 +36,7 @@ class GroupServiceTest {
 
     @Test
     void getById() {
-        Group group = new Group(1L);
+        Group group = new Group();
         GroupDto groupDto = new GroupDto(1L);
 
         when(groupRepo.getGroupById(groupDto.getId())).thenReturn(group);
@@ -50,9 +50,9 @@ class GroupServiceTest {
     @Test
     void getAll() {
         List<Group> list = new ArrayList<Group>();
-        list.add(new Group(33L));
-        list.add(new Group(44L));
-        list.add(new Group(55L));
+        list.add(new Group());
+        list.add(new Group());
+        list.add(new Group());
 
         when(groupRepo.getAll()).thenReturn(list);
 
@@ -90,8 +90,8 @@ class GroupServiceTest {
 
     @Test
     void addTask() {
-        Group group = new Group(1L);
-        Task task = new Task(1L);
+        Group group = new Group();
+        Task task = new Task();
         GroupDto groupDto = newGroupDtoForTest();
 
         when(taskRepo.getTaskById(task.getId())).thenReturn(task);
@@ -116,8 +116,8 @@ class GroupServiceTest {
 
     @Test
     void addGroup() {
-        Group group = new Group(2L);
-        Group groupIn = new Group(1L);
+        Group group = new Group();
+        Group groupIn = new Group();
 
         when(groupRepo.getGroupById(anyLong())).thenReturn(group);
         when(groupRepo.addGroupToGroup(group.getId(), groupIn.getId())).thenReturn(group);
@@ -129,8 +129,8 @@ class GroupServiceTest {
 
     @Test
     void deleteGroup() {
-        Group group = new Group(2L);
-        Group groupIn = new Group(1L);
+        Group group = new Group();
+        Group groupIn = new Group();
 
         when(groupRepo.deleteGroupFromGroup(group.getId(), groupIn.getId())).thenReturn(1);
         groupService.deleteGroup(group.getId(), groupIn.getId());

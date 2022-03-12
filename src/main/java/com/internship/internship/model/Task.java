@@ -4,13 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Task implements Assignment {
+@Entity
+public class Task implements Assignment{
 
+    @Id
     private Long id;
     private String name;
     private LocalDateTime startTime;
@@ -20,8 +25,10 @@ public class Task implements Assignment {
     private Integer spentTime;
     private Integer priority;
 
-    public Task(Long id) {
-        this.id = id;
-    }
-
+    @ManyToMany
+    @JoinTable(
+            name = "group_task",
+            joinColumns = @JoinColumn(name = "id_task"),
+            inverseJoinColumns = @JoinColumn(name = "id_group"))
+    private List<Group> groups = new ArrayList<>();
 }

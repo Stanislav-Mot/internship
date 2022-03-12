@@ -35,7 +35,7 @@ public class CacheService {
         this.taskDtoMapper = taskDtoMapper;
         this.groupDtoMapper = groupDtoMapper;
 
-        addAll();
+//        addAll();
         this.valid = true;
 
         Thread t = new Thread(() -> {

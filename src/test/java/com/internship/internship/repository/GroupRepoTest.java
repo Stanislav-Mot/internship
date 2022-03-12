@@ -55,7 +55,8 @@ class GroupRepoTest {
 
     @Test
     void updateGroup() {
-        Group groupForUpdate = new Group(ID_FOR_UPDATE, "nameUpdate", null, null);
+        Group groupForUpdate = new Group(/*"nameUpdate", null, null, null*/);
+        groupForUpdate.setId(ID_FOR_UPDATE);
         Group group = groupRepo.updateGroup(groupForUpdate);
         Assertions.assertThat(group).returns("nameUpdate", from(Group::getName));
     }

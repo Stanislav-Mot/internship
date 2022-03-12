@@ -58,7 +58,8 @@ class TaskRepoTest {
 
     @Test
     void updateTask() {
-        Task taskFroUpdate = new Task(ID_FOR_UPDATE, "updated", null, "123", 2, null, 44, 22);
+        Task taskFroUpdate = new Task(/* "updated", null, "123", 2, null, 44, 22*/);
+        taskFroUpdate.setId(ID_FOR_UPDATE);
         Task task = taskRepo.update(getMapSqlParameterSource(taskFroUpdate));
 
         Assertions.assertThat(task).returns("updated", from(Task::getName));
@@ -75,7 +76,7 @@ class TaskRepoTest {
 
     @Test
     void search() {
-        Task taskFroSearch = new Task(null, "searching", LocalDateTime.now(), "123", 2, null, 44, 22);
+        Task taskFroSearch = new Task(/*"searching", LocalDateTime.now(), "123", 2, null, 44, 22*/);
         taskRepo.addTask(getMapSqlParameterSource(taskFroSearch));
         SearchTaskDto searchTaskDto = new SearchTaskDto();
         searchTaskDto.setName("searching");
