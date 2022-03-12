@@ -13,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Entity
+@Table(name = "person")
 public class Person {
 
     @Id
@@ -20,6 +21,8 @@ public class Person {
     private String firstName;
     private String lastName;
     private LocalDate birthdate;
+    @OneToOne
+    @JoinColumn(name = "id")
     private User user;
 
     @ManyToMany(targetEntity = Group.class)

@@ -2,12 +2,11 @@ package com.internship.internship.service;
 
 import com.internship.internship.dto.UserDto;
 import com.internship.internship.exeption.ChangesNotAppliedException;
+import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.mapper.UserDtoMapper;
 import com.internship.internship.model.Role;
 import com.internship.internship.model.User;
 import com.internship.internship.repository.UserRepo;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,104 +16,73 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
 
-    private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
     private final UserDtoMapper mapper;
+    private final UserRepo repository;
 
-    public UserService(PasswordEncoder passwordEncoder, UserRepo userRepo, UserDtoMapper userDtoMapper) {
+    public UserService(PasswordEncoder passwordEncoder, UserDtoMapper userDtoMapper, UserRepo repository) {
         this.passwordEncoder = passwordEncoder;
-        this.userRepo = userRepo;
         this.mapper = userDtoMapper;
-    }
-
-    private MapSqlParameterSource getMapSqlParameterSource(User user) {
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
-
-        parameters.addValue("id", user.getId());
-        parameters.addValue("email", user.getEmail());
-        parameters.addValue("password", user.getPassword());
-        Set<Role> roles = user.getRoles();
-        if (roles != null) {
-            Optional<Role> first = roles.stream().findFirst();
-            first.ifPresent(role -> parameters.addValue("role", role.name()));
-        }
-        return parameters;
+        this.repository = repository;
     }
 
     @Transactional
     @Override
-    public UserDetails loadUserByUsername(String email)
-            throws UsernameNotFoundException {
-        User user = userRepo.getUserByEmail(email);
-        if (user != null) {
-            return user;
-        }
-        throw new UsernameNotFoundException(
-                "User '" + email + "' not found");
+    public UserDetails loadUserByUsername(String email) {
+        return repository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User '" + email + "' not found"));
     }
 
     public UserDto getById(Long id) {
-        return mapper.convertToDto(userRepo.getUserById(id));
+        User user = repository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException(String.format("User Id %d is not found", id)));
+        return mapper.convertToDto(user);
     }
 
     public List<UserDto> getAll() {
-        List<User> all = userRepo.getAll();
-        for (User user : all) {
-            user.setRoles(userRepo.getRoles(user.getId()));
+        return repository.findAll().stream().map(user -> {
             user.setPassword("hidden");
-        }
-        return all.stream().map(mapper::convertToDto).collect(Collectors.toList());
+            return mapper.convertToDto(user);
+        }).collect(Collectors.toList());
     }
 
     @Transactional
     public UserDto add(UserDto userDto) {
         User user = mapper.convertToEntity(userDto);
-        if (userRepo.getUserByEmail(user.getEmail()) != null) {
+        if (repository.findByEmail(user.getEmail()).isPresent()) {
             throw new ChangesNotAppliedException("User already exists with this email");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRoles(Collections.singleton(Role.ROLE_USER));
+        User saved = repository.save(user);
 
-        MapSqlParameterSource parameters = getMapSqlParameterSource(user);
-        KeyHolder keyHolder = userRepo.addUser(parameters);
-        UserDto response = mapper.convertToDto(keyHolder);
-
-        response.setRoles(Collections.singleton(Role.ROLE_USER));
-        userRepo.setRole(response.getId(), Role.ROLE_USER);
-
-        response.setPassword("hidden");
-        return response;
+        saved.setPassword("hidden");
+        return mapper.convertToDto(user);
     }
 
     public UserDto updateRole(UserDto userDto) {
-        if (userRepo.getUserByEmail(userDto.getEmail()) == null) {
+        if (!repository.findByEmail(userDto.getEmail()).isPresent()) {
             throw new ChangesNotAppliedException("User not exists with this email");
         }
         User user = mapper.convertToEntity(userDto);
-        MapSqlParameterSource parameters = getMapSqlParameterSource(user);
-        User response = userRepo.updateRole(parameters);
+        User response = repository.save(user);
         return mapper.convertToDto(response);
     }
 
     public UserDto updatePassword(UserDto userDto) {
-        if (userRepo.getUserByEmail(userDto.getEmail()) == null) {
-            throw new ChangesNotAppliedException("User not exists with this email");
+        User user = repository.findByEmail(userDto.getEmail()).orElseThrow(
+                () -> new ChangesNotAppliedException("User not exists with this email"));
 
-        }
         if (!userDto.getPassword().equals(userDto.getPasswordConfirmation())) {
             throw new ChangesNotAppliedException("passwords is different");
-
         }
-        User user = mapper.convertToEntity(userDto);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        MapSqlParameterSource parameters = getMapSqlParameterSource(user);
-        User response = userRepo.updatePassword(parameters);
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        User response = repository.save(user);
         return mapper.convertToDto(response);
     }
 }

@@ -45,7 +45,7 @@ public class AdminService {
     }
 
     public PersonDto clearTaskByClientIdOrProgress(Long clientId, Long taskProgress) {
-        Person person = personRepo.getPersonById(clientId);
+        Person person = personRepo.findById(clientId).get();
 
         MapSqlParameterSource sqlParameterSource = new MapSqlParameterSource();
         sqlParameterSource.addValue("clientId", clientId);

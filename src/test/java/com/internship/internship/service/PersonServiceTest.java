@@ -47,11 +47,11 @@ class PersonServiceTest {
         list.add(new Person(44L));
         list.add(new Person(55L));
 
-        when(personRepo.getAllPersons()).thenReturn(list);
+        when(personRepo.findAll()).thenReturn(list);
 
         List<PersonDto> personList = personService.getAll();
         assertEquals(3, personList.size());
-        verify(personRepo, times(1)).getAllPersons();
+        verify(personRepo, times(1)).findAll();
     }
 
 //    @Test

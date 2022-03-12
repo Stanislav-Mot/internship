@@ -15,7 +15,8 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Embeddable
+@Entity
+@Table(name = "person")
 public class User implements UserDetails {
 
     private static final long serialVersionUID = 1L;
