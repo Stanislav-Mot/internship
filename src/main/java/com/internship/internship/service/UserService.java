@@ -65,13 +65,19 @@ public class UserService implements UserDetailsService {
         return mapper.convertToDto(user);
     }
 
-    public UserDto updateRole(UserDto userDto) {
-        if (!repository.findByEmail(userDto.getEmail()).isPresent()) {
-            throw new ChangesNotAppliedException("User not exists with this email");
+    public UserDto updateRole(UserDto userDto, Boolean delete) {
+        User user = repository.findByEmail(userDto.getEmail())
+                .orElseThrow(() -> new ChangesNotAppliedException("User not exists with this email"));
+
+        for (Role role : userDto.getRoles()) {
+            if (delete) {
+                repository.deleteRole(user.getId(), role.name());
+            } else {
+                repository.addRole(user.getId(), role.name());
+            }
         }
-        User user = mapper.convertToEntity(userDto);
-        User response = repository.save(user);
-        return mapper.convertToDto(response);
+        User updated = repository.getById(user.getId());
+        return mapper.convertToDto(updated);
     }
 
     public UserDto updatePassword(UserDto userDto) {

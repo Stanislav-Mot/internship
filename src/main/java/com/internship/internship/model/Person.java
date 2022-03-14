@@ -17,6 +17,7 @@ import java.util.List;
 public class Person {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String firstName;
     private String lastName;
@@ -25,7 +26,7 @@ public class Person {
     @JoinColumn(name = "id")
     private User user;
 
-    @ManyToMany(targetEntity = Group.class)
+    @ManyToMany(targetEntity = Group.class, fetch = FetchType.EAGER)
     @JoinTable(
             name = "person_group",
             joinColumns = @JoinColumn(name = "id_person"),

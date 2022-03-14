@@ -23,6 +23,7 @@ public class GeneralConfiguration {
 
     @Bean
     public ModelMapper modelMapper() {
+        ModelMapper modelMapper = new ModelMapper();
         return new ModelMapper();
     }
 

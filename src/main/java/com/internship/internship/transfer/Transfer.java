@@ -6,4 +6,8 @@ public class Transfer {
 
     public interface Update {
     }
+
+    public interface UpdateRole {
+
+    }
 }

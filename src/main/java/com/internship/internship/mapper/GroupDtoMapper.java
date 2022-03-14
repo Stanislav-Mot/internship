@@ -15,6 +15,7 @@ public class GroupDtoMapper {
     }
 
     public GroupDto convertToDto(Group group) {
+
         return modelMapper.map(group, GroupDto.class);
     }
 

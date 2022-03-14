@@ -3,10 +3,7 @@ package com.internship.internship.mapper;
 import com.internship.internship.dto.PersonDto;
 import com.internship.internship.model.Person;
 import org.modelmapper.ModelMapper;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDate;
 
 @Component
 public class PersonDtoMapper {

@@ -12,6 +12,7 @@ import com.internship.internship.repository.TaskRepo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class CacheService {
     //time in seconds
@@ -68,7 +70,7 @@ public class CacheService {
         return cacheMap.size();
     }
 
-    private void addAll() {
+    public void addAll() {
         cacheMap.clear();
         groupRepo.findAll().stream()
                 .map(group -> {
@@ -79,6 +81,7 @@ public class CacheService {
         taskRepo.findAll().stream()
                 .map(taskDtoMapper::convertToDto)
                 .forEach(x -> put(x.getId(), Task.class, x));
+        System.out.println();
     }
 
     public Assignment getTask(Long id) {
@@ -102,7 +105,7 @@ public class CacheService {
     }
 
     public List<GroupDto> getAllGroup() {
-        return cacheMap.entrySet().parallelStream()
+        return cacheMap.entrySet().stream()
                 .filter(x -> x.getKey().getClazz().equals(Group.class)).map(x -> {
                     x.getValue().setLastAccessed(System.currentTimeMillis());
                     return (GroupDto) x.getValue().getValue();
@@ -115,6 +118,18 @@ public class CacheService {
 
     public void setValid(boolean valid) {
         this.valid = valid;
+    }
+
+    private List<Assignment> getComposite(Long id) {
+        List<Task> taskList = taskRepo.findByGroupsId(id);
+        List<Assignment> assignments = new ArrayList<>(taskList);
+
+        List<Group> groupList = groupRepo.findByGroupId(id);
+        groupList.forEach(group -> group.setTasks(getComposite(group.getId())));
+
+        assignments.addAll(groupList);
+
+        return assignments;
     }
 
     @Data
@@ -132,17 +147,5 @@ public class CacheService {
     private class KeyObject {
         private Long key;
         private Class<? extends Assignment> clazz;
-    }
-
-    private List<Assignment> getComposite(Long id) {
-        List<Task> taskList = taskRepo.findByGroupsId(id);
-        List<Assignment> assignments = new ArrayList<>(taskList);
-
-        List<Group> groupList = groupRepo.findByGroupId(id);
-        groupList.forEach(group -> group.setTasks(getComposite(group.getId())));
-
-        assignments.addAll(groupList);
-
-        return assignments;
     }
 }

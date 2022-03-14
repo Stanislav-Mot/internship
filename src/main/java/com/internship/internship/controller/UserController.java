@@ -68,8 +68,9 @@ public class UserController {
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = {@ExampleObject(value = "{\"email\": \"test@test.com\", \"roles\": [ \"ROLE_USER\" ]}")}))
     @Operation(summary = "Update user")
+    @Validated(Transfer.UpdateRole.class)
     @PutMapping("/user/role")
-    public UserDto updateRole(@Valid @RequestBody UserDto userDto) {
-        return userService.updateRole(userDto);
+    public UserDto updateRole(@Valid @RequestBody UserDto userDto, @RequestParam(defaultValue = "false") Boolean delete) {
+        return userService.updateRole(userDto, delete);
     }
 }

@@ -17,13 +17,13 @@ public class UserDto {
     private Long id;
 
     @Email(message = "Incorrect email")
-    @NotBlank(message = "Email is required", groups = {Transfer.New.class, Transfer.Update.class})
+    @NotBlank(message = "Email is required", groups = {Transfer.New.class, Transfer.Update.class, Transfer.UpdateRole.class})
     private String email;
 
-    @NotBlank(message = "Password is required", groups = {Transfer.New.class})
+    @NotBlank(message = "Password is required", groups = {Transfer.New.class, Transfer.Update.class,})
     private String password;
 
-    @NotBlank(message = "passwordConfirmation is required", groups = {Transfer.Update.class})
+    @NotBlank(message = "passwordConfirmation is required", groups = {Transfer.Update.class, Transfer.New.class})
     private String passwordConfirmation;
 
     private Set<Role> roles;

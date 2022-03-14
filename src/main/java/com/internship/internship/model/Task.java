@@ -16,6 +16,7 @@ import java.util.List;
 public class Task implements Assignment {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
     private String name;
@@ -26,14 +27,14 @@ public class Task implements Assignment {
     private Integer spentTime;
     private Integer priority;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "group_task",
             joinColumns = @JoinColumn(name = "id_task"),
             inverseJoinColumns = @JoinColumn(name = "id_group"))
     private List<Group> groups = new ArrayList<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "person_task",
             joinColumns = @JoinColumn(name = "id_task"),

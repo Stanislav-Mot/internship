@@ -31,7 +31,7 @@ public class Helper {
     }
 
     public static Person newPersonForTest() {
-        return new Person(null, "Tester", "Rochester", LocalDate.of(2012, 12, 12),  null, null);
+        return new Person(null, "Tester", "Rochester", LocalDate.of(2012, 12, 12), null, null);
     }
 
     public static Task newTaskForTest() {

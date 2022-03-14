@@ -21,6 +21,7 @@ public class User implements UserDetails {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Email(message = "Incorrect email")
@@ -33,7 +34,11 @@ public class User implements UserDetails {
     private String password;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id", nullable = false))
+    @CollectionTable(name = "user_role")
+    @JoinColumns({
+            @JoinColumn(name = "user_id", nullable = false),
+            @JoinColumn(name = "role", nullable = false)
+    })
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Set<Role> roles;

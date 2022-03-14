@@ -15,6 +15,7 @@ import java.util.List;
 public class Group implements Assignment {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -31,7 +32,7 @@ public class Group implements Assignment {
     @JoinColumn(name = "id_parent")
     private Group group;
 
-    @ManyToMany()
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "person_group",
             joinColumns = @JoinColumn(name = "id_group"),

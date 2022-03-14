@@ -42,7 +42,8 @@ public class GroupController {
     @Operation(summary = "Get all groups")
     @GetMapping("/group")
     public List<GroupDto> getAll() {
-        return groupService.getAll();
+        List<GroupDto> all = groupService.getAll();
+        return all;
     }
 
     @io.swagger.v3.oas.annotations.parameters.RequestBody(

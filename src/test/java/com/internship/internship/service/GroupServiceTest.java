@@ -94,7 +94,7 @@ class GroupServiceTest {
 
         when(taskRepo.getById(task.getId())).thenReturn(task);
         when(groupRepo.getById(group.getId())).thenReturn(group);
-        when(groupRepo.addTaskToGroup(group.getId(), task.getId())).thenReturn(44);
+//        when(groupRepo.addTaskToGroup(group.getId(), task.getId())).thenReturn(void);
         when(mapper.convertToDto(group)).thenReturn(groupDto);
 
         GroupDto result = groupService.addTask(group.getId(), task.getId());
