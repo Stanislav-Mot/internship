@@ -10,8 +10,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import java.util.ArrayList;
@@ -38,13 +36,13 @@ class TaskServiceTest {
         Task task = newTaskForTest();
         TaskDto taskDto = newTaskDtoForTest();
 
-        when(taskRepo.getTaskById(task.getId())).thenReturn(task);
+        when(taskRepo.getById(task.getId())).thenReturn(task);
         when(mapper.convertToDto(task)).thenReturn(taskDto);
         TaskDto taskFromService = taskService.getById(task.getId());
 
         assertEquals(taskFromService, taskDto);
 
-        verify(taskRepo, times(1)).getTaskById(task.getId());
+        verify(taskRepo, times(1)).getById(task.getId());
     }
 
     @Test
@@ -54,27 +52,26 @@ class TaskServiceTest {
         list.add(new Task());
         list.add(new Task());
 
-        when(taskRepo.getAllTasks()).thenReturn(list);
+        when(taskRepo.findAll()).thenReturn(list);
 
         List<TaskDto> taskList = taskService.getAll();
 
         assertEquals(3, taskList.size());
-        verify(taskRepo, times(1)).getAllTasks();
+        verify(taskRepo, times(1)).findAll();
     }
 
     @Test
     void add() {
         TaskDto taskDto = new TaskDto(1L);
         Task task = new Task();
-        KeyHolder keyHolder = new GeneratedKeyHolder();
 
         when(mapper.convertToEntity(any(TaskDto.class))).thenReturn(task);
-        when(taskRepo.addTask(any(MapSqlParameterSource.class))).thenReturn(keyHolder);
+        when(taskRepo.save(task)).thenReturn(task);
         when(mapper.getDtoFromHolder(any(KeyHolder.class))).thenReturn(taskDto);
 
         TaskDto result = taskService.add(taskDto);
         assertEquals(result.getId(), result.getId());
-        verify(taskRepo, times(1)).addTask(any(MapSqlParameterSource.class));
+        verify(taskRepo, times(1)).save(task);
     }
 
     @Test
@@ -82,13 +79,13 @@ class TaskServiceTest {
         TaskDto taskDto = newTaskDtoForTest();
         Task task = newTaskForTest();
 
-        when(taskRepo.update(any(MapSqlParameterSource.class))).thenReturn(task);
+        when(taskRepo.save(task)).thenReturn(task);
         when(mapper.convertToEntity(taskDto)).thenReturn(task);
         when(mapper.convertToDto(task)).thenReturn(taskDto);
 
         TaskDto result = taskService.update(taskDto);
         assertEquals(result.getId(), result.getId());
-        verify(taskRepo, times(1)).update(any(MapSqlParameterSource.class));
+        verify(taskRepo, times(1)).save(task);
     }
 
     @Test
@@ -96,11 +93,11 @@ class TaskServiceTest {
         Task task = newTaskForTest();
         List<Task> list = Collections.singletonList(task);
 
-        when(taskRepo.search(any(MapSqlParameterSource.class))).thenReturn(list);
+        when(taskRepo.searchCustom(null, null, null, null, null)).thenReturn(list);
 
         SearchTaskDto searchTaskDto = new SearchTaskDto("", 1, 1, null, null);
         List<TaskDto> taskList = taskService.search(searchTaskDto);
         assertEquals(1, taskList.size());
-        verify(taskRepo, times(1)).search(any(MapSqlParameterSource.class));
+        verify(taskRepo, times(1)).searchCustom(null, null, null, null, null);
     }
 }

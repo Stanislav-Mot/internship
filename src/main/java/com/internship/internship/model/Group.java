@@ -20,7 +20,7 @@ public class Group implements Assignment {
     @Column(nullable = false)
     private String name;
 
-    @ManyToMany(targetEntity = Task.class)
+    @ManyToMany(targetEntity = Task.class, fetch = FetchType.LAZY)
     @JoinTable(
             name = "group_task",
             joinColumns = @JoinColumn(name = "id_group"),

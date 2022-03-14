@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,7 +36,7 @@ public class CacheService {
         this.taskDtoMapper = taskDtoMapper;
         this.groupDtoMapper = groupDtoMapper;
 
-//        addAll();
+        addAll();
         this.valid = true;
 
         Thread t = new Thread(() -> {
@@ -69,10 +70,13 @@ public class CacheService {
 
     private void addAll() {
         cacheMap.clear();
-        groupRepo.getAll().stream()
-                .map(groupDtoMapper::convertToDto)
+        groupRepo.findAll().stream()
+                .map(group -> {
+                    group.setTasks(getComposite(group.getId()));
+                    return groupDtoMapper.convertToDto(group);
+                })
                 .forEach(x -> put(x.getId(), Group.class, x));
-        taskRepo.getAllTasks().stream()
+        taskRepo.findAll().stream()
                 .map(taskDtoMapper::convertToDto)
                 .forEach(x -> put(x.getId(), Task.class, x));
     }
@@ -128,5 +132,17 @@ public class CacheService {
     private class KeyObject {
         private Long key;
         private Class<? extends Assignment> clazz;
+    }
+
+    private List<Assignment> getComposite(Long id) {
+        List<Task> taskList = taskRepo.findByGroupsId(id);
+        List<Assignment> assignments = new ArrayList<>(taskList);
+
+        List<Group> groupList = groupRepo.findByGroupId(id);
+        groupList.forEach(group -> group.setTasks(getComposite(group.getId())));
+
+        assignments.addAll(groupList);
+
+        return assignments;
     }
 }

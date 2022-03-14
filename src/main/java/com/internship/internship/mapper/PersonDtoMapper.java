@@ -23,10 +23,4 @@ public class PersonDtoMapper {
     public Person convertToEntity(PersonDto personDto) {
         return modelMapper.map(personDto, Person.class);
     }
-
-    public PersonDto getDtoFromHolder(KeyHolder holder) {
-        PersonDto dto = modelMapper.map(holder.getKeys(), PersonDto.class);
-        dto.setBirthdate(LocalDate.parse(holder.getKeyList().get(0).get("birthdate").toString()));
-        return dto;
-    }
 }

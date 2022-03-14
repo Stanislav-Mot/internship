@@ -56,7 +56,13 @@ public class PersonService {
     }
 
     public List<PersonDto> search(SearchPersonDto searchPersonDto) {
-        List<Person> list = repository.searchByToken(searchPersonDto);
+        List<Person> list = repository.searchByToken(
+                searchPersonDto.getFirstName(),
+                searchPersonDto.getLastName(),
+                searchPersonDto.getExactAge(),
+                searchPersonDto.getRangeAgeStart(),
+                searchPersonDto.getRangeAgeEnd()
+        );
         return getPersonDtos(list);
     }
 

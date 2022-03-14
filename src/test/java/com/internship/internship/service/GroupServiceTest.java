@@ -11,8 +11,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import java.util.ArrayList;
@@ -39,12 +37,12 @@ class GroupServiceTest {
         Group group = new Group();
         GroupDto groupDto = new GroupDto(1L);
 
-        when(groupRepo.getGroupById(groupDto.getId())).thenReturn(group);
+        when(groupRepo.getById(groupDto.getId())).thenReturn(group);
         when(mapper.convertToDto(group)).thenReturn(groupDto);
 
         GroupDto groupFromService = groupService.getById(groupDto.getId());
         assertEquals(groupFromService, groupDto);
-        verify(groupRepo, times(1)).getGroupById(group.getId());
+        verify(groupRepo, times(1)).getById(group.getId());
     }
 
     @Test
@@ -54,24 +52,24 @@ class GroupServiceTest {
         list.add(new Group());
         list.add(new Group());
 
-        when(groupRepo.getAll()).thenReturn(list);
+        when(groupRepo.findAll()).thenReturn(list);
 
         List<GroupDto> groupList = groupService.getAll();
         assertEquals(3, groupList.size());
-        verify(groupRepo, times(1)).getAll();
+        verify(groupRepo, times(1)).findAll();
     }
 
     @Test
     void add() {
         GroupDto groupDto = new GroupDto(1L);
-        KeyHolder keyHolder = new GeneratedKeyHolder();
+        Group group = new Group();
 
-        when(groupRepo.addGroup(any(MapSqlParameterSource.class))).thenReturn(keyHolder);
+        when(groupRepo.save(any(Group.class))).thenReturn(group);
         when(mapper.getDtoFromHolder(any(KeyHolder.class))).thenReturn(groupDto);
 
         GroupDto groupDtoReturned = groupService.add(groupDto);
         assertEquals(groupDto.getId(), groupDtoReturned.getId());
-        verify(groupRepo, times(1)).addGroup(any(MapSqlParameterSource.class));
+        verify(groupRepo, times(1)).save(group);
     }
 
     @Test
@@ -79,13 +77,13 @@ class GroupServiceTest {
         GroupDto groupDto = newGroupDtoForTest();
         Group group = newGroupForTest();
 
-        when(groupRepo.updateGroup(any(Group.class))).thenReturn(group);
+        when(groupRepo.save(any(Group.class))).thenReturn(group);
         when(mapper.convertToEntity(groupDto)).thenReturn(group);
         when(mapper.convertToDto(any(Group.class))).thenReturn(groupDto);
 
         GroupDto dto = groupService.update(groupDto);
         assertEquals(groupDto.getId(), dto.getId());
-        verify(groupRepo, times(1)).updateGroup(any(Group.class));
+        verify(groupRepo, times(1)).save(any(Group.class));
     }
 
     @Test
@@ -94,9 +92,9 @@ class GroupServiceTest {
         Task task = new Task();
         GroupDto groupDto = newGroupDtoForTest();
 
-        when(taskRepo.getTaskById(task.getId())).thenReturn(task);
-        when(groupRepo.getGroupById(group.getId())).thenReturn(group);
-        when(groupRepo.addTaskToGroup(group.getId(), task.getId())).thenReturn(group);
+        when(taskRepo.getById(task.getId())).thenReturn(task);
+        when(groupRepo.getById(group.getId())).thenReturn(group);
+        when(groupRepo.addTaskToGroup(group.getId(), task.getId())).thenReturn(44);
         when(mapper.convertToDto(group)).thenReturn(groupDto);
 
         GroupDto result = groupService.addTask(group.getId(), task.getId());
@@ -119,8 +117,8 @@ class GroupServiceTest {
         Group group = new Group();
         Group groupIn = new Group();
 
-        when(groupRepo.getGroupById(anyLong())).thenReturn(group);
-        when(groupRepo.addGroupToGroup(group.getId(), groupIn.getId())).thenReturn(group);
+        when(groupRepo.getById(anyLong())).thenReturn(group);
+        when(groupRepo.addGroupToGroup(group.getId(), groupIn.getId())).thenReturn(1);
         when(mapper.convertToDto(any(Group.class))).thenReturn(any(GroupDto.class));
 
         groupService.addGroup(group.getId(), groupIn.getId());

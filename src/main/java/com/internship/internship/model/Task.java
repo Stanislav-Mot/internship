@@ -32,4 +32,12 @@ public class Task implements Assignment {
             joinColumns = @JoinColumn(name = "id_task"),
             inverseJoinColumns = @JoinColumn(name = "id_group"))
     private List<Group> groups = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "person_task",
+            joinColumns = @JoinColumn(name = "id_task"),
+            inverseJoinColumns = @JoinColumn(name = "id_person")
+    )
+    private List<Person> persons = new ArrayList<>();
 }
