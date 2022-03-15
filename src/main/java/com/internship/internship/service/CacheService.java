@@ -75,13 +75,13 @@ public class CacheService {
         groupRepo.findAll().stream()
                 .map(group -> {
                     group.setTasks(getComposite(group.getId()));
+                    group.getPersons().stream().forEach(x -> x.setGroups(null));
                     return groupDtoMapper.convertToDto(group);
                 })
                 .forEach(x -> put(x.getId(), Group.class, x));
         taskRepo.findAll().stream()
                 .map(taskDtoMapper::convertToDto)
                 .forEach(x -> put(x.getId(), Task.class, x));
-        System.out.println();
     }
 
     public Assignment getTask(Long id) {
@@ -105,7 +105,7 @@ public class CacheService {
     }
 
     public List<GroupDto> getAllGroup() {
-        return cacheMap.entrySet().stream()
+        return cacheMap.entrySet().parallelStream()
                 .filter(x -> x.getKey().getClazz().equals(Group.class)).map(x -> {
                     x.getValue().setLastAccessed(System.currentTimeMillis());
                     return (GroupDto) x.getValue().getValue();
@@ -122,6 +122,10 @@ public class CacheService {
 
     private List<Assignment> getComposite(Long id) {
         List<Task> taskList = taskRepo.findByGroupsId(id);
+        taskList.stream().forEach(x -> {
+            x.setPersons(null);
+            x.setGroups(null);
+        });
         List<Assignment> assignments = new ArrayList<>(taskList);
 
         List<Group> groupList = groupRepo.findByGroupId(id);

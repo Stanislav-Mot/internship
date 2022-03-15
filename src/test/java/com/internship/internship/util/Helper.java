@@ -47,6 +47,6 @@ public class Helper {
     }
 
     public static TaskDto newTaskDtoForTest() {
-        return new TaskDto(CORRECT_ID, "Tester", null, null, null, null, null, null);
+        return new TaskDto(CORRECT_ID, "Tester", null, null, null, null, null,  null);
     }
 }
