@@ -7,14 +7,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Transactional
 @Repository
 public interface GroupRepo extends JpaRepository<Group, Long> {
 
-    List<Group> findByPersonsId(Long id);
+//    List<Group> findByPersonsId(Long id);
 
     Optional<Group> findById(Long id);
 

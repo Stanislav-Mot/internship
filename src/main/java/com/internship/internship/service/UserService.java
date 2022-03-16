@@ -57,25 +57,27 @@ public class UserService implements UserDetailsService {
         if (repository.findByEmail(user.getEmail()).isPresent()) {
             throw new ChangesNotAppliedException("User already exists with this email");
         }
+        if (!userDto.getPassword().equals(userDto.getPasswordConfirmation())) {
+            throw new ChangesNotAppliedException("passwords is different");
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(Collections.singleton(Role.ROLE_USER));
-        User saved = repository.save(user);
-
-        saved.setPassword("hidden");
+        repository.save(user);
         return mapper.convertToDto(user);
     }
 
+    @Transactional
     public UserDto updateRole(UserDto userDto, Boolean delete) {
         User user = repository.findByEmail(userDto.getEmail())
                 .orElseThrow(() -> new ChangesNotAppliedException("User not exists with this email"));
 
-        for (Role role : userDto.getRoles()) {
-            if (delete) {
-//                repository.deleteRole(user.getId(), role.name());
+        userDto.getRoles().forEach(role -> {
+            if (Boolean.TRUE.equals(delete)) {
+                repository.deleteRole(user.getId(), role.name());
             } else {
-//                repository.addRole(user.getId(), role.name());
+                repository.addRole(user.getId(), role.name());
             }
-        }
+        });
         User updated = repository.getById(user.getId());
         return mapper.convertToDto(updated);
     }

@@ -3,7 +3,3 @@ databaseChangeLog: #параметр в котором находятся миг
       file: db/changeset/schema.sql # путь к файлу миграции
   - include:
       file: db/changeset/user-and-role.sql
-  - include:
-      file: db/changeset/person-task-table.sql
-  - include:
-      file: db/changeset/pk-role.sql

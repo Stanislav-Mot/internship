@@ -1,14 +1,3 @@
-ALTER TABLE person
-    ADD COLUMN password VARCHAR(256) NOT NULL,
-    ADD COLUMN email    VARCHAR(256) NOT NULL;
-
-CREATE TABLE user_role
-(
-    user_id INT8 NOT NULL,
-    role    varchar(255),
-    FOREIGN KEY (user_id) REFERENCES person (id)
-);
-
 INSERT INTO person (email, password, first_name, last_name, birthdate)
 VALUES ('admin@admin.com', 'admin', 'Admin', 'Adminov', '1967-05-10');
 

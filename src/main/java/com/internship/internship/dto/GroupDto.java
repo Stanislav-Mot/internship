@@ -27,7 +27,7 @@ public class GroupDto implements Assignment {
     private String name;
 
     @Null(groups = {Transfer.New.class, Transfer.Update.class})
-    private List<AssignmentImpl> tasks;
+    private List<AssignmentImpl> assignments;
 
     @Null(groups = {Transfer.New.class, Transfer.Update.class})
     private List<PersonDto> persons;

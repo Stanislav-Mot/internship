@@ -5,7 +5,6 @@ import com.internship.internship.dto.search.SearchPersonDto;
 import com.internship.internship.exeption.ChangesNotAppliedException;
 import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.mapper.PersonDtoMapper;
-import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
 import com.internship.internship.repository.PersonRepo;
 import org.springframework.stereotype.Service;
@@ -26,11 +25,6 @@ public class PersonService {
 
     public PersonDto getById(Long id) {
         Person person = repository.findById(id).orElseThrow(() -> new DataNotFoundException(String.format("Person Id %d is not found", id)));
-//        person.setGroups(person.getGroups().stream().map(x-> {
-//            Group group = (Group) x;
-//            group.setPersons(null);
-//            return group;
-//        }).collect(Collectors.toList()));
         return mapper.convertToDto(person);
     }
 
@@ -53,9 +47,9 @@ public class PersonService {
 
     public PersonDto addGroup(Long personId, Long groupId) {
         Integer result = repository.addGroupToPerson(personId, groupId);
-        if(result > 0){
+        if (result > 0) {
             return null;
-        }else {
+        } else {
             throw new ChangesNotAppliedException("Something wrong =)");
         }
     }
@@ -77,8 +71,8 @@ public class PersonService {
     }
 
     public void delete(Long id) {
-        repository.findById(id).orElseThrow(() -> new ChangesNotAppliedException(String.format("Person id: %d is not found", id)));
-        repository.deleteById(id);
+        Person person = repository.findById(id).orElseThrow(() -> new ChangesNotAppliedException(String.format("Person id: %d is not found", id)));
+        repository.deleteById(person.getId());
     }
 
     private List<PersonDto> getPersonDtos(List<Person> list) {

@@ -5,14 +5,11 @@ import com.internship.internship.dto.TaskDto;
 import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.mapper.PersonDtoMapper;
 import com.internship.internship.mapper.TaskDtoMapper;
-import com.internship.internship.model.AssignmentImpl;
 import com.internship.internship.model.Person;
 import com.internship.internship.repository.PersonRepo;
 import com.internship.internship.repository.TaskRepo;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,6 +48,7 @@ public class AdminService {
 
     public List<TaskDto> resetProgressOfAllTasks(Long clientId) {
         personRepo.resetProgress(clientId);
-        return taskRepo.findByPersonsId(clientId).stream().map(taskDtoMapper::convertToDto).collect(Collectors.toList());
+//        return taskRepo.findByPersonsId(clientId).stream().map(taskDtoMapper::convertToDto).collect(Collectors.toList());
+        return null;
     }
 }

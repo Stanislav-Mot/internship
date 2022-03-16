@@ -1,7 +1,6 @@
 package com.internship.internship.dto;
 
 import com.internship.internship.model.Assignment;
-import com.internship.internship.model.AssignmentImpl;
 import com.internship.internship.transfer.Transfer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

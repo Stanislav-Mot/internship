@@ -27,8 +27,8 @@ public class Person {
     @JoinColumn(name = "id")
     private User user;
 
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "persons")
-    private List<AssignmentImpl> assignments = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "persons")
+    private List<Group> assignments = new ArrayList<>();
 
     public Person(Long id) {
         this.id = id;

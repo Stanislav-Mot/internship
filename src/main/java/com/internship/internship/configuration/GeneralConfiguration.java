@@ -1,6 +1,5 @@
 package com.internship.internship.configuration;
 
-import com.internship.internship.service.CacheService;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;

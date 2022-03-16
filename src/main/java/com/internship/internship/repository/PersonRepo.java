@@ -17,7 +17,7 @@ public interface PersonRepo extends JpaRepository<Person, Long> {
     @Query(value = "SELECT * FROM person WHERE LOWER(CONCAT(first_name, ' ' , last_name)) LIKE LOWER(:token)", nativeQuery = true)
     List<Person> searchByTokenInName(String token);
 
-    @Query(value = "SELECT * FROM person WHERE (:first_name::VARCHAR IS NULL OR person.first_name = :first_name) " +
+    @Query(value = "SELECT * FROM person WHERE (:firstName::VARCHAR IS NULL OR person.first_name = :firstName) " +
             "AND (:lastName::VARCHAR IS NULL OR person.last_name = :lastName) " +
 
             "AND (:exactAge::INT8 IS NULL OR " +
@@ -27,12 +27,11 @@ public interface PersonRepo extends JpaRepository<Person, Long> {
             "extract(YEAR FROM NOW()::date) - extract(YEAR FROM person.birthdate) " +
             "BETWEEN :rangeAgeStart AND :rangeAgeEnd)", nativeQuery = true)
     List<Person> searchByToken(
-            String first_name,
+            String firstName,
             String lastName,
             Integer exactAge,
             Integer rangeAgeStart,
-            Integer rangeAgeEnd
-    );
+            Integer rangeAgeEnd);
 
     @Modifying
     @Query(value = "INSERT INTO person_group (id_person, id_group) VALUES (?, ?) ON CONFLICT DO NOTHING", nativeQuery = true)

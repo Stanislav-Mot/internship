@@ -13,9 +13,9 @@ import java.util.List;
 @Transactional
 @Repository
 public interface TaskRepo extends JpaRepository<Task, Long> {
-    List<Task> findByAssignmentsId(Long id);
+//    List<Task> findByGroupsId(Long id);
 
-    List<Task> findByPersonsId(Long id);
+//    List<Task> findByPersonsId(Long id);
 
     @Modifying
     @Query(value = "UPDATE task SET  progress = ? WHERE id = ? AND start_time IS NOT NULL", nativeQuery = true)

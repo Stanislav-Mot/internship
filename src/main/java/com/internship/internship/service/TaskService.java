@@ -45,11 +45,13 @@ public class TaskService {
     }
 
     public List<TaskDto> getByGroupId(Long id) {
-        return getTaskDtos(repository.findByAssignmentsId(id));
+//        return getTaskDtos(repository.findByGroupsId(id));
+        return null;
     }
 
     public List<TaskDto> getByPersonId(Long id) {
-        return getTaskDtos(repository.findByPersonsId(id));
+//        return getTaskDtos(repository.findByPersonsId(id));
+        return null;
     }
 
     public TaskDto add(TaskDto taskDto) {

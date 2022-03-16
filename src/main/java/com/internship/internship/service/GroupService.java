@@ -7,10 +7,10 @@ import com.internship.internship.mapper.GroupDtoMapper;
 import com.internship.internship.mapper.TaskDtoMapper;
 import com.internship.internship.model.AssignmentImpl;
 import com.internship.internship.model.Group;
-import com.internship.internship.model.Task;
 import com.internship.internship.repository.GroupRepo;
 import com.internship.internship.repository.TaskRepo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -32,25 +32,28 @@ public class GroupService {
         this.taskRepo = taskRepo;
     }
 
+    @Transactional
     public GroupDto getById(Long id) {
-//        if (cacheService.isValid()) {
+        if (cacheService.isValid()) {
 //            return (GroupDto) cacheService.getGroup(id);
-//        } else {
-//            Group group = groupRepo.findById(id).orElseThrow(() -> new DataNotFoundException(String.format("Group Id %d is not found", id)));
+        } else {
+            Group group = groupRepo.findById(id).orElseThrow(() -> new DataNotFoundException(String.format("Group Id %d is not found", id)));
 //            group.getPersons().forEach(x -> x.setGroups(null));
 //            group.setTasks(getComposite(id));
-//            return mapper.convertToDto(group);
-//        }
+            return mapper.convertToDto(group);
+        }
         return null;
     }
 
     public List<GroupDto> getByPersonId(Long id) {
-        return groupRepo.findByPersonsId(id)
-                .stream().map(mapper::convertToDto)
-                .collect(Collectors.toList());
+//        return groupRepo.findByPersonsId(id)
+//                .stream().map(mapper::convertToDto)
+//                .collect(Collectors.toList());
+        return null;
     }
 
     public List<GroupDto> getAll() {
+        groupRepo.findAll();
         if (cacheService.isValid()) {
             return cacheService.getAllGroup();
         } else {
@@ -145,7 +148,7 @@ public class GroupService {
     }
 
     private List<AssignmentImpl> getComposite(Long id) {
-        List<Task> taskList = taskRepo.findByAssignmentsId(id);
+//        List<Task> taskList = taskRepo.findByGroupsId(id);
 //        List<AssignmentImpl> assignments = taskList.stream().map(task -> {
 //            task.setGroups(null);
 //            task.setPersons(null);
@@ -157,8 +160,8 @@ public class GroupService {
         List<GroupDto> groupDtos = groupList.stream().map(mapper::convertToDto).collect(Collectors.toList());
         groupDtos.forEach(group -> {
             group.setPersons(null);
-            group.setTasks(null);
-            group.setTasks(getComposite(group.getId()));
+            group.setAssignments(null);
+            group.setAssignments(getComposite(group.getId()));
         });
 
 //        assignments.addAll(groupDtos);

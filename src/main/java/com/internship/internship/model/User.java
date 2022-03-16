@@ -34,13 +34,12 @@ public class User implements UserDetails {
     private String password;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_role")
-    @JoinColumns({
-            @JoinColumn(name = "user_id", nullable = false),
-            @JoinColumn(name = "role", nullable = false)
-    })
     @Enumerated(EnumType.STRING)
-    @Column(name = "role")
+    @CollectionTable(
+            name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id")
+    )
+    @Column(name = "role", nullable = false)
     private Set<Role> roles;
 
     @Override

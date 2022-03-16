@@ -5,8 +5,6 @@ import com.internship.internship.dto.TaskDto;
 import com.internship.internship.mapper.GroupDtoMapper;
 import com.internship.internship.mapper.TaskDtoMapper;
 import com.internship.internship.model.AssignmentImpl;
-import com.internship.internship.model.Group;
-import com.internship.internship.model.Task;
 import com.internship.internship.repository.GroupRepo;
 import com.internship.internship.repository.TaskRepo;
 import lombok.AllArgsConstructor;
@@ -18,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 import static java.lang.Thread.sleep;
 
@@ -45,7 +42,7 @@ public class CacheService {
         this.taskDtoMapper = taskDtoMapper;
         this.groupDtoMapper = groupDtoMapper;
 
-        if(Boolean.TRUE.equals(cache)){
+        if (Boolean.TRUE.equals(cache)) {
             addAll();
             this.valid = true;
 
@@ -64,8 +61,8 @@ public class CacheService {
             });
             t.setDaemon(true);
             t.start();
-        }else {
-            this.valid=false;
+        } else {
+            this.valid = false;
         }
     }
 
@@ -99,7 +96,7 @@ public class CacheService {
 //        CacheObject c = cacheMap.get(new KeyObject(id, Task.class));
 //        c.lastAccessed = System.currentTimeMillis();
 //        return c.value;
-        return  null;
+        return null;
     }
 
     public AssignmentImpl getGroup(Long id) {
@@ -136,7 +133,7 @@ public class CacheService {
     }
 
     private List<AssignmentImpl> getComposite(Long id) {
-        List<Task> taskList = taskRepo.findByAssignmentsId(id);
+//        List<Task> taskList = taskRepo.findByGroupsId(id);
 
 //        List<AssignmentImpl> assignments = taskList.stream().map(taskDtoMapper::convertToDto).collect(Collectors.toList());
 

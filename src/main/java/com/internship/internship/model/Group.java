@@ -3,6 +3,7 @@ package com.internship.internship.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Target;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Entity(name = "groups")
-public class Group implements Assignment{
+public class Group {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,33 +22,19 @@ public class Group implements Assignment{
     @Column(nullable = false)
     private String name;
 
-//    @OneToMany(targetEntity = Task.class, fetch = FetchType.EAGER)
-//    @JoinTable(
-//            name = "group_task",
-//            joinColumns = @JoinColumn(name = "id_group"),
-//            inverseJoinColumns = @JoinColumn(name = "id_task"))
-//    private List<AssignmentImpl> tasks = new ArrayList<>();
-
-//    @ManyToOne
-//    @JoinColumn(name = "id_parent")
-//    private Group group;
+    @Column(name = "group_id", nullable = false)
+    @Embedded
+    @Target(AssignmentImpl.class)
+    private List<AssignmentImpl> assignments = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "general_connections",
+            name = "assignment",
             joinColumns = @JoinColumn(name = "group_id"),
             inverseJoinColumns = @JoinColumn(name = "person_id"))
-    List<Person> persons = new ArrayList<>();
+    private List<Person> persons = new ArrayList<>();
 
     public Group(String name) {
         this.name = name;
     }
-
-//    public void add(AssignmentImpl task) {
-//        tasks.add(task);
-//    }
-//
-//    public Integer size() {
-//        return tasks.size();
-//    }
 }

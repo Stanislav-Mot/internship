@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Entity
-public class Task implements Assignment{
+public class Task implements Assignment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,12 +27,16 @@ public class Task implements Assignment{
     private Integer spentTime;
     private Integer priority;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "tasks")
-    private List<AssignmentImpl> assignments = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "assignment",
+            joinColumns = @JoinColumn(name = "task_id"),
+            inverseJoinColumns = @JoinColumn(name = "group_id"))
+    private List<Group> groups = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "general_connections",
+            name = "assignment",
             joinColumns = @JoinColumn(name = "group_id"),
             inverseJoinColumns = @JoinColumn(name = "person_id"))
     private List<Person> persons = new ArrayList<>();
