@@ -13,7 +13,7 @@ import java.util.List;
 @Transactional
 @Repository
 public interface TaskRepo extends JpaRepository<Task, Long> {
-    List<Task> findByGroupsId(Long id);
+    List<Task> findByAssignmentsId(Long id);
 
     List<Task> findByPersonsId(Long id);
 
@@ -40,6 +40,7 @@ public interface TaskRepo extends JpaRepository<Task, Long> {
             @Param("toProgress") Integer toProgress
     );
 
+    @Transactional
     @Modifying
     @Query(value = "UPDATE task SET start_time = NOW()::timestamp(0) WHERE id = ?", nativeQuery = true)
     void setStartTime(Long id);

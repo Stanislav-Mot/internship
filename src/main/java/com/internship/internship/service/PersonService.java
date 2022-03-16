@@ -5,6 +5,7 @@ import com.internship.internship.dto.search.SearchPersonDto;
 import com.internship.internship.exeption.ChangesNotAppliedException;
 import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.mapper.PersonDtoMapper;
+import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
 import com.internship.internship.repository.PersonRepo;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,11 @@ public class PersonService {
 
     public PersonDto getById(Long id) {
         Person person = repository.findById(id).orElseThrow(() -> new DataNotFoundException(String.format("Person Id %d is not found", id)));
+//        person.setGroups(person.getGroups().stream().map(x-> {
+//            Group group = (Group) x;
+//            group.setPersons(null);
+//            return group;
+//        }).collect(Collectors.toList()));
         return mapper.convertToDto(person);
     }
 
@@ -46,8 +52,12 @@ public class PersonService {
     }
 
     public PersonDto addGroup(Long personId, Long groupId) {
-        Person person = repository.addGroupToPerson(personId, groupId);
-        return mapper.convertToDto(person);
+        Integer result = repository.addGroupToPerson(personId, groupId);
+        if(result > 0){
+            return null;
+        }else {
+            throw new ChangesNotAppliedException("Something wrong =)");
+        }
     }
 
     public List<PersonDto> searchByTokenInName(String token) {

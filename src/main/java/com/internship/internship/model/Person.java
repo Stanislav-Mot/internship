@@ -27,12 +27,8 @@ public class Person {
     @JoinColumn(name = "id")
     private User user;
 
-    @ManyToMany(targetEntity = Group.class, fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "person_group",
-            joinColumns = @JoinColumn(name = "id_person"),
-            inverseJoinColumns = @JoinColumn(name = "id_group"))
-    private List<Assignment> groups = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "persons")
+    private List<AssignmentImpl> assignments = new ArrayList<>();
 
     public Person(Long id) {
         this.id = id;

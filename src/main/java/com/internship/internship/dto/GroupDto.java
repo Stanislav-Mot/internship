@@ -1,6 +1,7 @@
 package com.internship.internship.dto;
 
 import com.internship.internship.model.Assignment;
+import com.internship.internship.model.AssignmentImpl;
 import com.internship.internship.transfer.Transfer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -26,7 +27,7 @@ public class GroupDto implements Assignment {
     private String name;
 
     @Null(groups = {Transfer.New.class, Transfer.Update.class})
-    private List<Assignment> tasks;
+    private List<AssignmentImpl> tasks;
 
     @Null(groups = {Transfer.New.class, Transfer.Update.class})
     private List<PersonDto> persons;

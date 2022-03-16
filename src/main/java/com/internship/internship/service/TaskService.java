@@ -28,7 +28,8 @@ public class TaskService {
 
     public TaskDto getById(Long id) {
         if (cacheService.isValid()) {
-            return (TaskDto) cacheService.getTask(id);
+//            return (TaskDto) cacheService.getTask(id);
+            return null;
         } else {
             Task task = repository.findById(id).orElseThrow(() -> new DataNotFoundException(String.format("Task Id %d is not found", id)));
             return mapper.convertToDto(task);
@@ -44,7 +45,7 @@ public class TaskService {
     }
 
     public List<TaskDto> getByGroupId(Long id) {
-        return getTaskDtos(repository.findByGroupsId(id));
+        return getTaskDtos(repository.findByAssignmentsId(id));
     }
 
     public List<TaskDto> getByPersonId(Long id) {
@@ -55,7 +56,7 @@ public class TaskService {
         Task task = mapper.convertToEntity(taskDto);
         Task save = repository.save(task);
         TaskDto dto = mapper.convertToDto(save);
-        cacheService.put(dto.getId(), Task.class, dto);
+//        cacheService.put(dto.getId(), Task.class, dto);
         return dto;
     }
 
@@ -94,8 +95,9 @@ public class TaskService {
     public TaskDto delete(Long id) {
         repository.findById(id).orElseThrow(() -> new ChangesNotAppliedException(String.format("Task id: %d is not found", id)));
         repository.deleteById(id);
-        TaskDto taskDto = (TaskDto) cacheService.getTask(id);
-        cacheService.remove(id, Task.class);
-        return taskDto;
+//        TaskDto taskDto = (TaskDto) cacheService.getTask(id);
+//        cacheService.remove(id, Task.class);
+//        return taskDto;
+        return null;
     }
 }

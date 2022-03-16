@@ -5,7 +5,7 @@ import com.internship.internship.dto.TaskDto;
 import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.mapper.PersonDtoMapper;
 import com.internship.internship.mapper.TaskDtoMapper;
-import com.internship.internship.model.Assignment;
+import com.internship.internship.model.AssignmentImpl;
 import com.internship.internship.model.Person;
 import com.internship.internship.repository.PersonRepo;
 import com.internship.internship.repository.TaskRepo;
@@ -34,10 +34,10 @@ public class AdminService {
     public List<PersonDto> retrievingAllTasks() {
         List<PersonDto> personList = personRepo.findAll().stream().map(mapper::convertToDto).collect(Collectors.toList());
 
-        for (PersonDto person : personList) {
-            List<Assignment> assignments = new ArrayList<>(taskRepo.findByPersonsId(person.getId()));
-            person.setGroups(assignments);
-        }
+//        for (PersonDto person : personList) {
+//            List<AssignmentImpl> assignments = new ArrayList<>(taskRepo.findByPersonsId(person.getId()));
+//            person.setGroups(assignments);
+//        }
         return personList;
     }
 
@@ -45,7 +45,7 @@ public class AdminService {
         Person person = personRepo.findById(clientId).orElseThrow(() -> new DataNotFoundException(String.format("Person Id %d is not found", clientId)));
 
         personRepo.clearTasks(clientId, taskProgress);
-        person.setGroups(Collections.unmodifiableList(taskRepo.findByPersonsId(clientId)));
+//        person.setGroups(Collections.unmodifiableList(taskRepo.findByPersonsId(clientId)));
         return mapper.convertToDto(person);
     }
 

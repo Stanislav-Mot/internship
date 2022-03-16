@@ -1,7 +1,7 @@
 package com.internship.internship.dto;
 
 import com.internship.internship.model.Assignment;
-import com.internship.internship.model.Person;
+import com.internship.internship.model.AssignmentImpl;
 import com.internship.internship.transfer.Transfer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -11,8 +11,6 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor

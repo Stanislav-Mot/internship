@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-
 @Transactional
 @Repository
 public interface PersonRepo extends JpaRepository<Person, Long> {
@@ -28,16 +27,16 @@ public interface PersonRepo extends JpaRepository<Person, Long> {
             "extract(YEAR FROM NOW()::date) - extract(YEAR FROM person.birthdate) " +
             "BETWEEN :rangeAgeStart AND :rangeAgeEnd)", nativeQuery = true)
     List<Person> searchByToken(
-            @Param("first_name") String first_name,
-            @Param("lastName") String lastName,
-            @Param("exactAge") Integer exactAge,
-            @Param("rangeAgeStart") Integer rangeAgeStart,
-            @Param("rangeAgeEnd") Integer rangeAgeEnd
+            String first_name,
+            String lastName,
+            Integer exactAge,
+            Integer rangeAgeStart,
+            Integer rangeAgeEnd
     );
 
     @Modifying
     @Query(value = "INSERT INTO person_group (id_person, id_group) VALUES (?, ?) ON CONFLICT DO NOTHING", nativeQuery = true)
-    Person addGroupToPerson(Long personId, Long groupId);
+    Integer addGroupToPerson(Long personId, Long groupId);
 
     @Modifying
     @Query(value = "DELETE FROM person_group WHERE id_person = ? AND id_group = ?", nativeQuery = true)

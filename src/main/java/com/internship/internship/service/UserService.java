@@ -71,9 +71,9 @@ public class UserService implements UserDetailsService {
 
         for (Role role : userDto.getRoles()) {
             if (delete) {
-                repository.deleteRole(user.getId(), role.name());
+//                repository.deleteRole(user.getId(), role.name());
             } else {
-                repository.addRole(user.getId(), role.name());
+//                repository.addRole(user.getId(), role.name());
             }
         }
         User updated = repository.getById(user.getId());
