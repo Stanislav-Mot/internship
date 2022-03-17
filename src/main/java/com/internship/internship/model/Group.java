@@ -13,19 +13,14 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Entity(name = "groups")
-public class Group {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Group extends AssignmentImpl implements Assignment{
 
     @Column(nullable = false)
     private String name;
 
-    @Column(name = "group_id", nullable = false)
-    @Embedded
-    @Target(AssignmentImpl.class)
-    private List<AssignmentImpl> assignments = new ArrayList<>();
+    @ManyToMany
+    @Target(Group.class)
+    private List<Assignment> assignments = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

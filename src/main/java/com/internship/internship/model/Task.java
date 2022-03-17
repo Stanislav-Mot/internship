@@ -13,11 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Entity
-public class Task implements Assignment {
+public class Task extends AssignmentImpl implements Assignment{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     @Column(nullable = false)
     private String name;
     private LocalDateTime startTime;
@@ -37,7 +34,7 @@ public class Task implements Assignment {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "assignment",
-            joinColumns = @JoinColumn(name = "group_id"),
+            joinColumns = @JoinColumn(name = "task_id"),
             inverseJoinColumns = @JoinColumn(name = "person_id"))
     private List<Person> persons = new ArrayList<>();
 }
