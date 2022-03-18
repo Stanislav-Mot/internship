@@ -1,5 +1,7 @@
 CREATE SEQUENCE BIG_SERIAL START 101;
 
+CREATE SEQUENCE hibernate_sequence START 1 INCREMENT 1;
+
 CREATE TABLE person
 (
     id         BIGSERIAL PRIMARY KEY,
@@ -38,11 +40,11 @@ CREATE TABLE task
 
 CREATE TABLE assignment
 (
+    id SERIAL PRIMARY KEY,
     group_id  INT8,
-    child_id  INT8,
+    children_id  INT8,
     person_id INT8,
-    task_id   INT8,
-    PRIMARY KEY (group_id)
+    task_id   INT8
 );
 
 ALTER TABLE IF EXISTS assignment
@@ -52,4 +54,4 @@ ALTER TABLE IF EXISTS assignment
 ALTER TABLE IF EXISTS assignment
     ADD CONSTRAINT ass_task_id_task FOREIGN KEY (task_id) REFERENCES task;
 ALTER TABLE IF EXISTS assignment
-    ADD CONSTRAINT ass_child_id_groups FOREIGN KEY (child_id) REFERENCES groups;
+    ADD CONSTRAINT ass_child_id_groups FOREIGN KEY (children_id) REFERENCES groups;

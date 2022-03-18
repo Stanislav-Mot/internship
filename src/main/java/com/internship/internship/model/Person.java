@@ -29,8 +29,8 @@ public class Person {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "person_group",
-            joinColumns = @JoinColumn(name = "person_id"),
-            inverseJoinColumns = @JoinColumn(name = "group_id"))
+            name = "assignment",
+            joinColumns = @JoinColumn(name = "person_id", nullable = true),
+            inverseJoinColumns = @JoinColumn(name = "group_id", nullable = true))
     private List<Group> groups = new ArrayList<>();
 }
