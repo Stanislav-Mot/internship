@@ -34,14 +34,6 @@ public interface PersonRepo extends JpaRepository<Person, Long> {
             Integer rangeAgeEnd);
 
     @Modifying
-    @Query(value = "INSERT INTO person_group (id_person, id_group) VALUES (?, ?) ON CONFLICT DO NOTHING", nativeQuery = true)
-    Integer addGroupToPerson(Long personId, Long groupId);
-
-    @Modifying
-    @Query(value = "DELETE FROM person_group WHERE id_person = ? AND id_group = ?", nativeQuery = true)
-    Integer deleteGroupFromPerson(Long personId, Long groupId);
-
-    @Modifying
     @Query(value = "DELETE from task where " +
             "id in (Select t.id from task t JOIN person_group pg ON t.id_group = pg.id_group where pg.id_person = :clientId) " +
             "and (:taskProgress::INT8 IS NULL OR task.progress = :taskProgress)", nativeQuery = true)

@@ -6,10 +6,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PersonDtoMapper {
+public class PersonMapper {
     private final ModelMapper modelMapper;
 
-    public PersonDtoMapper(ModelMapper modelMapper) {
+    public PersonMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
     }
 

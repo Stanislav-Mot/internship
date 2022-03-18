@@ -1,7 +1,6 @@
 package com.internship.internship.dto;
 
 import com.internship.internship.model.Assignment;
-import com.internship.internship.model.AssignmentImpl;
 import com.internship.internship.transfer.Transfer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -17,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 public class GroupDto implements Assignment {
+
     @Schema(example = "2")
     @Null(message = "id should be generate be db", groups = {Transfer.New.class})
     @NotNull(message = "id should be not null", groups = {Transfer.Update.class})
@@ -27,12 +27,5 @@ public class GroupDto implements Assignment {
     private String name;
 
     @Null(groups = {Transfer.New.class, Transfer.Update.class})
-    private List<AssignmentImpl> assignments;
-
-    @Null(groups = {Transfer.New.class, Transfer.Update.class})
-    private List<PersonDto> persons;
-
-    public GroupDto(Long id) {
-        this.id = id;
-    }
+    private List<Assignment> assignments;
 }

@@ -3,30 +3,31 @@ package com.internship.internship.service;
 import com.internship.internship.dto.GroupDto;
 import com.internship.internship.exeption.ChangesNotAppliedException;
 import com.internship.internship.exeption.DataNotFoundException;
-import com.internship.internship.mapper.GroupDtoMapper;
-import com.internship.internship.mapper.TaskDtoMapper;
-import com.internship.internship.model.AssignmentImpl;
+import com.internship.internship.mapper.GroupMapper;
+import com.internship.internship.mapper.TaskMapper;
 import com.internship.internship.model.Group;
+import com.internship.internship.model.Task;
 import com.internship.internship.repository.GroupRepo;
 import com.internship.internship.repository.TaskRepo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
 public class GroupService {
-    private final GroupDtoMapper mapper;
-    private final TaskDtoMapper taskDtoMapper;
+    private final GroupMapper groupMapper;
+    private final TaskMapper taskMapper;
     private final CacheService cacheService;
     private final GroupRepo groupRepo;
     private final TaskRepo taskRepo;
 
-    public GroupService(GroupDtoMapper mapper, TaskDtoMapper taskDtoMapper, CacheService cacheService, GroupRepo groupRepo, TaskRepo taskRepo) {
-        this.mapper = mapper;
-        this.taskDtoMapper = taskDtoMapper;
+    public GroupService(GroupMapper groupMapper, TaskMapper taskMapper, CacheService cacheService, GroupRepo groupRepo, TaskRepo taskRepo) {
+        this.groupMapper = groupMapper;
+        this.taskMapper = taskMapper;
         this.cacheService = cacheService;
         this.groupRepo = groupRepo;
         this.taskRepo = taskRepo;
@@ -34,87 +35,98 @@ public class GroupService {
 
     @Transactional
     public GroupDto getById(Long id) {
-        if (cacheService.isValid()) {
-//            return (GroupDto) cacheService.getGroup(id);
-        } else {
-            Group group = groupRepo.findById(id).orElseThrow(() -> new DataNotFoundException(String.format("Group Id %d is not found", id)));
-//            group.getPersons().forEach(x -> x.setGroups(null));
-//            group.setTasks(getComposite(id));
-            return mapper.convertToDto(group);
-        }
-        return null;
+        Group group = groupRepo.findById(id).orElseThrow(() -> new DataNotFoundException(String.format("Group Id %d is not found", id)));
+        return groupMapper.convertToDto(group);
     }
 
     public List<GroupDto> getByPersonId(Long id) {
-//        return groupRepo.findByPersonsId(id)
-//                .stream().map(mapper::convertToDto)
-//                .collect(Collectors.toList());
-        return null;
+        return groupRepo.findByPersonId(id)
+                .stream().map(groupMapper::convertToDto)
+                .collect(Collectors.toList());
     }
 
     public List<GroupDto> getAll() {
-        groupRepo.findAll();
-        if (cacheService.isValid()) {
-            return cacheService.getAllGroup();
-        } else {
-            return groupRepo.findAll().stream().map(group -> {
-//                group.setTasks(getComposite(group.getId()));
-                return mapper.convertToDto(group);
-            }).collect(Collectors.toList());
-        }
+        List<Group> all = groupRepo.findAll();
+        return all.stream().map(groupMapper::convertToDto).collect(Collectors.toList());
+
     }
 
     public GroupDto add(GroupDto groupDto) {
-        Group group = mapper.convertToEntity(groupDto);
+        Group group = groupMapper.convertToEntity(groupDto);
         Group save = groupRepo.save(group);
-        GroupDto dto = mapper.convertToDto(save);
-//        cacheService.put(dto.getId(), Group.class, dto);
-        return dto;
+        return groupMapper.convertToDto(save);
     }
 
     public GroupDto update(GroupDto groupDto) {
-        Group group = mapper.convertToEntity(groupDto);
+        Group group = groupMapper.convertToEntity(groupDto);
         Group save = groupRepo.save(group);
         cacheService.setValid(false);
-        return mapper.convertToDto(save);
+        return groupMapper.convertToDto(save);
     }
 
-    public GroupDto addTask(Long id, Long taskId) {
-        if (!taskRepo.findById(taskId).isPresent() || !groupRepo.findById(id).isPresent()) {
-            throw new ChangesNotAppliedException(String.format("id: %d or %d is not found", id, taskId));
-        }
-        groupRepo.addTaskToGroup(id, taskId);
-        taskRepo.setStartTime(taskId);
+    @Transactional
+    public GroupDto addTask(Long groupId, Long taskId) {
+        Group group = groupRepo.findById(groupId).orElseThrow(() ->
+                new ChangesNotAppliedException(String.format("Group id: %d is not found", groupId)));
+        Task task = taskRepo.findById(taskId).orElseThrow(() ->
+                new ChangesNotAppliedException(String.format("Task id: %d is not found", taskId)));
 
-        cacheService.setValid(false);
-        return getById(id);
+        group.getTasks().add(task);
+        Group updated = groupRepo.save(group);
+
+        task.setStartTime(LocalDateTime.now());
+        taskRepo.save(task);
+
+        return groupMapper.convertToDto(updated);
     }
 
-    public void deleteTask(Long id, Long taskId) {
-        Integer answer = groupRepo.deleteTaskFromGroup(id, taskId);
-        if (answer < 1) {
-            throw new ChangesNotAppliedException(String.format("Group Id %d or Task id %d is not found", id, taskId));
-        }
-        cacheService.setValid(false);
+    public GroupDto deleteTask(Long groupId, Long taskId) {
+        Group group = groupRepo.findById(groupId).orElseThrow(() ->
+                new ChangesNotAppliedException(String.format("Group id: %d is not found", groupId)));
+        Task task = taskRepo.findById(taskId).orElseThrow(() ->
+                new ChangesNotAppliedException(String.format("Task id: %d is not found", taskId)));
+
+        group.getTasks().remove(task);
+        Group updated = groupRepo.save(group);
+
+        return groupMapper.convertToDto(updated);
     }
 
-    public GroupDto addGroup(Long id, Long groupId) {
-        if (Objects.equals(id, groupId)) {
+    @Transactional
+    public GroupDto addGroup(Long groupId, Long groupIdForAdd) {
+        Group group = groupRepo.findById(groupId).orElseThrow(() ->
+                new ChangesNotAppliedException(String.format("id: %d is not found", groupId)));
+        Group children = groupRepo.findById(groupIdForAdd).orElseThrow(() ->
+                new ChangesNotAppliedException(String.format("id: %d is not found", groupId)));
+
+        if (Objects.equals(group.getId(), children.getId())) {
             throw new ChangesNotAppliedException("group cannot refer to itself");
         }
-        if (!groupRepo.findById(id).isPresent() || !groupRepo.findById(groupId).isPresent()) {
-            throw new ChangesNotAppliedException(String.format("Group with id: %d or %d is not found", id, groupId));
-        }
-        if (checkCyclicDependency(id, groupId)) {
-            throw new ChangesNotAppliedException("cyclic dependency");
-        }
-        groupRepo.addGroupToGroup(id, groupId);
-        cacheService.setValid(false);
-        return getById(id);
+//        if (checkCyclicDependency(group.getId(), groupForAdd.getId())) {
+//            throw new ChangesNotAppliedException("cyclic dependency");
+//      }
+
+        group.getChildren().add(children);
+//        children.setParent(group);
+
+        return groupMapper.convertToDto(group);
     }
 
-    private boolean checkCyclicDependency(Long id, Long groupId) {
-        List<Group> groupList = /*groupRepo.findByGroupId(groupId);*/ null;
+    @Transactional
+    public GroupDto deleteGroup(Long groupId, Long groupIdForDelete) {
+        Group group = groupRepo.findById(groupId).orElseThrow(() ->
+                new ChangesNotAppliedException(String.format("id: %d is not found", groupId)));
+        Group children = groupRepo.findById(groupIdForDelete).orElseThrow(() ->
+                new ChangesNotAppliedException(String.format("id: %d is not found", groupId)));
+
+        group.getChildren().remove(children);
+//        children.setParent(null);
+
+        return groupMapper.convertToDto(group);
+    }
+
+    private boolean checkCyclicDependency(Long id, Group groupId) {
+        List<Group> groupList = null /*groupRepo.findByAssignments(groupId)*/;
         if (groupList.isEmpty()) {
             return false;
         }
@@ -122,7 +134,7 @@ public class GroupService {
             if (Objects.equals(group.getId(), id)) {
                 return true;
             } else {
-                if (checkCyclicDependency(id, group.getId())) {
+                if (checkCyclicDependency(id, group)) {
                     return true;
                 }
             }
@@ -130,42 +142,34 @@ public class GroupService {
         return false;
     }
 
-    public void deleteGroup(Long id, Long groupId) {
-        Integer answer = groupRepo.deleteGroupFromGroup(id, groupId);
-        if (answer < 1) {
-            throw new ChangesNotAppliedException(String.format("Group Id %d or %d is not found", id, groupId));
-        }
-        cacheService.setValid(false);
+    public void delete(Long id) {
+
+        Group group = groupRepo.findById(id).orElseThrow(() ->
+                new ChangesNotAppliedException(String.format("id: %d is not found", id)));
+
+        groupRepo.deleteById(group.getId());
+//        cacheService.remove(group.getId(), Group.class);
     }
 
-    public GroupDto delete(Long id) {
-        Group group = groupRepo.findById(id).orElseThrow(() -> new ChangesNotAppliedException(String.format("Group id: %d is not found", id)));
-        groupRepo.deleteById(id);
-//        GroupDto groupDto = (GroupDto) cacheService.getGroup(group.getId());
-//        cacheService.remove(id, Task.class);
-//        return groupDto;
-        return null;
-    }
-
-    private List<AssignmentImpl> getComposite(Long id) {
+//    private List<AssignmentImpl> getComposite(Long id) {
 //        List<Task> taskList = taskRepo.findByGroupsId(id);
 //        List<AssignmentImpl> assignments = taskList.stream().map(task -> {
 //            task.setGroups(null);
 //            task.setPersons(null);
 //            return taskDtoMapper.convertToDto(task);
 //        }).collect(Collectors.toList());
-
-//        List<Group> groupList = groupRepo.findByGroupId(id);
-        List<Group> groupList = null;
-        List<GroupDto> groupDtos = groupList.stream().map(mapper::convertToDto).collect(Collectors.toList());
-        groupDtos.forEach(group -> {
-            group.setPersons(null);
-            group.setAssignments(null);
-            group.setAssignments(getComposite(group.getId()));
-        });
-
+//
+//        List<Group> groupList = groupRepo.findByAssignmentsId(id);
+//        List<Group> groupList = null;
+//        List<GroupDto> groupDtos = groupList.stream().map(groupDtoMapper::convertToDto).collect(Collectors.toList());
+//        groupDtos.forEach(group -> {
+//            group.setPersons(null);
+//            group.setAssignments(null);
+//            group.setAssignments(getComposite(group.getId()));
+//        });
+//
 //        assignments.addAll(groupDtos);
-
-        return /*assignments*/ null;
-    }
+//
+//        return assignments;
+//    }
 }

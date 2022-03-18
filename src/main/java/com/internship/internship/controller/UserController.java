@@ -47,7 +47,11 @@ public class UserController {
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            content = @Content(examples = {@ExampleObject(value = "{\"email\": \"user@user.com\", \"password\": \"12345678\"}")}))
+            content = @Content(examples = {@ExampleObject(
+                    value = "{\"email\": \"user@user.com\", " +
+                            "\"password\": \"12345678\", " +
+                            "\"passwordConfirmation\": \"12345678\"}"
+            )}))
     @Operation(summary = "Add new user")
     @Validated(Transfer.New.class)
     @PostMapping("/user")

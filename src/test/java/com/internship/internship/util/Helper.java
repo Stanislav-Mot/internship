@@ -3,9 +3,7 @@ package com.internship.internship.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.internship.internship.dto.GroupDto;
 import com.internship.internship.dto.PersonDto;
-import com.internship.internship.dto.TaskDto;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
 import com.internship.internship.model.Task;
@@ -38,15 +36,15 @@ public class Helper {
         return new Task(/*"Tester", null, null, null, null, null, null*/);
     }
 
-    public static GroupDto newGroupDtoForTest() {
-        return new GroupDto(CORRECT_ID, "Tester", null, null);
-    }
+//    public static GroupDto newGroupDtoForTest() {
+//        return new GroupDto(CORRECT_ID, "Tester", null, null);
+//    }
 
     public static PersonDto newPersonDtoForTest() {
         return new PersonDto(null, "Tester", "Rochester", LocalDate.of(2012, 12, 12), null);
     }
 
-    public static TaskDto newTaskDtoForTest() {
-        return new TaskDto(CORRECT_ID, "Tester", null, null, null, null, null, null);
-    }
+//    public static TaskDto newTaskDtoForTest() {
+//        return new TaskDto(CORRECT_ID, "Tester", null, null, null, null, null, null);
+//    }
 }

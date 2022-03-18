@@ -4,68 +4,55 @@ import com.internship.internship.dto.TaskDto;
 import com.internship.internship.dto.search.SearchTaskDto;
 import com.internship.internship.exeption.ChangesNotAppliedException;
 import com.internship.internship.exeption.DataNotFoundException;
-import com.internship.internship.mapper.TaskDtoMapper;
+import com.internship.internship.mapper.TaskMapper;
 import com.internship.internship.model.Task;
 import com.internship.internship.repository.TaskRepo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class TaskService {
 
-    private final TaskDtoMapper mapper;
-    private final CacheService cacheService;
+    private final TaskMapper mapper;
     private final TaskRepo repository;
 
-    public TaskService(TaskDtoMapper mapper, CacheService cacheService, TaskRepo repository) {
+    public TaskService(TaskMapper mapper, TaskRepo repository) {
         this.mapper = mapper;
-        this.cacheService = cacheService;
         this.repository = repository;
     }
 
     public TaskDto getById(Long id) {
-        if (cacheService.isValid()) {
-//            return (TaskDto) cacheService.getTask(id);
-            return null;
-        } else {
-            Task task = repository.findById(id).orElseThrow(() -> new DataNotFoundException(String.format("Task Id %d is not found", id)));
-            return mapper.convertToDto(task);
-        }
+        Task task = repository.findById(id).orElseThrow(() -> new DataNotFoundException(String.format("Task Id %d is not found", id)));
+        return mapper.convertToDto(task);
+
     }
 
     public List<TaskDto> getAll() {
-        if (cacheService.isValid()) {
-            return cacheService.getAllTask();
-        } else {
-            return getTaskDtos(repository.findAll());
-        }
+        return getTaskDtos(repository.findAll());
+
     }
 
     public List<TaskDto> getByGroupId(Long id) {
-//        return getTaskDtos(repository.findByGroupsId(id));
-        return null;
+        return getTaskDtos(repository.findByGroupsId(id));
     }
 
     public List<TaskDto> getByPersonId(Long id) {
-//        return getTaskDtos(repository.findByPersonsId(id));
-        return null;
+        return getTaskDtos(repository.findByPersonsId(id));
     }
 
     public TaskDto add(TaskDto taskDto) {
         Task task = mapper.convertToEntity(taskDto);
         Task save = repository.save(task);
-        TaskDto dto = mapper.convertToDto(save);
-//        cacheService.put(dto.getId(), Task.class, dto);
-        return dto;
+        return mapper.convertToDto(save);
     }
 
     public TaskDto update(TaskDto taskDto) {
         Task task = mapper.convertToEntity(taskDto);
         Task save = repository.save(task);
-        cacheService.setValid(false);
         return mapper.convertToDto(save);
     }
 
@@ -86,20 +73,17 @@ public class TaskService {
 
     @Transactional
     public TaskDto updateProgress(Long id, Integer progress) {
-        repository.updateProgress(id, progress);
-        repository.setSpentTime(id);
-
         Task task = repository.findById(id).orElseThrow(() -> new DataNotFoundException(String.format("Task Id %d is not found", id)));
-        cacheService.setValid(false);
+
+        if (task.getStartTime() != null) {
+            task.setProgress(progress);
+            task.setSpentTime(LocalDateTime.now().getMinute() - task.getStartTime().getMinute());
+        }
         return mapper.convertToDto(task);
     }
 
-    public TaskDto delete(Long id) {
-        repository.findById(id).orElseThrow(() -> new ChangesNotAppliedException(String.format("Task id: %d is not found", id)));
-        repository.deleteById(id);
-//        TaskDto taskDto = (TaskDto) cacheService.getTask(id);
-//        cacheService.remove(id, Task.class);
-//        return taskDto;
-        return null;
+    public void delete(Long id) {
+        Task task = repository.findById(id).orElseThrow(() -> new ChangesNotAppliedException(String.format("Task id: %d is not found", id)));
+        repository.delete(task);
     }
 }

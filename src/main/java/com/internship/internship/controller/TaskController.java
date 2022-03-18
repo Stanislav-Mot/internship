@@ -90,7 +90,7 @@ public class TaskController {
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/task/{id}")
-    public TaskDto delete(@PathVariable Long id) {
-        return taskService.delete(id);
+    public void delete(@PathVariable Long id) {
+        taskService.delete(id);
     }
 }

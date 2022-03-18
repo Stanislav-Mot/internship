@@ -3,7 +3,8 @@ package com.internship.internship.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Target;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -13,23 +14,28 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Entity(name = "groups")
-public class Group extends AssignmentImpl implements Assignment{
+public class Group implements Assignment {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     @Column(nullable = false)
     private String name;
 
-    @ManyToMany
-    @Target(Group.class)
-    private List<Assignment> assignments = new ArrayList<>();
-
-    @ManyToMany(fetch = FetchType.LAZY)
+    @Fetch(value = FetchMode.JOIN)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "assignment",
-            joinColumns = @JoinColumn(name = "group_id"),
-            inverseJoinColumns = @JoinColumn(name = "person_id"))
-    private List<Person> persons = new ArrayList<>();
+            name = "group_children",
+            joinColumns = @JoinColumn(name = "children_id"),
+            inverseJoinColumns = @JoinColumn(name = "group_id"))
+    private List<Group> children = new ArrayList<>();
 
-    public Group(String name) {
-        this.name = name;
-    }
+    @Fetch(value = FetchMode.JOIN)
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "group_task",
+            joinColumns = @JoinColumn(name = "group_id"),
+            inverseJoinColumns = @JoinColumn(name = "task_id"))
+    private List<Task> tasks = new ArrayList<>();
 }

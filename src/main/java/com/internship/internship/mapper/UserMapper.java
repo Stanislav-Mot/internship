@@ -7,10 +7,10 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserDtoMapper {
+public class UserMapper {
     private final ModelMapper modelMapper;
 
-    public UserDtoMapper(ModelMapper modelMapper) {
+    public UserMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
     }
 

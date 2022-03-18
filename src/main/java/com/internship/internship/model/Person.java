@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,10 +27,10 @@ public class Person {
     @JoinColumn(name = "id")
     private User user;
 
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = AssignmentImpl.class)
-    private Set<Assignment> assignments = new HashSet<>();
-
-    public Person(Long id) {
-        this.id = id;
-    }
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "person_group",
+            joinColumns = @JoinColumn(name = "person_id"),
+            inverseJoinColumns = @JoinColumn(name = "group_id"))
+    private List<Group> groups = new ArrayList<>();
 }

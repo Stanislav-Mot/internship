@@ -4,10 +4,13 @@ import com.internship.internship.dto.PersonDto;
 import com.internship.internship.dto.search.SearchPersonDto;
 import com.internship.internship.exeption.ChangesNotAppliedException;
 import com.internship.internship.exeption.DataNotFoundException;
-import com.internship.internship.mapper.PersonDtoMapper;
+import com.internship.internship.mapper.PersonMapper;
+import com.internship.internship.model.Group;
 import com.internship.internship.model.Person;
+import com.internship.internship.repository.GroupRepo;
 import com.internship.internship.repository.PersonRepo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,12 +18,14 @@ import java.util.stream.Collectors;
 @Service
 public class PersonService {
 
-    private final PersonDtoMapper mapper;
+    private final PersonMapper mapper;
     private final PersonRepo repository;
+    private final GroupRepo groupRepo;
 
-    public PersonService(PersonDtoMapper mapper, PersonRepo repository) {
+    public PersonService(PersonMapper mapper, PersonRepo repository, GroupRepo groupRepo) {
         this.mapper = mapper;
         this.repository = repository;
+        this.groupRepo = groupRepo;
     }
 
     public PersonDto getById(Long id) {
@@ -38,20 +43,24 @@ public class PersonService {
         return mapper.convertToDto(response);
     }
 
-    public void deleteGroup(Long personId, Long groupId) {
-        Integer answer = repository.deleteGroupFromPerson(personId, groupId);
-        if (answer < 1) {
-            throw new ChangesNotAppliedException(String.format("Person id: %d or Group id %d is wrong", personId, groupId));
-        }
+    @Transactional
+    public PersonDto deleteGroup(Long personId, Long groupId) {
+        Person person = repository.findById(personId).orElseThrow(() ->
+                new ChangesNotAppliedException(String.format("Person id: %d is wrong", personId)));
+        Group group = groupRepo.findById(groupId).orElseThrow(() ->
+                new ChangesNotAppliedException(String.format("Group id: %d is wrong", groupId)));
+        person.getGroups().remove(group);
+        return mapper.convertToDto(person);
     }
 
+    @Transactional
     public PersonDto addGroup(Long personId, Long groupId) {
-        Integer result = repository.addGroupToPerson(personId, groupId);
-        if (result > 0) {
-            return null;
-        } else {
-            throw new ChangesNotAppliedException("Something wrong =)");
-        }
+        Person person = repository.findById(personId).orElseThrow(() ->
+                new ChangesNotAppliedException(String.format("Person id: %d is wrong", personId)));
+        Group group = groupRepo.findById(groupId).orElseThrow(() ->
+                new ChangesNotAppliedException(String.format("Group id: %d is wrong", groupId)));
+        person.getGroups().add(group);
+        return mapper.convertToDto(person);
     }
 
     public List<PersonDto> searchByTokenInName(String token) {
@@ -72,10 +81,13 @@ public class PersonService {
 
     public void delete(Long id) {
         Person person = repository.findById(id).orElseThrow(() -> new ChangesNotAppliedException(String.format("Person id: %d is not found", id)));
-        repository.deleteById(person.getId());
+        repository.delete(person);
     }
 
     private List<PersonDto> getPersonDtos(List<Person> list) {
-        return list.stream().map(mapper::convertToDto).collect(Collectors.toList());
+        return list.stream().map(x -> {
+            x.getGroups();
+            return mapper.convertToDto(x);
+        }).collect(Collectors.toList());
     }
 }

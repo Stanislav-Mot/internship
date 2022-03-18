@@ -59,8 +59,8 @@ public class PersonController {
 
     @Operation(summary = "Delete group from person")
     @PutMapping("/person/{personId}/deleteGroup/{groupId}")
-    public void deleteGroupFromPerson(@PathVariable Long personId, @PathVariable Long groupId) {
-        personService.deleteGroup(personId, groupId);
+    public PersonDto deleteGroupFromPerson(@PathVariable Long personId, @PathVariable Long groupId) {
+        return personService.deleteGroup(personId, groupId);
     }
 
     @SecurityRequirement(name = "bearerAuth")

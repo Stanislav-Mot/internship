@@ -33,9 +33,5 @@ public class PersonDto {
     private LocalDate birthdate;
 
     private List<GroupDto> assignments;
-
-    public PersonDto(Long id) {
-        this.id = id;
-    }
 }
 

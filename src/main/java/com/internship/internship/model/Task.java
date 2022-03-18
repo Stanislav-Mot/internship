@@ -6,14 +6,16 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Entity
-public class Task extends AssignmentImpl implements Assignment{
+public class Task implements Assignment {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     @Column(nullable = false)
     private String name;
@@ -23,18 +25,4 @@ public class Task extends AssignmentImpl implements Assignment{
     private Integer progress;
     private Integer spentTime;
     private Integer priority;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "assignment",
-            joinColumns = @JoinColumn(name = "task_id"),
-            inverseJoinColumns = @JoinColumn(name = "group_id"))
-    private List<Group> groups = new ArrayList<>();
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "assignment",
-            joinColumns = @JoinColumn(name = "task_id"),
-            inverseJoinColumns = @JoinColumn(name = "person_id"))
-    private List<Person> persons = new ArrayList<>();
 }

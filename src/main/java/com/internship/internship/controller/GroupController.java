@@ -93,7 +93,7 @@ public class GroupController {
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/group/{id}")
-    public GroupDto delete(@PathVariable Long id) {
-        return groupService.delete(id);
+    public void delete(@PathVariable Long id) {
+        groupService.delete(id);
     }
 }

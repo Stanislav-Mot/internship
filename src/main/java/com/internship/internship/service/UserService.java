@@ -3,7 +3,7 @@ package com.internship.internship.service;
 import com.internship.internship.dto.UserDto;
 import com.internship.internship.exeption.ChangesNotAppliedException;
 import com.internship.internship.exeption.DataNotFoundException;
-import com.internship.internship.mapper.UserDtoMapper;
+import com.internship.internship.mapper.UserMapper;
 import com.internship.internship.model.Role;
 import com.internship.internship.model.User;
 import com.internship.internship.repository.UserRepo;
@@ -22,12 +22,12 @@ import java.util.stream.Collectors;
 public class UserService implements UserDetailsService {
 
     private final PasswordEncoder passwordEncoder;
-    private final UserDtoMapper mapper;
+    private final UserMapper mapper;
     private final UserRepo repository;
 
-    public UserService(PasswordEncoder passwordEncoder, UserDtoMapper userDtoMapper, UserRepo repository) {
+    public UserService(PasswordEncoder passwordEncoder, UserMapper userMapper, UserRepo repository) {
         this.passwordEncoder = passwordEncoder;
-        this.mapper = userDtoMapper;
+        this.mapper = userMapper;
         this.repository = repository;
     }
 

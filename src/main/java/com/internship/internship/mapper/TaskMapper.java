@@ -7,10 +7,10 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TaskDtoMapper {
+public class TaskMapper {
     private final ModelMapper modelMapper;
 
-    public TaskDtoMapper(ModelMapper modelMapper) {
+    public TaskMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
     }
 

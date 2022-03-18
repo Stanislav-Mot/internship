@@ -2,9 +2,9 @@ package com.internship.internship.service;
 
 import com.internship.internship.dto.GroupDto;
 import com.internship.internship.dto.TaskDto;
-import com.internship.internship.mapper.GroupDtoMapper;
-import com.internship.internship.mapper.TaskDtoMapper;
-import com.internship.internship.model.AssignmentImpl;
+import com.internship.internship.mapper.GroupMapper;
+import com.internship.internship.mapper.TaskMapper;
+import com.internship.internship.model.Assignment;
 import com.internship.internship.repository.GroupRepo;
 import com.internship.internship.repository.TaskRepo;
 import lombok.AllArgsConstructor;
@@ -27,20 +27,20 @@ public class CacheService {
     private final Map<KeyObject, CacheObject> cacheMap = new ConcurrentHashMap<>();
     private final TaskRepo taskRepo;
     private final GroupRepo groupRepo;
-    private final TaskDtoMapper taskDtoMapper;
-    private final GroupDtoMapper groupDtoMapper;
+    private final TaskMapper taskMapper;
+    private final GroupMapper groupMapper;
     private boolean valid;
 
     public CacheService(
             TaskRepo taskRepo,
             GroupRepo groupRepo,
-            TaskDtoMapper taskDtoMapper,
-            GroupDtoMapper groupDtoMapper,
+            TaskMapper taskMapper,
+            GroupMapper groupMapper,
             @Value(value = "${custom.cache}") Boolean cache) {
         this.taskRepo = taskRepo;
         this.groupRepo = groupRepo;
-        this.taskDtoMapper = taskDtoMapper;
-        this.groupDtoMapper = groupDtoMapper;
+        this.taskMapper = taskMapper;
+        this.groupMapper = groupMapper;
 
         if (Boolean.TRUE.equals(cache)) {
             addAll();
@@ -66,11 +66,11 @@ public class CacheService {
         }
     }
 
-    public void put(Long key, Class<? extends AssignmentImpl> clazz, AssignmentImpl value) {
+    public void put(Long key, Class<? extends Assignment> clazz, Assignment value) {
         cacheMap.put(new KeyObject(key, clazz), new CacheObject(value));
     }
 
-    public void remove(Long id, Class<? extends AssignmentImpl> clazz) {
+    public void remove(Long id, Class<? extends Assignment> clazz) {
         cacheMap.remove(new KeyObject(id, clazz));
     }
 
@@ -92,14 +92,14 @@ public class CacheService {
 //                .forEach(x -> put(x.getId(), Task.class, x));
     }
 
-    public AssignmentImpl getTask(Long id) {
+    public Assignment getTask(Long id) {
 //        CacheObject c = cacheMap.get(new KeyObject(id, Task.class));
 //        c.lastAccessed = System.currentTimeMillis();
 //        return c.value;
         return null;
     }
 
-    public AssignmentImpl getGroup(Long id) {
+    public Assignment getGroup(Long id) {
 //        CacheObject c = cacheMap.get(new KeyObject(id, Group.class));
 //        c.lastAccessed = System.currentTimeMillis();
 //        return c.value;
@@ -132,7 +132,7 @@ public class CacheService {
         this.valid = valid;
     }
 
-    private List<AssignmentImpl> getComposite(Long id) {
+    private List<Assignment> getComposite(Long id) {
 //        List<Task> taskList = taskRepo.findByGroupsId(id);
 
 //        List<AssignmentImpl> assignments = taskList.stream().map(taskDtoMapper::convertToDto).collect(Collectors.toList());
@@ -149,9 +149,9 @@ public class CacheService {
     @Data
     private class CacheObject {
         private long lastAccessed = System.currentTimeMillis();
-        private AssignmentImpl value;
+        private Assignment value;
 
-        public CacheObject(AssignmentImpl value) {
+        public CacheObject(Assignment value) {
             this.value = value;
         }
     }
@@ -160,6 +160,6 @@ public class CacheService {
     @AllArgsConstructor
     private class KeyObject {
         private Long key;
-        private Class<? extends AssignmentImpl> clazz;
+        private Class<? extends Assignment> clazz;
     }
 }
