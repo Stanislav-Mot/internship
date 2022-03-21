@@ -37,11 +37,11 @@ public class GeneralConfiguration {
         Converter<Group, GroupDto> converter = context -> {
 
             GroupDto dto = new GroupDto();
-            List<Assignment> children = context.getSource().getChildren().stream().map(Assignment.class::cast).collect(Collectors.toList());
-            List<Assignment> tasks = context.getSource().getTasks().stream().map(c -> {
-//                c.setGroups(null);
-                return (Assignment) c;
-            }).collect(Collectors.toList());
+            List<Assignment> children = context.getSource().getChildren().stream()
+                    .map(Assignment.class::cast).collect(Collectors.toList());
+
+            List<Assignment> tasks = context.getSource().getTasks().stream()
+                    .map(Assignment.class::cast).collect(Collectors.toList());
 
             List<Assignment> collect = new ArrayList<>();
             collect.addAll(children);

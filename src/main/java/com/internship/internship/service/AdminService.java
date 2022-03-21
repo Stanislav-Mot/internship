@@ -22,33 +22,54 @@ public class AdminService {
     private final PersonRepo personRepo;
     private final PersonMapper mapper;
     private final TaskMapper taskMapper;
+    private final CacheService cacheService;
 
-    public AdminService(TaskRepo taskRepo, PersonRepo personRepo, PersonMapper mapper, TaskMapper taskMapper) {
+    public AdminService(TaskRepo taskRepo, PersonRepo personRepo, PersonMapper mapper, TaskMapper taskMapper, CacheService cacheService) {
         this.taskRepo = taskRepo;
         this.personRepo = personRepo;
         this.mapper = mapper;
         this.taskMapper = taskMapper;
+        this.cacheService = cacheService;
     }
 
     public List<PersonDto> retrievingAllTasks() {
         List<Person> personList = personRepo.findAll();
-        for (Person person : personList) {
-            List<Assignment> assignments = new ArrayList<>(taskRepo.findByPersonsId(person.getId()));
-//            person.getGroups(assignments);
-        }
-        return personList.stream().map(mapper::convertToDto).collect(Collectors.toList());
+        return personList.stream().map(person -> {
+            PersonDto personDto = mapper.convertToDto(person);
+            personDto.setAssignments(
+                    cacheService.getTaskByPersonId(personDto.getId())
+                            .stream().map(Assignment.class::cast).collect(Collectors.toList()));
+            return personDto;
+        }).collect(Collectors.toList());
     }
 
     public PersonDto clearTaskByClientIdOrProgress(Long clientId, Long taskProgress) {
         Person person = personRepo.findById(clientId).orElseThrow(() -> new DataNotFoundException(String.format("Person Id %d is not found", clientId)));
 
-        personRepo.clearTasks(clientId, taskProgress);
-//        person.getGroups(Collections.unmodifiableList(taskRepo.findByPersonsId(clientId)));
+        List<TaskDto> tasks = getNativeTasksByPerson(clientId);
+        List<Long> ids = tasks.stream().map(TaskDto::getId).collect(Collectors.toList());
+        personRepo.clearTasks(ids, taskProgress);
+
         return mapper.convertToDto(person);
     }
 
     public List<TaskDto> resetProgressOfAllTasks(Long clientId) {
-        personRepo.resetProgress(clientId);
-        return taskRepo.findByPersonsId(clientId).stream().map(taskMapper::convertToDto).collect(Collectors.toList());
+        List<TaskDto> tasks = getNativeTasksByPerson(clientId);
+        taskRepo.resetProgresses(
+                tasks.stream().map(TaskDto::getId)
+                        .collect(Collectors.toList()));
+        return tasks;
+    }
+
+    private List<TaskDto> getNativeTasksByPerson(Long id) {
+        List<TaskDto> tasks = new ArrayList<>();
+        List<Long> groupIds = taskRepo.findGroupIdByPersonId(id);
+        groupIds.forEach(x ->
+                tasks.addAll(taskRepo.findByGroupId(x)
+                        .stream().map(task -> {
+                            task.setPriority(0);
+                            return taskMapper.convertToDto(task);
+                        }).collect(Collectors.toList())));
+        return tasks;
     }
 }

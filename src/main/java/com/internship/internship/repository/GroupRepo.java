@@ -12,11 +12,9 @@ import java.util.List;
 @Repository
 public interface GroupRepo extends JpaRepository<Group, Long> {
 
-    @Query(value = "select * from groups g left join person_group pg on g.id = pg.group_id where person_id = ?", nativeQuery = true)
+    @Query(value = "select * from groups g left join assignment a on g.id = a.group_id where a.person_id = ?", nativeQuery = true)
     List<Group> findByPersonId(Long id);
 
     @Query(value = "select * from groups", nativeQuery = true)
     List<Group> findAllWithoutConstraint();
-
-//    List<Group> findByAssignments(Assignment assignment);
 }

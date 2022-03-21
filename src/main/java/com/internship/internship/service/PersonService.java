@@ -21,20 +21,30 @@ public class PersonService {
     private final PersonMapper mapper;
     private final PersonRepo repository;
     private final GroupRepo groupRepo;
+    private final CacheService cacheService;
 
-    public PersonService(PersonMapper mapper, PersonRepo repository, GroupRepo groupRepo) {
+    public PersonService(PersonMapper mapper, PersonRepo repository, GroupRepo groupRepo, CacheService cacheService) {
         this.mapper = mapper;
         this.repository = repository;
         this.groupRepo = groupRepo;
+        this.cacheService = cacheService;
     }
 
     public PersonDto getById(Long id) {
         Person person = repository.findById(id).orElseThrow(() -> new DataNotFoundException(String.format("Person Id %d is not found", id)));
-        return mapper.convertToDto(person);
+        PersonDto personDto = mapper.convertToDto(person);
+        personDto.setAssignments(cacheService.findByPersonId(id));
+        return personDto;
     }
 
     public List<PersonDto> getAll() {
-        return getPersonDtos(repository.findAll());
+        List<Person> persons = repository.findAll();
+        return persons.stream()
+                .map(person -> {
+                    PersonDto personDto = mapper.convertToDto(person);
+                    personDto.setAssignments(cacheService.findByPersonId(person.getId()));
+                    return personDto;
+                }).collect(Collectors.toList());
     }
 
     public PersonDto update(PersonDto personDto) {
@@ -85,9 +95,6 @@ public class PersonService {
     }
 
     private List<PersonDto> getPersonDtos(List<Person> list) {
-        return list.stream().map(x -> {
-            x.getGroups();
-            return mapper.convertToDto(x);
-        }).collect(Collectors.toList());
+        return list.stream().map(mapper::convertToDto).collect(Collectors.toList());
     }
 }

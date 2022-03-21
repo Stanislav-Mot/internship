@@ -19,29 +19,28 @@ public class TaskService {
 
     private final TaskMapper mapper;
     private final TaskRepo repository;
+    private final CacheService cacheService;
 
-    public TaskService(TaskMapper mapper, TaskRepo repository) {
+    public TaskService(TaskMapper mapper, TaskRepo repository, CacheService cacheService) {
         this.mapper = mapper;
         this.repository = repository;
+        this.cacheService = cacheService;
     }
 
     public TaskDto getById(Long id) {
-        Task task = repository.findById(id).orElseThrow(() -> new DataNotFoundException(String.format("Task Id %d is not found", id)));
-        return mapper.convertToDto(task);
-
+        return (TaskDto) cacheService.getTask(id);
     }
 
     public List<TaskDto> getAll() {
-        return getTaskDtos(repository.findAll());
-
+        return cacheService.getAllTask();
     }
 
     public List<TaskDto> getByGroupId(Long id) {
-        return getTaskDtos(repository.findByGroupsId(id));
+        return cacheService.getTaskByGroupId(id);
     }
 
     public List<TaskDto> getByPersonId(Long id) {
-        return getTaskDtos(repository.findByPersonsId(id));
+        return cacheService.getTaskByPersonId(id);
     }
 
     public TaskDto add(TaskDto taskDto) {

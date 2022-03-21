@@ -14,4 +14,5 @@ public class AppProperties {
     private String url;
     private String email;
     private String author;
+    private Long interval;
 }

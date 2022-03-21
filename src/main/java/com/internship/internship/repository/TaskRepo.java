@@ -2,6 +2,7 @@ package com.internship.internship.repository;
 
 import com.internship.internship.model.Task;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -16,12 +17,31 @@ public interface TaskRepo extends JpaRepository<Task, Long> {
     @Query(value = "select * from task", nativeQuery = true)
     List<Task> findAllWithoutConstraint();
 
-    @Query(value = "select * from task left join group_task gt on task.id = gt.task_id where group_id = ?", nativeQuery = true)
+    @Query(value = "select * from task left join assignment a on task.id = a.task_id where a.group_id = ?", nativeQuery = true)
     List<Task> findByGroupsId(Long id);
 
-    @Query(value = "select * from task left join group_task gt on task.id = gt.task_id " +
-            "left join person_group pg on gt.group_id = pg.group_id where pg.person_id = ?", nativeQuery = true)
-    List<Task> findByPersonsId(Long id);
+    @Modifying
+    @Query(value = "update task set progress = 0 where id in :ids", nativeQuery = true)
+    Integer resetProgresses(List<Long> ids);
+
+    @Query(value = "WITH RECURSIVE r AS (" +
+
+            " SELECT a.id, a.children_id" +
+            " FROM assignment as a" +
+            " where a.group_id = :id and a.children_id is not null" +
+            " UNION" +
+            " SELECT a2.id, a2.children_id" +
+            " FROM assignment as a2" +
+            " JOIN r" +
+            " ON a2.group_id = r.children_id" +
+            " where a2.children_id is not null) " +
+
+            " select distinct(task.*)  from task join assignment a on task.id = a.task_id" +
+            " join r on a.group_id in (r.children_id, :id); ", nativeQuery = true)
+    List<Task> findByGroupId(Long id);
+
+    @Query(value = "select group_id from assignment where person_id = ?", nativeQuery = true)
+    List<Long> findGroupIdByPersonId(Long id);
 
     @Query(value = "SELECT * FROM task WHERE (cast(:name AS VARCHAR) IS NULL OR task.name = :name) " +
 

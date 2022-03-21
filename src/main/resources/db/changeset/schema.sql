@@ -40,11 +40,11 @@ CREATE TABLE task
 
 CREATE TABLE assignment
 (
-    id INT8 PRIMARY KEY DEFAULT nextval('BIG_SERIAL'),
-    group_id  INT8,
-    children_id  INT8,
-    person_id INT8,
-    task_id   INT8
+    id          INT8 PRIMARY KEY DEFAULT nextval('BIG_SERIAL'),
+    group_id    INT8,
+    children_id INT8,
+    person_id   INT8,
+    task_id     INT8
 );
 
 ALTER TABLE IF EXISTS assignment

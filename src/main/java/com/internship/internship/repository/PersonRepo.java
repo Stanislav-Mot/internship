@@ -34,16 +34,7 @@ public interface PersonRepo extends JpaRepository<Person, Long> {
             Integer rangeAgeEnd);
 
     @Modifying
-    @Query(value = "DELETE from task where " +
-            "id in (Select t.id from task t JOIN person_group pg ON t.id_group = pg.id_group where pg.id_person = :clientId) " +
+    @Query(value = "DELETE from task where id in :ids " +
             "and (:taskProgress::INT8 IS NULL OR task.progress = :taskProgress)", nativeQuery = true)
-    Integer clearTasks(
-            @Param("clientId") Long clientId,
-            @Param("taskProgress") Long taskProgress
-    );
-
-    @Modifying
-    @Query(value = "UPDATE task SET progress = 0 where id in " +
-            "(Select t.id from task t JOIN person_group pg ON t.id_group = pg.id_group where pg.id_person = ?)", nativeQuery = true)
-    Integer resetProgress(Long clientId);
+    Integer clearTasks(@Param("ids") List<Long> ids, @Param("taskProgress") Long taskProgress);
 }

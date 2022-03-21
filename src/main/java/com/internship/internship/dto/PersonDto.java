@@ -1,5 +1,6 @@
 package com.internship.internship.dto;
 
+import com.internship.internship.model.Assignment;
 import com.internship.internship.transfer.Transfer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -32,6 +33,6 @@ public class PersonDto {
     @NotNull(message = "age should be not null", groups = {Transfer.New.class})
     private LocalDate birthdate;
 
-    private List<GroupDto> assignments;
+    private List<Assignment> assignments;
 }
 

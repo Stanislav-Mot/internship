@@ -2,9 +2,7 @@ package com.internship.internship.service;
 
 import com.internship.internship.dto.GroupDto;
 import com.internship.internship.exeption.ChangesNotAppliedException;
-import com.internship.internship.exeption.DataNotFoundException;
 import com.internship.internship.mapper.GroupMapper;
-import com.internship.internship.mapper.TaskMapper;
 import com.internship.internship.model.Group;
 import com.internship.internship.model.Task;
 import com.internship.internship.repository.GroupRepo;
@@ -20,35 +18,27 @@ import java.util.stream.Collectors;
 @Service
 public class GroupService {
     private final GroupMapper groupMapper;
-    private final TaskMapper taskMapper;
     private final CacheService cacheService;
     private final GroupRepo groupRepo;
     private final TaskRepo taskRepo;
 
-    public GroupService(GroupMapper groupMapper, TaskMapper taskMapper, CacheService cacheService, GroupRepo groupRepo, TaskRepo taskRepo) {
+    public GroupService(GroupMapper groupMapper, CacheService cacheService, GroupRepo groupRepo, TaskRepo taskRepo) {
         this.groupMapper = groupMapper;
-        this.taskMapper = taskMapper;
         this.cacheService = cacheService;
         this.groupRepo = groupRepo;
         this.taskRepo = taskRepo;
     }
 
-    @Transactional
     public GroupDto getById(Long id) {
-        Group group = groupRepo.findById(id).orElseThrow(() -> new DataNotFoundException(String.format("Group Id %d is not found", id)));
-        return groupMapper.convertToDto(group);
+        return (GroupDto) cacheService.getGroup(id);
     }
 
     public List<GroupDto> getByPersonId(Long id) {
-        return groupRepo.findByPersonId(id)
-                .stream().map(groupMapper::convertToDto)
-                .collect(Collectors.toList());
+        return cacheService.findByPersonId(id).stream().map(GroupDto.class::cast).collect(Collectors.toList());
     }
 
     public List<GroupDto> getAll() {
-        List<Group> all = groupRepo.findAll();
-        return all.stream().map(groupMapper::convertToDto).collect(Collectors.toList());
-
+        return cacheService.getAllGroup();
     }
 
     public GroupDto add(GroupDto groupDto) {
@@ -60,7 +50,6 @@ public class GroupService {
     public GroupDto update(GroupDto groupDto) {
         Group group = groupMapper.convertToEntity(groupDto);
         Group save = groupRepo.save(group);
-        cacheService.setValid(false);
         return groupMapper.convertToDto(save);
     }
 
@@ -150,26 +139,4 @@ public class GroupService {
         groupRepo.deleteById(group.getId());
 //        cacheService.remove(group.getId(), Group.class);
     }
-
-//    private List<AssignmentImpl> getComposite(Long id) {
-//        List<Task> taskList = taskRepo.findByGroupsId(id);
-//        List<AssignmentImpl> assignments = taskList.stream().map(task -> {
-//            task.setGroups(null);
-//            task.setPersons(null);
-//            return taskDtoMapper.convertToDto(task);
-//        }).collect(Collectors.toList());
-//
-//        List<Group> groupList = groupRepo.findByAssignmentsId(id);
-//        List<Group> groupList = null;
-//        List<GroupDto> groupDtos = groupList.stream().map(groupDtoMapper::convertToDto).collect(Collectors.toList());
-//        groupDtos.forEach(group -> {
-//            group.setPersons(null);
-//            group.setAssignments(null);
-//            group.setAssignments(getComposite(group.getId()));
-//        });
-//
-//        assignments.addAll(groupDtos);
-//
-//        return assignments;
-//    }
 }
