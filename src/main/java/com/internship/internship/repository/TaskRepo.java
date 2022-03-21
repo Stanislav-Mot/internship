@@ -13,6 +13,9 @@ import java.util.List;
 @Repository
 public interface TaskRepo extends JpaRepository<Task, Long> {
 
+    @Query(value = "select * from task", nativeQuery = true)
+    List<Task> findAllWithoutConstraint();
+
     @Query(value = "select * from task left join group_task gt on task.id = gt.task_id where group_id = ?", nativeQuery = true)
     List<Task> findByGroupsId(Long id);
 

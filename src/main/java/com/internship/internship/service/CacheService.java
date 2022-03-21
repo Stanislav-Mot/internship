@@ -5,6 +5,10 @@ import com.internship.internship.dto.TaskDto;
 import com.internship.internship.mapper.GroupMapper;
 import com.internship.internship.mapper.TaskMapper;
 import com.internship.internship.model.Assignment;
+import com.internship.internship.model.Composite;
+import com.internship.internship.model.Group;
+import com.internship.internship.model.Task;
+import com.internship.internship.repository.CompositeRepo;
 import com.internship.internship.repository.GroupRepo;
 import com.internship.internship.repository.TaskRepo;
 import lombok.AllArgsConstructor;
@@ -13,9 +17,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static java.lang.Thread.sleep;
 
@@ -29,6 +35,7 @@ public class CacheService {
     private final GroupRepo groupRepo;
     private final TaskMapper taskMapper;
     private final GroupMapper groupMapper;
+    private final CompositeRepo compositeRepo;
     private boolean valid;
 
     public CacheService(
@@ -36,11 +43,12 @@ public class CacheService {
             GroupRepo groupRepo,
             TaskMapper taskMapper,
             GroupMapper groupMapper,
-            @Value(value = "${custom.cache}") Boolean cache) {
+            @Value(value = "${custom.cache}") Boolean cache, CompositeRepo compositeRepo) {
         this.taskRepo = taskRepo;
         this.groupRepo = groupRepo;
         this.taskMapper = taskMapper;
         this.groupMapper = groupMapper;
+        this.compositeRepo = compositeRepo;
 
         if (Boolean.TRUE.equals(cache)) {
             addAll();
@@ -80,12 +88,18 @@ public class CacheService {
 
     public void addAll() {
         cacheMap.clear();
-//        groupRepo.findAll().stream()
-//                .map(group -> {
-//                    group.setTasks(getComposite(group.getId()));
-//                    group.getPersons().forEach(x -> x.setGroups(null));
-//                    return groupDtoMapper.convertToDto(group);
-//                })
+
+        List<Group> groups = groupRepo.findAllWithoutConstraint();
+        List<Task> tasks = taskRepo.findAllWithoutConstraint();
+        List<Composite> composites = compositeRepo.findAll();
+
+
+        groupRepo.findAll().stream()
+                .map(group -> {
+                    group.setTasks(getComposite(group.getId()));
+                    group.getPersons().forEach(x -> x.setGroups(null));
+                    return groupDtoMapper.convertToDto(group);
+                })
 //                .forEach(x -> put(x.getId(), Group.class, x));
 //        taskRepo.findAll().stream()
 //                .map(taskDtoMapper::convertToDto)
@@ -124,13 +138,6 @@ public class CacheService {
         return null;
     }
 
-    public boolean isValid() {
-        return valid;
-    }
-
-    public void setValid(boolean valid) {
-        this.valid = valid;
-    }
 
     private List<Assignment> getComposite(Long id) {
 //        List<Task> taskList = taskRepo.findByGroupsId(id);
@@ -146,9 +153,17 @@ public class CacheService {
         return null;
     }
 
+    public boolean isValid() {
+        return valid;
+    }
+
+    public void setValid(boolean valid) {
+        this.valid = valid;
+    }
+
     @Data
     private class CacheObject {
-        private long lastAccessed = System.currentTimeMillis();
+        private List<Composite> composites = new CopyOnWriteArrayList<>();
         private Assignment value;
 
         public CacheObject(Assignment value) {

@@ -40,7 +40,7 @@ CREATE TABLE task
 
 CREATE TABLE assignment
 (
-    id SERIAL PRIMARY KEY,
+    id INT8 PRIMARY KEY DEFAULT nextval('BIG_SERIAL'),
     group_id  INT8,
     children_id  INT8,
     person_id INT8,
