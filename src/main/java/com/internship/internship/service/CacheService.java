@@ -70,14 +70,11 @@ public class CacheService {
         }
     }
 
-    private void updateCache() {
-    }
-
     private void put(Long key, Class<? extends Assignment> clazz, CacheObject value) {
         cacheMap.put(new KeyObject(key, clazz), value);
     }
 
-    private void put(KeyObject keyObject, CacheObject cacheObject){
+    private void put(KeyObject keyObject, CacheObject cacheObject) {
         cacheMap.put(keyObject, cacheObject);
     }
 
@@ -85,95 +82,136 @@ public class CacheService {
         cacheMap.remove(new KeyObject(id, clazz));
     }
 
-    public int size() {
-        return cacheMap.size();
-    }
-
     private void addAll() {
-        cacheMap.clear();
+        List<GroupDto> groups = groupRepo.findAllWithoutConstraint().stream().map(x -> {
+            GroupDto groupDto = new GroupDto();
+            groupDto.setName(x.getName());
+            groupDto.setId(x.getId());
+            return groupDto;
+        }).collect(Collectors.toList());
 
-        List<Group> groups = groupRepo.findAllWithoutConstraint();
-        List<Task> tasks = taskRepo.findAllWithoutConstraint();
+        List<TaskDto> tasks = taskRepo.findAllWithoutConstraint()
+                .stream().map(taskMapper::convertToDto).collect(Collectors.toList());
+
         List<Composite> composites = compositeRepo.findAll();
 
-        groups.stream()
-                .map(groupMapper::convertToDto)
-                .map(groupDto -> {
-                    List<Composite> comp;
-                    comp = composites.stream()
-                            .filter(x -> x.getGroup_id().equals(groupDto.getId()))
-                            .collect(Collectors.toList());
-                    return new CacheObject(comp, groupDto, true);
-                })
-                .forEach(x -> put(((GroupDto) x.value).getId(), Group.class, x));
+        extractedGroups(groups, composites);
+        extractedTasks(tasks, composites);
+    }
 
+    private void updateCache() {
+        List<Long> taskIds = new ArrayList<>();
+        List<Long> groupIds = new ArrayList<>();
+        cacheMap.entrySet().parallelStream().filter(object -> !object.getValue().valid).forEach(x -> {
+            if (x.getKey().clazz.equals(Task.class)) {
+                taskIds.add(x.getKey().key);
+            } else {
+                groupIds.add(x.getKey().key);
+            }
+        });
+        if (taskIds.isEmpty() && groupIds.isEmpty()) {
+            return;
+        }
+        List<Composite> composites = compositeRepo.findAll();
+
+        if (!taskIds.isEmpty()) {
+            List<TaskDto> tasks = taskRepo.findAllWithoutConstraintByIds(taskIds)
+                    .stream().map(taskMapper::convertToDto).collect(Collectors.toList());
+            extractedTasks(tasks, composites);
+        }
+        if (!groupIds.isEmpty()) {
+            List<GroupDto> groups = groupRepo.findAllWithoutConstraintByIds(groupIds)
+                    .stream().map(x -> {
+                        GroupDto groupDto = new GroupDto();
+                        groupDto.setName(x.getName());
+                        groupDto.setId(x.getId());
+                        return groupDto;
+                    }).collect(Collectors.toList());
+            extractedGroups(groups, composites);
+        }
+    }
+
+    private void extractedTasks(List<TaskDto> tasks, List<Composite> composites) {
         tasks.stream()
-                .map(taskMapper::convertToDto)
                 .map(taskDto -> {
                     List<Composite> comp;
                     comp = composites.stream()
-                            .filter(x -> x.getTask_id() != null && x.getTask_id().equals(taskDto.getId()))
+                            .filter(x -> x.getTaskId() != null && x.getTaskId().equals(taskDto.getId()))
                             .collect(Collectors.toList());
                     return new CacheObject(comp, taskDto, true);
                 })
                 .forEach(x -> put(((TaskDto) x.value).getId(), Task.class, x));
     }
 
+    private void extractedGroups(List<GroupDto> groups, List<Composite> composites) {
+        groups.stream()
+                .map(groupDto -> {
+                    List<Composite> comp;
+                    comp = composites.stream()
+                            .filter(x -> x.getGroupId().equals(groupDto.getId()))
+                            .collect(Collectors.toList());
+                    return new CacheObject(comp, groupDto, true);
+                })
+                .forEach(x -> put(((GroupDto) x.value).getId(), Group.class, x));
+    }
+
     public Assignment getTask(Long id) {
         if (enable) {
-            return cacheMap.get(new KeyObject(id, Task.class)).value;
-        } else {
-            Task task = taskRepo.findById(id).orElseThrow(() -> new DataNotFoundException(String.format("Task Id %d is not found", id)));
-            return taskMapper.convertToDto(task);
+            CacheObject cacheObject = cacheMap.get(new KeyObject(id, Task.class));
+            if (cacheObject != null && cacheObject.valid) {
+                return cacheObject.value;
+            }
         }
+        Task task = taskRepo.findById(id).orElseThrow(() -> new DataNotFoundException(String.format("Task Id %d is not found", id)));
+        return taskMapper.convertToDto(task);
     }
 
     public Assignment getGroup(Long id) {
-        CacheObject c = cacheMap.get(new KeyObject(id, Group.class));
-        if (c != null) {
-            GroupDto groupDto = (GroupDto) c.getValue();
-            groupDto.setAssignments(getComposite(c));
-            return groupDto;
-        } else {
-            Group group = groupRepo.findById(id).orElseThrow(() -> new DataNotFoundException(String.format("Group Id %d is not found", id)));
-            return groupMapper.convertToDto(group);
+        if (enable) {
+            CacheObject cacheObject = cacheMap.get(new KeyObject(id, Group.class));
+            if (cacheObject != null && cacheObject.valid) {
+                GroupDto groupDto = (GroupDto) cacheObject.getValue();
+                groupDto.setAssignments(getComposite(cacheObject));
+                return groupDto;
+            }
         }
+        Group group = groupRepo.findById(id).orElseThrow(() -> new DataNotFoundException(String.format("Group Id %d is not found", id)));
+        return groupMapper.convertToDto(group);
     }
 
     public List<TaskDto> getAllTask() {
         if (enable) {
             return cacheMap.entrySet().parallelStream()
-                    .filter(x -> x.getKey().getClazz().equals(Task.class))
+                    .filter(x -> x.getKey().getClazz().equals(Task.class) && x.getValue().valid)
                     .map(x -> (TaskDto) x.getValue().getValue())
                     .collect(Collectors.toList());
-        } else {
-            return taskRepo.findAll().stream().map(taskMapper::convertToDto).collect(Collectors.toList());
         }
+        return taskRepo.findAll().stream().map(taskMapper::convertToDto).collect(Collectors.toList());
     }
 
     public List<GroupDto> getAllGroup() {
         if (enable) {
             return cacheMap.entrySet().parallelStream()
-                    .filter(x -> x.getKey().getClazz().equals(Group.class)).map(x -> {
+                    .filter(x -> x.getKey().getClazz().equals(Group.class) && x.getValue().valid)
+                    .map(x -> {
                         GroupDto groupDto = (GroupDto) x.getValue().getValue();
                         groupDto.setAssignments(getComposite(x.getValue()));
                         return (GroupDto) x.getValue().getValue();
                     }).collect(Collectors.toList());
-        } else {
-            return groupRepo.findAll().stream().map(groupMapper::convertToDto).collect(Collectors.toList());
         }
+        return groupRepo.findAll().stream().map(groupMapper::convertToDto).collect(Collectors.toList());
     }
 
     private List<Assignment> getComposite(CacheObject object) {
         List<Composite> composites = object.getComposites();
 
-        List<Assignment> assignments = composites.stream().filter(x -> x.getTask_id() != null)
-                .map(x -> cacheMap.get(new KeyObject(x.getTask_id(), Task.class)).value)
+        List<Assignment> assignments = composites.stream().filter(x -> x.getTaskId() != null)
+                .map(x -> cacheMap.get(new KeyObject(x.getTaskId(), Task.class)).value)
                 .collect(Collectors.toList());
 
-        List<Assignment> groups = composites.stream().filter(x -> x.getChildren_id() != null)
+        List<Assignment> groups = composites.stream().filter(x -> x.getChildrenId() != null)
                 .map(x -> {
-                    CacheObject cacheObject = cacheMap.get(new KeyObject(x.getChildren_id(), Group.class));
+                    CacheObject cacheObject = cacheMap.get(new KeyObject(x.getChildrenId(), Group.class));
                     GroupDto groupDto = (GroupDto) cacheObject.value;
                     groupDto.setAssignments(getComposite(cacheObject));
                     return groupDto;
@@ -187,37 +225,35 @@ public class CacheService {
     public List<Assignment> findByPersonId(Long id) {
         if (enable) {
             return cacheMap.entrySet().stream()
-                    .filter(obj -> obj.getKey().getClazz().equals(Group.class))
+                    .filter(obj -> obj.getKey().getClazz().equals(Group.class) && obj.getValue().valid)
                     .filter(object -> object.getValue().getComposites()
-                            .stream().anyMatch(composite -> composite.getPerson_id() != null && composite.getPerson_id().equals(id)))
+                            .stream().anyMatch(composite -> composite.getPersonId() != null && composite.getPersonId().equals(id)))
                     .map(object -> (GroupDto) object.getValue().value)
                     .peek(groupDto -> groupDto.setAssignments(getComposite(cacheMap.get(new KeyObject(groupDto.getId(), Group.class)))))
                     .collect(Collectors.toList());
-        } else {
-            return groupRepo.findByPersonId(id)
-                    .stream().map(groupMapper::convertToDto)
-                    .collect(Collectors.toList());
         }
+        return groupRepo.findByPersonId(id)
+                .stream().map(groupMapper::convertToDto)
+                .collect(Collectors.toList());
     }
 
     public List<TaskDto> getTaskByGroupId(Long id) {
         if (enable) {
             return cacheMap.entrySet().stream()
-                    .filter(obj -> obj.getKey().getClazz().equals(Task.class))
+                    .filter(obj -> obj.getKey().getClazz().equals(Task.class) && obj.getValue().valid)
                     .filter(object -> object.getValue().getComposites()
-                            .stream().anyMatch(composite -> composite.getGroup_id() != null && composite.getGroup_id().equals(id)))
+                            .stream().anyMatch(composite -> composite.getGroupId() != null && composite.getGroupId().equals(id)))
                     .map(object -> (TaskDto) object.getValue().value)
                     .collect(Collectors.toList());
-        } else {
-            return taskRepo.findByGroupsId(id).stream().map(taskMapper::convertToDto).collect(Collectors.toList());
         }
+        return taskRepo.findByGroupsId(id).stream().map(taskMapper::convertToDto).collect(Collectors.toList());
     }
 
     public List<TaskDto> getTaskByPersonId(Long id) {
         if (enable) {
             List<CacheObject> groups = cacheMap.values().stream()
-                    .filter(object -> object.getComposites()
-                            .stream().anyMatch(x -> x.getPerson_id() != null && x.getPerson_id().equals(id)))
+                    .filter(object -> object.valid && object.getComposites()
+                            .stream().anyMatch(x -> x.getPersonId() != null && x.getPersonId().equals(id)))
                     .collect(Collectors.toList());
             List<TaskDto> tasks = new ArrayList<>();
 
@@ -229,13 +265,12 @@ public class CacheService {
             return tasks.stream()
                     .collect(collectingAndThen(toCollection(() ->
                             new TreeSet<>(Comparator.comparingLong(TaskDto::getId))), ArrayList::new));
-        } else {
-            List<TaskDto> taskDtos = new ArrayList<>();
-            List<Long> groupIds = taskRepo.findGroupIdByPersonId(id);
-            groupIds.forEach(x ->
-                    taskDtos.addAll(taskRepo.findByGroupId(x).stream().map(taskMapper::convertToDto).collect(Collectors.toList())));
-            return taskDtos;
         }
+        List<TaskDto> taskDtos = new ArrayList<>();
+        List<Long> groupIds = taskRepo.findGroupIdByPersonId(id);
+        groupIds.forEach(x ->
+                taskDtos.addAll(taskRepo.findByGroupId(x).stream().map(taskMapper::convertToDto).collect(Collectors.toList())));
+        return taskDtos;
     }
 
     private List<Long> getChildren(Long id) {
@@ -249,10 +284,10 @@ public class CacheService {
             return ids;
         }
         parent.getComposites().stream()
-                .filter(composite -> composite.getChildren_id() != null)
+                .filter(composite -> composite.getChildrenId() != null)
                 .forEach(composite -> {
-                    ids.add(composite.getChildren_id());
-                    ids.addAll(getChildren(composite.getChildren_id()));
+                    ids.add(composite.getChildrenId());
+                    ids.addAll(getChildren(composite.getChildrenId()));
                 });
         return ids;
     }
@@ -261,10 +296,10 @@ public class CacheService {
         List<Composite> composites = new ArrayList<>();
         CacheObject cacheObject = new CacheObject(composites, assignment, true);
         Long id;
-        if(clazz.equals(Task.class)){
-            id = ((TaskDto)assignment).getId();
-        }else {
-            id = ((GroupDto)assignment).getId();
+        if (clazz.equals(Task.class)) {
+            id = ((TaskDto) assignment).getId();
+        } else {
+            id = ((GroupDto) assignment).getId();
         }
         KeyObject keyObject = new KeyObject(id, clazz);
         put(keyObject, cacheObject);

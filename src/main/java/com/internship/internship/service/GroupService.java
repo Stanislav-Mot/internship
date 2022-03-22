@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class GroupService {
+    public static final String MESSAGE = "id: %d is not found";
     private final GroupMapper groupMapper;
     private final CacheService cacheService;
     private final GroupRepo groupRepo;
@@ -52,16 +53,16 @@ public class GroupService {
     public GroupDto update(GroupDto groupDto) {
         Group group = groupMapper.convertToEntity(groupDto);
         Group save = groupRepo.save(group);
-        cacheService.setInvalid(save.getId(), Task.class);
+        cacheService.setInvalid(save.getId(), Group.class);
         return groupMapper.convertToDto(save);
     }
 
     @Transactional
     public GroupDto addTask(Long groupId, Long taskId) {
         Group group = groupRepo.findById(groupId).orElseThrow(() ->
-                new ChangesNotAppliedException(String.format("Group id: %d is not found", groupId)));
+                new ChangesNotAppliedException(String.format(MESSAGE, groupId)));
         Task task = taskRepo.findById(taskId).orElseThrow(() ->
-                new ChangesNotAppliedException(String.format("Task id: %d is not found", taskId)));
+                new ChangesNotAppliedException(String.format(MESSAGE, taskId)));
 
         group.getTasks().add(task);
         Group updated = groupRepo.save(group);
@@ -74,31 +75,30 @@ public class GroupService {
         return groupMapper.convertToDto(updated);
     }
 
-    public GroupDto deleteTask(Long groupId, Long taskId) {
+    public void deleteTask(Long groupId, Long taskId) {
         Group group = groupRepo.findById(groupId).orElseThrow(() ->
-                new ChangesNotAppliedException(String.format("Group id: %d is not found", groupId)));
+                new ChangesNotAppliedException(String.format(MESSAGE, groupId)));
         Task task = taskRepo.findById(taskId).orElseThrow(() ->
-                new ChangesNotAppliedException(String.format("Task id: %d is not found", taskId)));
+                new ChangesNotAppliedException(String.format(MESSAGE, taskId)));
 
         group.getTasks().remove(task);
-        Group updated = groupRepo.save(group);
+        groupRepo.save(group);
 
         cacheService.setInvalid(groupId, Group.class);
         cacheService.setInvalid(taskId, Task.class);
-        return groupMapper.convertToDto(updated);
     }
 
     @Transactional
     public GroupDto addGroup(Long groupId, Long groupIdForAdd) {
         Group group = groupRepo.findById(groupId).orElseThrow(() ->
-                new ChangesNotAppliedException(String.format("id: %d is not found", groupId)));
+                new ChangesNotAppliedException(String.format(MESSAGE, groupId)));
         Group children = groupRepo.findById(groupIdForAdd).orElseThrow(() ->
-                new ChangesNotAppliedException(String.format("id: %d is not found", groupIdForAdd)));
+                new ChangesNotAppliedException(String.format(MESSAGE, groupIdForAdd)));
 
         if (Objects.equals(group.getId(), children.getId())) {
             throw new ChangesNotAppliedException("group cannot refer to itself");
         }
-        if (checkCyclicDependency(group.getId(), children)){
+        if (checkCyclicDependency(group.getId(), children.getId())) {
             throw new ChangesNotAppliedException("cyclic dependency");
         }
         group.getChildren().add(children);
@@ -106,38 +106,24 @@ public class GroupService {
         return groupMapper.convertToDto(group);
     }
 
-    @Transactional
-    public GroupDto deleteGroup(Long groupId, Long groupIdForDelete) {
+    public void deleteGroup(Long groupId, Long groupIdForDelete) {
         Group group = groupRepo.findById(groupId).orElseThrow(() ->
-                new ChangesNotAppliedException(String.format("id: %d is not found", groupId)));
+                new ChangesNotAppliedException(String.format(MESSAGE, groupId)));
         Group children = groupRepo.findById(groupIdForDelete).orElseThrow(() ->
-                new ChangesNotAppliedException(String.format("id: %d is not found", groupIdForDelete)));
+                new ChangesNotAppliedException(String.format(MESSAGE, groupIdForDelete)));
 
         group.getChildren().remove(children);
         cacheService.setInvalid(groupId, Group.class);
-        return groupMapper.convertToDto(group);
     }
 
-    private boolean checkCyclicDependency(Long id, Group groupId) {
-        List<Group> groupList = groupRepo.findByAssignments(groupId);
-        if (groupList.isEmpty()) {
-            return false;
-        }
-        for (Group group : groupList) {
-            if (Objects.equals(group.getId(), id)) {
-                return true;
-            } else {
-                if (checkCyclicDependency(id, group)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    private boolean checkCyclicDependency(Long id, Long groupId) {
+        List<Long> groupList = groupRepo.getNextGeneration(groupId);
+        return groupList.stream().anyMatch(id::equals);
     }
 
     public void delete(Long id) {
         Group group = groupRepo.findById(id).orElseThrow(() ->
-                new ChangesNotAppliedException(String.format("id: %d is not found", id)));
+                new ChangesNotAppliedException(String.format(MESSAGE, id)));
 
         groupRepo.deleteById(group.getId());
         cacheService.remove(id, Group.class);

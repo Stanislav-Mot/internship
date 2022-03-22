@@ -24,7 +24,7 @@ public class Group implements Assignment {
     private String name;
 
     @Fetch(value = FetchMode.JOIN)
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "assignment",
             joinColumns = @JoinColumn(name = "children_id"),
@@ -32,7 +32,7 @@ public class Group implements Assignment {
     private List<Group> children = new ArrayList<>();
 
     @Fetch(value = FetchMode.JOIN)
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "assignment",
             joinColumns = @JoinColumn(name = "group_id"),

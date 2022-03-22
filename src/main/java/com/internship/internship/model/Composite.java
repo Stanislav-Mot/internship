@@ -3,6 +3,7 @@ package com.internship.internship.model;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -16,11 +17,15 @@ public class Composite {
     @Id
     private Long id;
 
-    private Long group_id;
+    @Column(name = "group_id")
+    private Long groupId;
 
-    private Long children_id;
+    @Column(name = "children_id")
+    private Long childrenId;
 
-    private Long person_id;
+    @Column(name = "person_id")
+    private Long personId;
 
-    private Long task_id;
+    @Column(name = "task_id")
+    private Long taskId;
 }

@@ -26,7 +26,7 @@ public class TrustSet<T> implements java.util.Set<T> {
 
     public TrustSet(Collection<? extends T> c) {
 
-        if (c.size() == 0) {
+        if (c.isEmpty()) {
             return;
         }
 

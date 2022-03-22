@@ -81,6 +81,7 @@ public class TaskService {
             task.setProgress(progress);
             task.setSpentTime(LocalDateTime.now().getMinute() - task.getStartTime().getMinute());
         }
+        cacheService.setInvalid(task.getId(), Task.class);
         return mapper.convertToDto(task);
     }
 
