@@ -35,7 +35,7 @@ public class CacheService {
     private final TaskMapper taskMapper;
     private final GroupMapper groupMapper;
     private final CompositeRepo compositeRepo;
-    private boolean valid;
+    private boolean enable;
 
     public CacheService(
             TaskRepo taskRepo,
@@ -53,7 +53,7 @@ public class CacheService {
 
         if (Boolean.TRUE.equals(cache)) {
             addAll();
-            this.valid = true;
+            this.enable = true;
 
             Thread t = new Thread(() -> {
                 while (true) {
@@ -62,21 +62,23 @@ public class CacheService {
                     } catch (InterruptedException ex) {
                         Thread.currentThread().interrupt();
                     }
-                    if (!valid) {
-//                        addAll();
-                        this.valid = true;
-                    }
+                    updateCache();
                 }
             });
             t.setDaemon(true);
             t.start();
-        } else {
-            this.valid = false;
         }
     }
 
-    public void put(Long key, Class<? extends Assignment> clazz, CacheObject value) {
+    private void updateCache() {
+    }
+
+    private void put(Long key, Class<? extends Assignment> clazz, CacheObject value) {
         cacheMap.put(new KeyObject(key, clazz), value);
+    }
+
+    private void put(KeyObject keyObject, CacheObject cacheObject){
+        cacheMap.put(keyObject, cacheObject);
     }
 
     public void remove(Long id, Class<? extends Assignment> clazz) {
@@ -87,7 +89,7 @@ public class CacheService {
         return cacheMap.size();
     }
 
-    public void addAll() {
+    private void addAll() {
         cacheMap.clear();
 
         List<Group> groups = groupRepo.findAllWithoutConstraint();
@@ -101,7 +103,7 @@ public class CacheService {
                     comp = composites.stream()
                             .filter(x -> x.getGroup_id().equals(groupDto.getId()))
                             .collect(Collectors.toList());
-                    return new CacheObject(comp, groupDto);
+                    return new CacheObject(comp, groupDto, true);
                 })
                 .forEach(x -> put(((GroupDto) x.value).getId(), Group.class, x));
 
@@ -112,13 +114,13 @@ public class CacheService {
                     comp = composites.stream()
                             .filter(x -> x.getTask_id() != null && x.getTask_id().equals(taskDto.getId()))
                             .collect(Collectors.toList());
-                    return new CacheObject(comp, taskDto);
+                    return new CacheObject(comp, taskDto, true);
                 })
                 .forEach(x -> put(((TaskDto) x.value).getId(), Task.class, x));
     }
 
     public Assignment getTask(Long id) {
-        if (valid) {
+        if (enable) {
             return cacheMap.get(new KeyObject(id, Task.class)).value;
         } else {
             Task task = taskRepo.findById(id).orElseThrow(() -> new DataNotFoundException(String.format("Task Id %d is not found", id)));
@@ -139,7 +141,7 @@ public class CacheService {
     }
 
     public List<TaskDto> getAllTask() {
-        if (valid) {
+        if (enable) {
             return cacheMap.entrySet().parallelStream()
                     .filter(x -> x.getKey().getClazz().equals(Task.class))
                     .map(x -> (TaskDto) x.getValue().getValue())
@@ -150,7 +152,7 @@ public class CacheService {
     }
 
     public List<GroupDto> getAllGroup() {
-        if (valid) {
+        if (enable) {
             return cacheMap.entrySet().parallelStream()
                     .filter(x -> x.getKey().getClazz().equals(Group.class)).map(x -> {
                         GroupDto groupDto = (GroupDto) x.getValue().getValue();
@@ -183,7 +185,7 @@ public class CacheService {
     }
 
     public List<Assignment> findByPersonId(Long id) {
-        if (valid) {
+        if (enable) {
             return cacheMap.entrySet().stream()
                     .filter(obj -> obj.getKey().getClazz().equals(Group.class))
                     .filter(object -> object.getValue().getComposites()
@@ -199,7 +201,7 @@ public class CacheService {
     }
 
     public List<TaskDto> getTaskByGroupId(Long id) {
-        if (valid) {
+        if (enable) {
             return cacheMap.entrySet().stream()
                     .filter(obj -> obj.getKey().getClazz().equals(Task.class))
                     .filter(object -> object.getValue().getComposites()
@@ -212,7 +214,7 @@ public class CacheService {
     }
 
     public List<TaskDto> getTaskByPersonId(Long id) {
-        if (valid) {
+        if (enable) {
             List<CacheObject> groups = cacheMap.values().stream()
                     .filter(object -> object.getComposites()
                             .stream().anyMatch(x -> x.getPerson_id() != null && x.getPerson_id().equals(id)))
@@ -255,11 +257,30 @@ public class CacheService {
         return ids;
     }
 
+    public void addAssignment(Assignment assignment, Class<? extends Assignment> clazz) {
+        List<Composite> composites = new ArrayList<>();
+        CacheObject cacheObject = new CacheObject(composites, assignment, true);
+        Long id;
+        if(clazz.equals(Task.class)){
+            id = ((TaskDto)assignment).getId();
+        }else {
+            id = ((GroupDto)assignment).getId();
+        }
+        KeyObject keyObject = new KeyObject(id, clazz);
+        put(keyObject, cacheObject);
+    }
+
+    public void setInvalid(Long id, Class<? extends Assignment> clazz) {
+        KeyObject keyObject = new KeyObject(id, clazz);
+        cacheMap.get(keyObject).setValid(false);
+    }
+
     @Data
     @AllArgsConstructor
     private class CacheObject {
         private List<Composite> composites;
         private Assignment value;
+        private Boolean valid;
     }
 
     @Data

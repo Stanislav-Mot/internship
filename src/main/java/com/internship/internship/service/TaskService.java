@@ -46,12 +46,15 @@ public class TaskService {
     public TaskDto add(TaskDto taskDto) {
         Task task = mapper.convertToEntity(taskDto);
         Task save = repository.save(task);
-        return mapper.convertToDto(save);
+        TaskDto saveDto = mapper.convertToDto(save);
+        cacheService.addAssignment(saveDto, Task.class);
+        return saveDto;
     }
 
     public TaskDto update(TaskDto taskDto) {
         Task task = mapper.convertToEntity(taskDto);
         Task save = repository.save(task);
+        cacheService.setInvalid(save.getId(), Task.class);
         return mapper.convertToDto(save);
     }
 
@@ -83,6 +86,7 @@ public class TaskService {
 
     public void delete(Long id) {
         Task task = repository.findById(id).orElseThrow(() -> new ChangesNotAppliedException(String.format("Task id: %d is not found", id)));
+        cacheService.remove(id, Task.class);
         repository.delete(task);
     }
 }

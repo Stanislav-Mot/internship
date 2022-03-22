@@ -27,15 +27,15 @@ public class Group implements Assignment {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "assignment",
-            joinColumns = @JoinColumn(name = "children_id", nullable = true),
-            inverseJoinColumns = @JoinColumn(name = "group_id", nullable = true))
+            joinColumns = @JoinColumn(name = "children_id"),
+            inverseJoinColumns = @JoinColumn(name = "group_id"))
     private List<Group> children = new ArrayList<>();
 
     @Fetch(value = FetchMode.JOIN)
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "assignment",
-            joinColumns = @JoinColumn(name = "group_id", nullable = true),
-            inverseJoinColumns = @JoinColumn(name = "task_id", nullable = true))
+            joinColumns = @JoinColumn(name = "group_id"),
+            inverseJoinColumns = @JoinColumn(name = "task_id"))
     private List<Task> tasks = new ArrayList<>();
 }

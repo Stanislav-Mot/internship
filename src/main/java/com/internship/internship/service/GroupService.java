@@ -44,12 +44,15 @@ public class GroupService {
     public GroupDto add(GroupDto groupDto) {
         Group group = groupMapper.convertToEntity(groupDto);
         Group save = groupRepo.save(group);
-        return groupMapper.convertToDto(save);
+        GroupDto saveDto = groupMapper.convertToDto(save);
+        cacheService.addAssignment(saveDto, Group.class);
+        return saveDto;
     }
 
     public GroupDto update(GroupDto groupDto) {
         Group group = groupMapper.convertToEntity(groupDto);
         Group save = groupRepo.save(group);
+        cacheService.setInvalid(save.getId(), Task.class);
         return groupMapper.convertToDto(save);
     }
 
@@ -66,6 +69,8 @@ public class GroupService {
         task.setStartTime(LocalDateTime.now());
         taskRepo.save(task);
 
+        cacheService.setInvalid(groupId, Group.class);
+        cacheService.setInvalid(taskId, Task.class);
         return groupMapper.convertToDto(updated);
     }
 
@@ -78,6 +83,8 @@ public class GroupService {
         group.getTasks().remove(task);
         Group updated = groupRepo.save(group);
 
+        cacheService.setInvalid(groupId, Group.class);
+        cacheService.setInvalid(taskId, Task.class);
         return groupMapper.convertToDto(updated);
     }
 
@@ -86,18 +93,16 @@ public class GroupService {
         Group group = groupRepo.findById(groupId).orElseThrow(() ->
                 new ChangesNotAppliedException(String.format("id: %d is not found", groupId)));
         Group children = groupRepo.findById(groupIdForAdd).orElseThrow(() ->
-                new ChangesNotAppliedException(String.format("id: %d is not found", groupId)));
+                new ChangesNotAppliedException(String.format("id: %d is not found", groupIdForAdd)));
 
         if (Objects.equals(group.getId(), children.getId())) {
             throw new ChangesNotAppliedException("group cannot refer to itself");
         }
-//        if (checkCyclicDependency(group.getId(), groupForAdd.getId())) {
-//            throw new ChangesNotAppliedException("cyclic dependency");
-//      }
-
+        if (checkCyclicDependency(group.getId(), children)){
+            throw new ChangesNotAppliedException("cyclic dependency");
+        }
         group.getChildren().add(children);
-//        children.setParent(group);
-
+        cacheService.setInvalid(groupId, Group.class);
         return groupMapper.convertToDto(group);
     }
 
@@ -106,16 +111,15 @@ public class GroupService {
         Group group = groupRepo.findById(groupId).orElseThrow(() ->
                 new ChangesNotAppliedException(String.format("id: %d is not found", groupId)));
         Group children = groupRepo.findById(groupIdForDelete).orElseThrow(() ->
-                new ChangesNotAppliedException(String.format("id: %d is not found", groupId)));
+                new ChangesNotAppliedException(String.format("id: %d is not found", groupIdForDelete)));
 
         group.getChildren().remove(children);
-//        children.setParent(null);
-
+        cacheService.setInvalid(groupId, Group.class);
         return groupMapper.convertToDto(group);
     }
 
     private boolean checkCyclicDependency(Long id, Group groupId) {
-        List<Group> groupList = null /*groupRepo.findByAssignments(groupId)*/;
+        List<Group> groupList = groupRepo.findByAssignments(groupId);
         if (groupList.isEmpty()) {
             return false;
         }
@@ -132,11 +136,10 @@ public class GroupService {
     }
 
     public void delete(Long id) {
-
         Group group = groupRepo.findById(id).orElseThrow(() ->
                 new ChangesNotAppliedException(String.format("id: %d is not found", id)));
 
         groupRepo.deleteById(group.getId());
-//        cacheService.remove(group.getId(), Group.class);
+        cacheService.remove(id, Group.class);
     }
 }
